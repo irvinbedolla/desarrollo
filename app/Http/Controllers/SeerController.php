@@ -13817,94 +13817,209 @@ class SeerController extends Controller
         return Excel::download(new CitasExport, 'pagos.xlsx');
     }
     
-    public function todas_audiencias() {
+    public function todas_audiencias(Request $request) {
         $user = auth()->user();
-        $userRole = $user->roles->pluck('name')->first();
+        $userRole = $user->roles->first()->name ?? null; 
         $isAudiencia = 'Si';
-    
-        // 1. Definir el Query base con sus relaciones (Eager Loading)
+
+        // 1. Query base optimizado con Eager Loading selectivo
         $query = Audiencias::with([
-            'solicitante', // Asumiendo relación en el modelo Audiencia
-            'expediente',  // Asumiendo relación con SeerPerGeneral
-            'conciliador', // Asumiendo relación con User
-            'pagos'        => function($q) {
-                $q->where('estatus', 'Pendiente')->where('tipo_pago', 'Audiencia');
+            'solicitante:id_solicitud,nombre', 
+            'expediente:id,NUE,estatus,incidencia', 
+            'conciliador:id,name', 
+            'pagos' => function($q) {
+                $q->select('id', 'id_solicitud', 'estatus', 'tipo_pago')
+                ->where('estatus', 'Pendiente')
+                ->where('tipo_pago', 'Audiencia');
             }
         ])
-            //Excluir audiencias cuyo expediente esté marcado como incidencia
-            ->whereHas('expediente', function ($q) {
-                $q->whereNull('incidencia')->orWhere('incidencia', 0);
-            })
-            ->select('id', 'id_solicitud', 'fecha', 'hora', 'id_conciliador', 'estatus', 'delegacion', 'created_at')
-            ->distinct();
-    
-        // 2. Mapeo de delegaciones para evitar IFs repetitivos
+        ->whereHas('expediente', function ($q) {
+            $q->where(function($sub) {
+                $sub->whereNull('incidencia')->orWhere('incidencia', 0);
+            });
+        })
+        ->select('id', 'id_solicitud', 'fecha', 'hora', 'id_conciliador', 'estatus', 'delegacion', 'created_at');
+
+        // Filtro de búsqueda global en el Servidor
+        if ($request->filled('buscar')) {
+            $buscar = $request->input('buscar');
+            
+            $query->where(function($q) use ($buscar) {
+                // Buscar por coincidencia en el NUE del expediente
+                $q->whereHas('expediente', function($sub) use ($buscar) {
+                    $sub->where('NUE', 'LIKE', "%{$buscar}%");
+                })
+                // O buscar por coincidencia en el nombre del solicitante
+                ->orWhereHas('solicitante', function($sub) use ($buscar) {
+                    $sub->where('nombre', 'LIKE', "%{$buscar}%");
+                });
+            });
+        }
+
+        // 2. Mapeo de delegaciones regionales (Gobierno de Michoacán)
         $mapaDelegaciones = [
             'Morelia' => ['Morelia', 'Zitácuaro'],
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
             'Zamora'  => ['Sahuayo', 'Zamora'],
         ];
-    
-        // 3. Aplicar filtros según Rol
-        if ($userRole == "Conciliador") {
-            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->first();
+
+        // 3. Filtros de Rol de Usuario (Incluyendo Auxiliar)
+        if ($userRole === "Conciliador") {
             $query->where('id_conciliador', $user->id);
+            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->select('tipo')->first();
             
-            if ($permisos && $permisos->tipo == "Ambos") {
+            if ($permisos && $permisos->tipo === "Ambos") {
                 $delegaciones = $mapaDelegaciones[$user->delegacion] ?? [$user->delegacion];
                 $query->whereIn('delegacion', $delegaciones);
             } else {
                 $query->where('delegacion', $user->delegacion);
             }
         } 
-        elseif ($userRole == "Delegado" || $userRole == "Enlace") {
+        elseif ($userRole === "Delegado") {
             $delegaciones = $mapaDelegaciones[$user->delegacion] ?? [$user->delegacion];
             $query->whereIn('delegacion', $delegaciones);
         }
-        elseif ($userRole == "Auxiliar") {
+        // NUEVO: Filtro restrictivo para personal Auxiliar
+        elseif ($userRole === "Auxiliar") {
             $query->where('delegacion', $user->delegacion);
         }
-        // Si es Super Usuario o Admin, no se agregan filtros adicionales (ve todo)
-    
-        //$audiencias = $query->orderBy('created_at', 'desc')->paginate(50);
-        $audiencias = $query->orderBy('created_at', 'desc')->limit(4500)->get();
+
+        // 4. Paginación e inyección del parámetro de búsqueda
+        $audiencias = $query->orderBy('created_at', 'desc')
+                            ->paginate(500)
+                            ->appends(['buscar' => $request->input('buscar')]);
         
-        //$audiencias->through(function ($audiencia) {
-        $audiencias->transform(function ($audiencia) {
+        $audiencias->through(function ($audiencia) {
             $audiencia->estatus_modelo = $audiencia->estatus;
-            
-            // Datos del solicitante y expediente (vienen de la relación)
             $audiencia->nombre = $audiencia->solicitante->nombre ?? 'Sin solicitante';
             $audiencia->NUE = $audiencia->expediente->NUE ?? 'Sin Expediente';
             $audiencia->estatus = $audiencia->expediente->estatus ?? 'Sin estatus';
-            
-            // Formateo de fecha y hora
-            //$audiencia->fecha = date('d-m-Y', strtotime($audiencia->fecha));
-            //$audiencia->hora = date('H:i:s', strtotime($audiencia->hora));
-            
-            // Conciliador y Pagos
             $audiencia->conciliador_nombre = $audiencia->conciliador->name ?? 'Sin Conciliador';
             $audiencia->constancia = $audiencia->pagos->count() > 0 ? 1 : 0;
-    
             return $audiencia;
         });
         
         return view('audiencias.todas_audiencias', compact('audiencias', 'isAudiencia'));
     }
 
-    public function todas_ratificaciones() {
+    public function todos_complimientos(Request $request) {
+        $user = auth()->user();
+        $userRole = $user->roles->first()?->name; 
+        $delegacionUsuario = $user->delegacion;
+
+        // 1. Mapeo de delegaciones regionales (Gobierno de Michoacán)
+        $mapaDelegaciones = [
+            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo'],
+        ];
+
+        // 2. Construcción del Query Base para Ratificaciones (Tabla: turnos | Siglas: RAT)
+        $queryRatificacion = Pagos::where("pago_solicitud.tipo_pago", "Ratificacion")
+            ->join("turnos", "turnos.id", "pago_solicitud.id_solicitud")
+            ->select(
+                "pago_solicitud.id", "pago_solicitud.fecha", "pago_solicitud.hora", 
+                "pago_solicitud.monto", "pago_solicitud.descripcion", "pago_solicitud.observaciones", 
+                "pago_solicitud.estatus", "turnos.NUE", "turnos.id as id_solicitud",
+                DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+                DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador')
+            );
+
+        // 3. Construcción del Query Base para Audiencias (Tabla: seer_general / seer_solicitante | Siglas: SOL)
+        $queryAudiencia = Pagos::where("pago_solicitud.tipo_pago", "Audiencia")
+            ->join("seer_general", "seer_general.id", "pago_solicitud.id_solicitud")
+            ->join("seer_solicitante", "seer_general.id", "seer_solicitante.id_solicitud")
+            ->select(
+                "pago_solicitud.id", "pago_solicitud.fecha", "pago_solicitud.hora", 
+                "pago_solicitud.monto", "pago_solicitud.descripcion", "pago_solicitud.observaciones", 
+                "pago_solicitud.estatus", "seer_general.NUE", "seer_general.id as id_solicitud",
+                DB::raw('seer_solicitante.nombre AS trabajador')
+            );
+
+        // ========================================================
+        // LOGICA AVANZADA: ENRUTAMIENTO INTELIGENTE DE BÚSQUEDA
+        // ========================================================
+        if ($request->filled('buscar')) {
+            $buscar = trim($request->input('buscar'));
+            
+            // Convertimos a mayúsculas para evitar problemas de escritura (ej: mor/rat -> MOR/RAT)
+            $buscarUpper = mb_strtoupper($buscar, 'UTF-8');
+
+            if (str_contains($buscarUpper, '/RAT/')) {
+                // Caso RAT: El registro vive estrictamente en turnos, vaciamos el query de audiencias para que vaya rápido
+                $queryAudiencia->whereRaw('1 = 0'); 
+                $queryRatificacion->where('turnos.NUE', 'LIKE', "%{$buscar}%");
+                
+            } elseif (str_contains($buscarUpper, '/SOL/')) {
+                // Caso SOL: El registro vive estrictamente en seer_general, vaciamos ratificaciones
+                $queryRatificacion->whereRaw('1 = 0');
+                $queryAudiencia->where('seer_general.NUE', 'LIKE', "%{$buscar}%");
+                
+            } elseif (str_contains($buscarUpper, '/CI/')) {
+                // Caso CI: Es un identificador directo de la tabla de pagos (pago_solicitud)
+                // Como ambos tipos de pago (Audiencia/Ratificación) pueden tener folios de recibo internos, filtramos ambos por ID
+                // Extraemos solo los números del string (ej: MOR/CI/2025/004166 -> 4166) o buscamos la coincidencia exacta si tienes una columna 'folio_ci'
+                $queryRatificacion->where('pago_solicitud.NUE', 'LIKE', "%{$buscar}%");
+                $queryAudiencia->where('pago_solicitud.NUE', 'LIKE', "%{$buscar}%");
+                
+            } else {
+                // Búsqueda común por Nombre de trabajador o empresa (si no escribieron un NUE completo)
+                $queryRatificacion->where(function($q) use ($buscar) {
+                    $q->where('turnos.trabajador', 'LIKE', "%{$buscar}%")
+                    ->orWhere('turnos.nombre_empresa', 'LIKE', "%{$buscar}%")
+                    ->orWhere('turnos.NUE', 'LIKE', "%{$buscar}%");
+                });
+
+                $queryAudiencia->where(function($q) use ($buscar) {
+                    $q->where('seer_solicitante.nombre', 'LIKE', "%{$buscar}%")
+                    ->orWhere('seer_general.NUE', 'LIKE', "%{$buscar}%");
+                });
+            }
+        }
+
+        // 4. Aplicación de Filtros de Seguridad por Rol de Usuario
+        if (in_array($userRole, ["Auxiliar", "Excepcion"])) {
+            $queryRatificacion->where('turnos.delegacion', $delegacionUsuario);
+            $queryAudiencia->where('seer_general.delegacion', $delegacionUsuario);
+        } 
+        elseif ($userRole === "Conciliador") {
+            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->select('tipo')->first();
+            
+            if ($permisos && $permisos->tipo === "Ambos" && isset($mapaDelegaciones[$delegacionUsuario])) {
+                $sedes = $mapaDelegaciones[$delegacionUsuario];
+                $queryRatificacion->whereIn('turnos.delegacion', $sedes);
+                $queryAudiencia->whereIn('seer_general.delegacion', $sedes);
+            } else {
+                $queryRatificacion->where('turnos.delegacion', $delegacionUsuario);
+                $queryAudiencia->where('seer_general.delegacion', $delegacionUsuario);
+            }
+        } 
+        elseif (in_array($userRole, ["Delegado", "Enlace"])) {
+            $sedes = $mapaDelegaciones[$delegacionUsuario] ?? [$delegacionUsuario];
+            $queryRatificacion->whereIn('turnos.delegacion', $sedes);
+            $queryAudiencia->whereIn('seer_general.delegacion', $sedes);
+        }
+
+        // Ordenamiento final por fecha de creación del trámite
+        $queryRatificacion->orderBy('turnos.created_at', 'desc');
+        $queryAudiencia->orderBy('seer_general.created_at', 'desc');
+
+        // 5. Paginación asíncrona independiente preservando parámetros de filtrado
+        $complimientos_ratificacion = $queryRatificacion->paginate(50, ['*'], 'pag_rat')
+                                                        ->appends(['buscar' => $request->input('buscar')]);
+                                                        
+        $complimientos_audiencias   = $queryAudiencia->paginate(50, ['*'], 'pag_aud')
+                                                    ->appends(['buscar' => $request->input('buscar')]);
+
+        return view('cumplimientos/actuales', compact('complimientos_ratificacion', 'complimientos_audiencias'));
+    } 
+
+    public function todas_ratificaciones(Request $request) {
         $user = auth()->user();
         // Obtenemos el nombre del rol principal directamente
         $userRole = $user->roles->first()?->name; 
 
-        // Mapeo de delegaciones para evitar repetir bloques IF
-        $mapaDelegaciones = [
-            'Morelia' => ['Morelia', 'Zitácuaro'],
-            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
-            'Zamora'  => ['Sahuayo', 'Zamora'],
-        ];
-
-        // Iniciamos la consulta base
+        // 1. Iniciamos la consulta base seleccionando columnas específicas si es posible
         $query = Turnos::where('tipo', 'Ratificación')
             ->where(function($q) {
                 // Agrupamos esto para que el OR no interfiera con los otros WHERE
@@ -13913,18 +14028,39 @@ class SeerController extends Controller
             ->withExists(['pagos as tiene_pendientes' => function($q) {
                 $q->where('estatus', 'Pendiente')
                 ->where('tipo_pago', 'Ratificacion');
-            }])
-            ->orderBy('created_at', 'desc')
-            ->limit(1000);
+            }]);
 
-        // Aplicamos filtros de seguridad según Rol
+        // ========================================================
+        // NUEVO: FILTRO DE BÚSQUEDA GLOBAL DESDE EL SERVIDOR
+        // ========================================================
+        if ($request->filled('buscar')) {
+            $buscar = $request->input('buscar');
+            
+            $query->where(function($q) use ($buscar) {
+                // Buscar por coincidencia en el NUE del expediente de ratificación
+                $q->where('NUE', 'LIKE', "%{$buscar}%")
+                // O buscar por coincidencia en el nombre del solicitante (si está en la misma tabla o relación)
+                // Si 'nombre' está en una relación (ej. solicitante), cámbialo por un orWhereHas
+                ->orWhere('nombre_empresa', 'LIKE', "%{$buscar}%");
+            });
+        }
+
+        // 2. Mapeo de delegaciones regionales (Gobierno de Michoacán)
+        $mapaDelegaciones = [
+            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Sahuayo', 'Zamora'],
+        ];
+
+        // 3. Aplicamos filtros de seguridad según Rol de manera estricta y unificada
         if (in_array($userRole, ["Auxiliar", "Excepcion"])) {
             $query->where('delegacion', $user->delegacion);
         } 
-        elseif ($userRole == "Conciliador") {
-            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->first();
+        elseif ($userRole === "Conciliador") {
+            // Optimizado trayendo solo la columna 'tipo'
+            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->select('tipo')->first();
             
-            if ($permisos && $permisos->tipo == "Ambos" && isset($mapaDelegaciones[$user->delegacion])) {
+            if ($permisos && $permisos->tipo === "Ambos" && isset($mapaDelegaciones[$user->delegacion])) {
                 $query->whereIn('delegacion', $mapaDelegaciones[$user->delegacion]);
             } else {
                 $query->where('delegacion', $user->delegacion);
@@ -13934,12 +14070,15 @@ class SeerController extends Controller
             $delegaciones = $mapaDelegaciones[$user->delegacion] ?? [$user->delegacion];
             $query->whereIn('delegacion', $delegaciones);
         }
-        // "Super Usuario" y "Administrador" pasan sin filtros adicionales
+        // "Super Usuario" y "Administrador" pasan sin filtros adicionales (ven todo)
 
-        $solicitudes = $query->get();
+        // 4. LA SOLUCIÓN CLAVE: Paginación fluida inyectando el término buscado
+        $solicitudes = $query->orderBy('created_at', 'desc')
+                            ->paginate(500)
+                            ->appends(['buscar' => $request->input('buscar')]);
 
-        // Transformamos el resultado para que tu vista siga recibiendo la variable 'constancia'
-        $solicitudes->transform(function ($audiencia) {
+        // 5. Transformamos de manera eficiente ÚNICAMENTE los registros de la página actual
+        $solicitudes->through(function ($audiencia) {
             $audiencia->constancia = $audiencia->tiene_pendientes ? 1 : 0;
             return $audiencia;
         });
@@ -13947,208 +14086,102 @@ class SeerController extends Controller
         return view('ratificaciones.ratificaciones_todas', compact('solicitudes', 'userRole'));
     }
 
-    public function todos_complimientos(){
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
+    public function todas_solicitudes(Request $request) {
+        $user = auth()->user();
+        $userRole = $user->roles->first()?->name; 
+        $isAudiencia = 'No';
 
-        if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
-            ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
-            ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-            "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
-            DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
-            DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-            ->where('turnos.delegacion',$user["delegacion"])
-            ->orderBy('turnos.created_at', 'desc')->limit(500)
-            ->get();
+        // 1. Iniciamos el Query base optimizado con Eager Loading selectivo
+        $query = SeerPerGeneral::with('solicitante:id,id_solicitud,nombre')
+            ->where('estatus', '!=', 'Pendiente')
+            ->where(function ($q) {
+                $q->whereNull('incidencia')
+                ->orWhere('incidencia', 0);
+            })
+            ->select('id', 'consecutivo','fecha_confirmacion as fecha', 'NUE', 'actividad', 'tipo_solicitud', 'estatus', 'delegacion', 'created_at');
 
-            $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
-            ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
-            ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
-            ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-            "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
-            DB::raw('seer_solicitante.nombre AS trabajador'))
-            ->where('seer_general.delegacion',$user["delegacion"])
-            ->orderBy('seer_general.created_at', 'desc')->limit(500)
-            ->get();
+        // ========================================================
+        // NUEVO: FILTRO DE BÚSQUEDA GLOBAL DESDE EL SERVIDOR
+        // ========================================================
+        if ($request->filled('buscar')) {
+            $buscar = $request->input('buscar');
+            
+            $query->where(function($q) use ($buscar) {
+                // Buscar por el campo NUE de la solicitud
+                $q->where('NUE', 'LIKE', "%{$buscar}%")
+                // O buscar por el nombre del solicitante en la tabla vinculada
+                ->orWhereHas('solicitante', function($sub) use ($buscar) {
+                    $sub->where('nombre', 'LIKE', "%{$buscar}%");
+                });
+            });
         }
-        else if($userRole[0] == "Conciliador"){
-            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
-            if($permisos["tipo"] == "Ambos"){
-                if($user["delegacion"] == "Morelia"){
-                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
-                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
-                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
-                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('turnos.delegacion', ["Morelia", "Zitácuaro"])
-                    ->orderBy('turnos.created_at', 'desc')->limit(500)
-                    ->get();
 
-                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
-                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
-                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
-                    DB::raw('seer_solicitante.nombre AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
-                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
-                    ->get();
-                }
-                if($user["delegacion"] == "Uruapan"){
-                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
-                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
-                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
-                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('turnos.delegacion', ["Uruapan", "Lázaro Cárdenas"])
-                    ->orderBy('turnos.created_at', 'desc')->limit(500)
-                    ->get();
+        // 2. Definimos el mapa de delegaciones regionales (Gobierno de Michoacán)
+        $mapaDelegaciones = [
+            "Morelia" => ["Morelia", "Zitácuaro"],
+            "Uruapan" => ["Uruapan", "Lázaro Cárdenas"],
+            "Zamora"  => ["Zamora", "Sahuayo"],
+            "Sahuayo" => ["Sahuayo", "Zamora"],
+        ];
 
-                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
-                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
-                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
-                    DB::raw('seer_solicitante.nombre AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
-                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
-                    ->get();
-                }
-                if($user["delegacion"] == "Zamora"){
-                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
-                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
-                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
-                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('turnos.delegacion', ["Zamora", "Sahuayo"])
-                    ->orderBy('turnos.created_at', 'desc')->limit(500)
-                    ->get();
-
-                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
-                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
-                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
-                    DB::raw('seer_solicitante.nombre AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Zamora", "Sahuayo"])
-                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
-                    ->get();
-                }
+        // 3. Aplicamos los filtros de seguridad territorial según el Rol
+        if (in_array($userRole, ["Auxiliar", "Excepcion"])) {
+            $query->where('delegacion', $user->delegacion);
+        } 
+        elseif ($userRole === "Conciliador") {
+            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->select('tipo')->first();
+            
+            if ($permisos && $permisos->tipo === "Ambos" && isset($mapaDelegaciones[$user->delegacion])) {
+                $query->whereIn('delegacion', $mapaDelegaciones[$user->delegacion]);
+            } else {
+                $query->where('delegacion', $user->delegacion);
             }
-            else{
-                 $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
-                ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
-                ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
-                DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
-                DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                ->where('turnos.delegacion',$user["delegacion"])
-                ->orderBy('turnos.created_at', 'desc')->limit(500)
-                ->get();
-
-                $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
-                ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
-                ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
-                ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
-                DB::raw('seer_solicitante.nombre AS trabajador'))
-                ->where('seer_general.delegacion',$user["delegacion"])
-                ->orderBy('seer_general.created_at', 'desc')->limit(500)
-                ->get();
-                }
-        }
-        else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
-            if($user["delegacion"] == "Morelia"){
-                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
-                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
-                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
-                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('turnos.delegacion', ["Morelia", "Zitácuaro"])
-                    ->orderBy('turnos.created_at', 'desc')->limit(500)
-                    ->get();
-
-                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
-                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
-                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
-                    DB::raw('seer_solicitante.nombre AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
-                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
-                    ->get();
-                }
-                if($user["delegacion"] == "Uruapan"){
-                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
-                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
-                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
-                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('turnos.delegacion', ["Uruapan", "Lázaro Cárdenas"])
-                    ->orderBy('turnos.created_at', 'desc')->limit(500)
-                    ->get();
-
-                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
-                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
-                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
-                    DB::raw('seer_solicitante.nombre AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
-                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
-                    ->get();
-                }
-                if($user["delegacion"] == "Zamora"){
-                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
-                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
-                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
-                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('turnos.delegacion', ["Zamora", "Sahuayo"])
-                    ->orderBy('turnos.created_at', 'desc')->limit(500)
-                    ->get();
-
-                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
-                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
-                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
-                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
-                    DB::raw('seer_solicitante.nombre AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Zamora", "Sahuayo"])
-                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
-                    ->get();
-                }
-        }
-        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
-            $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
-            ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
-            ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-            "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
-            DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
-            DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-            ->orderBy('turnos.created_at', 'desc')->limit(500)
-            ->get();
-
-            $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
-            ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
-            ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
-            ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-            "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
-            DB::raw('seer_solicitante.nombre AS trabajador'))
-            ->orderBy('seer_general.created_at', 'desc')->limit(500)
-            ->get();
+        } 
+        elseif (in_array($userRole, ["Delegado", "Enlace"])) {
+            if (isset($mapaDelegaciones[$user->delegacion])) {
+                $query->whereIn('delegacion', $mapaDelegaciones[$user->delegacion]);
+            } else {
+                $query->where('delegacion', $user->delegacion);
+            }
         }
 
-        return view('cumplimientos/actuales',compact('complimientos_ratificacion','complimientos_audiencias'));
+        // 4. LA SOLUCIÓN CLAVE: Paginación fluida inyectando el término buscado
+        // Se cambia de 2500 registros simultáneos a bloques manejables de 100
+        $solicitudes = $query->orderBy('created_at', 'desc')
+                            ->paginate(100)
+                            ->appends(['buscar' => $request->input('buscar')]);
+
+        // 5. Mapear de forma optimizada los citados únicamente para las filas de la página actual
+        $idsSolicitudes = $solicitudes->pluck('id');
+        
+        $citadosSolicitud = DB::table('seer_citados')
+            ->whereIn('id_solicitud', $idsSolicitudes)
+            ->where('resulte_responsable', 'No')
+            ->select('id_solicitud', 'nombre', 'primer_apellido', 'segundo_apellido')
+            ->get()
+            ->groupBy('id_solicitud');
+
+        // 6. Transformación limpia usando through() (Preserva la estructura de paginación)
+        $solicitudes->through(function ($solicitud) use ($citadosSolicitud) { 
+            // Nombre del solicitante
+            $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
+            
+            // Listado consolidado de citados
+            if (isset($citadosSolicitud[$solicitud->id])) {
+                $solicitud->lista_citados = $citadosSolicitud[$solicitud->id]
+                    ->map(function($citado) {
+                        return trim("{$citado->nombre} {$citado->primer_apellido} {$citado->segundo_apellido}");
+                    })
+                    ->filter()
+                    ->implode(', ');
+            } else {
+                $solicitud->lista_citados = 'Sin citados';
+            }
+
+            return $solicitud;
+        });
+
+        return view('solicitudes.solicitudes_todas', compact('solicitudes', 'isAudiencia', 'userRole'));
     }
 
     public function mostrar_citado(Request $request){
@@ -16919,85 +16952,6 @@ class SeerController extends Controller
 
         $nombreArchivo = 'constancia_de_cumplimiento_' . $solicitud->trabajador .'.pdf';
         return $pdf->stream($nombreArchivo);                  
-    }
-
-    public function todas_solicitudes() {
-        $user = auth()->user();
-        // Obtenemos el nombre del primer rol asignado
-        $userRole = $user->roles->pluck('name')->first(); 
-        $isAudiencia = 'No';
-
-        // 1. Iniciamos el Query base con la relación y la validación de estatus
-        // Usamos 'solicitante:id,id_solicitud,nombre' para traer solo las columnas necesarias
-        $query = SeerPerGeneral::with('solicitante:id,id_solicitud,nombre')
-            ->where('estatus', '!=', 'Pendiente')
-            ->where(function ($q) {
-                $q->whereNull('incidencia')
-                    ->orWhere('incidencia', 0);
-            })
-            ->orderBy('created_at', 'desc')
-            ->limit(2500);
-    
-        // 2. Definimos el mapa de delegaciones para evitar IFs repetitivos
-        $mapaDelegaciones = [
-            "Morelia" => ["Morelia", "Zitácuaro"],
-            "Uruapan" => ["Uruapan", "Lázaro Cárdenas"],
-            "Zamora"  => ["Zamora", "Sahuayo"],
-            "Sahuayo" => ["Sahuayo", "Zamora"],
-        ];
-
-        // 3. Aplicamos los filtros de seguridad según el Rol
-        if (in_array($userRole, ["Auxiliar", "Excepcion"])) {
-            $query->where('delegacion', $user->delegacion);
-        } 
-        elseif ($userRole == "Conciliador") {
-            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->first();
-            // Si tiene permiso "Ambos", aplicamos el mapeo de sedes
-            if ($permisos && $permisos->tipo == "Ambos" && isset($mapaDelegaciones[$user->delegacion])) {
-                $query->whereIn('delegacion', $mapaDelegaciones[$user->delegacion]);
-            } else {
-                $query->where('delegacion', $user->delegacion);
-            }
-        } 
-        elseif (in_array($userRole, ["Delegado", "Enlace"])) {
-            if (isset($mapaDelegaciones[$user->delegacion])) {
-                $query->whereIn('delegacion', $mapaDelegaciones[$user->delegacion]);
-            } else {
-                $query->where('delegacion', $user->delegacion);
-            }
-        }
-        // Para Super Usuario / Administrador no se agregan filtros (ve todo)
-
-        // 4. Ejecutamos la consulta
-        $solicitudes = $query->get();
-
-        $idsSolicitudes = $solicitudes->pluck('id');
-        //citadosSolicitud trae todos los citados de las solicitudes obtenidas, agrupados por id_solicitud
-        $citadosSolicitud = DB::table('seer_citados')
-            ->whereIn('id_solicitud', $idsSolicitudes)
-            ->where('resulte_responsable', 'No')
-            ->get()
-            ->groupBy('id_solicitud');
-        $solicitudes->transform(function ($solicitud) use ($citadosSolicitud) {           
-            if (isset($citadosSolicitud[$solicitud->id])) {
-                $solicitud->lista_citados = $citadosSolicitud[$solicitud->id]
-                    ->map(function($citado) {
-                        return trim("{$citado->nombre} {$citado->primer_apellido} {$citado->segundo_apellido}");
-                    })
-                    ->filter()
-                    ->implode(', ');
-            } else {
-                $solicitud->lista_citados = 'Sin citados';
-            }
-            return $solicitud;
-        });
-        // 5. Mapeamos el nombre del solicitante al objeto principal para no romper tu vista actual
-        $solicitudes->transform(function ($solicitud) {
-            $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
-            return $solicitud;
-        });
-
-        return view('solicitudes.solicitudes_todas', compact('solicitudes', 'isAudiencia', 'userRole'));
     }
 
     public function VerPDFCaratula($id, $tipo){

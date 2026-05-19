@@ -12,10 +12,24 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <form action="{{ url()->current() }}" method="GET">
+                                        <div class="input-group">
+                                            <input type="text" name="buscar" class="form-control" placeholder="Buscar ratificación por NUE o Empresa..." value="{{ request('buscar') }}">
+                                            <button class="btn btn-primary" type="submit" style="background-color: #4A001F; border-color: #4A001F;">
+                                                <i class="fas fa-search"></i> Buscar
+                                            </button>
+                                            @if(request('buscar'))
+                                                <a href="{{ url()->current() }}" class="btn btn-secondary">Limpiar</a>
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-2"> 
                                         <thead style="background-color: #4A001F;">
-                                            <th style="color: #fff;">Folio General</th> 
                                             <th style="color: #fff;">N° Interno</th> 
                                             <th style="color: #fff;">NUE</th> 
                                             <th style="color: #fff;">Fecha</th>
@@ -36,7 +50,6 @@
                                         <tbody>
                                             @foreach($solicitudes as $solicitud)
                                                 <tr>
-                                                    <td>{{$solicitud->id}}</td>
                                                     <td>{{$solicitud->consecutivo}}</td>
                                                     <td>{{$solicitud->NUE}}</td>
                                                     <td>{{$solicitud->fecha}}</td> 
@@ -145,8 +158,7 @@
                                 </div>
 
                             <!-- Centramos la paginación a la derecha-->
-                            <div class="pagination justify-content-end">
-                            </div>
+                            <div class="pagination justify-content-end"></div>
 
                             
                         </div>
@@ -157,74 +169,95 @@
     </section>
 @endsection
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('rechazar_turnos')}}">
-        @csrf
-        <input type="hidden" id="modal-id" name="id" value="">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Motivo de rechazo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <textarea name="observaciones" style="width:100%"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <form class='needs-validation novalidate'  method='POST' action="{{route('rechazar_turnos')}}">
+            @csrf
+            <input type="hidden" id="modal-id" name="id" value="">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Motivo de rechazo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea name="observaciones" style="width:100%"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </form>
-</div>
-<!-- Modal Expediente -->
-<div class="modal fade" id="expediente" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <form  class='needs-validation novalidate' method='POST' action="{{ route('subir_expediente_ratificacion') }}" enctype="multipart/form-data">
-        @csrf
-        <input type="hidden" name="audiencia_id" id="expediente_audiencia_id" value="">
-        <div class="modal-dialog modal-l">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Subir expediente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="col-xs-12 col-sm-12 col-md-12">
-                        <div class="form-group">
-                            <label>Documento en PDF</label>
-                            <input type="file" name="documentoExpediente" class="form-control" accept=".pdf" required>
-                            <div class="invalid-feedback">
-                                El documento es obligatorio.
+        </form>
+    </div>
+    <!-- Modal Expediente -->
+    <div class="modal fade" id="expediente" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <form  class='needs-validation novalidate' method='POST' action="{{ route('subir_expediente_ratificacion') }}" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="audiencia_id" id="expediente_audiencia_id" value="">
+            <div class="modal-dialog modal-l">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">Subir expediente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label>Documento en PDF</label>
+                                <input type="file" name="documentoExpediente" class="form-control" accept=".pdf" required>
+                                <div class="invalid-feedback">
+                                    El documento es obligatorio.
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div  class="col-xs-12 col-sm-12 col-md-12">
-                    <div class="form-group"><br>
-                        <label for="name">Nombre de expediente<span style="color:red;">(*)</span></label>
-                        <input type="text" name="nombreExpediente" class="form-control" required> 
-                        <div class="invalid-feedback">
-                            El nombre para el expediente es obligatorio.
+                    <div  class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group"><br>
+                            <label for="name">Nombre de expediente<span style="color:red;">(*)</span></label>
+                            <input type="text" name="nombreExpediente" class="form-control" required> 
+                            <div class="invalid-feedback">
+                                El nombre para el expediente es obligatorio.
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button> 
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button> 
+                    </div>
                 </div>
             </div>
-        </div>
-    </form>
-</div>
-<div id="nuevo_poder" style ="display: none;">
-    <div>.</div>
-    <div class="loader"></div>
-</div>
+        </form>
+    </div>
+    <div id="nuevo_poder" style ="display: none;">
+        <div>.</div>
+        <div class="loader"></div>
+    </div>
 
 @section('scripts')
     <script>
+        $(document).ready(function() {
+            if ($.fn.DataTable.isDataTable('#tu_id_de_tabla_ratificaciones')) {
+                $('#tu_id_de_tabla_ratificaciones').DataTable().destroy();
+            }
+
+            $('#tu_id_de_tabla_ratificaciones').DataTable({
+                "destroy": true,
+                "paging": true,        // Segmenta de 10 en 10 localmente las 500 filas
+                "pageLength": 10,
+                "searching": true,     // Activa el filtro rápido de la esquina de DataTables
+                "ordering": true,
+                "info": true,
+                "language": {
+                    "search": "Filtrar en esta pantalla:",
+                    "lengthMenu": "Mostrar _MENU_ filas",
+                    "info": "Mostrando del _START_ al _END_ de un bloque de _TOTAL_ registros",
+                    "zeroRecords": "No se encontraron coincidencias en esta página. Use el buscador superior."
+                }
+            });
+        });
+        
         $(document).on('click', '.open-expediente-modal', function() {
             // 2. Capturar el 'data-id'
             var idRegistro = $(this).data('id');            

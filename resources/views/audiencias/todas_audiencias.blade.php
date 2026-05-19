@@ -31,6 +31,21 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <form action="{{ url()->current() }}" method="GET">
+                                        <div class="input-group">
+                                            <input type="text" name="buscar" class="form-control" placeholder="Escribe el NUE o nombre del solicitante..." value="{{ request('buscar') }}">
+                                            <button class="btn btn-primary" type="submit" style="background-color: #4A001F; border-color: #4A001F;">
+                                                <i class="fas fa-search"></i> Buscar
+                                            </button>
+                                            @if(request('buscar'))
+                                                <a href="{{ url()->current() }}" class="btn btn-secondary">Limpiar Filtro</a>
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-1">
                                         <thead style="background-color: #4A001F;">
@@ -226,97 +241,97 @@
     </section>
 @endsection
 
-<!-- Modal Documentos -->
-<div class="modal fade" id="documentos" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalLabel">Citatorios</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body">
-            <table class="table table-striped" style="width: 100%; text-align: center;">
-                <thead style="background-color: #D2D3D5;">
-                  <tr>
-                    <th>Citatorios</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody id="listaRegistros"></tbody>
-            </table>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        </div>
-      </div>
-    </div>
-</div>
-
-<!-- Modal Expediente -->
-<div class="modal fade" id="expediente" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <form  class='needs-validation novalidate' method='POST' action="{{ route('subir_expediente') }}" enctype="multipart/form-data">
-        @csrf
-        <input type="hidden" name="audiencia_id" id="expediente_audiencia_id">
-        <div class="modal-dialog modal-l">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Subir expediente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="col-xs-12 col-sm-12 col-md-12">
-                        <div class="form-group">
-                            <label>Documento en PDF</label>
-                            <input type="file" name="documentoExpediente" class="form-control" accept=".pdf" required>
-                            <div class="invalid-feedback">
-                                El doceumento es obligatorio.
-                            </div>
-                        </div>
-                    </div>
-                    <div  class="col-xs-12 col-sm-12 col-md-12">
-                        <div class="form-group"><br>
-                            <label for="name">Nombre de expediente<span style="color:red;">(*)</span></label>
-                            <input type="text" name="nombreExpediente" class="form-control" required> 
-                            <div class="invalid-feedback">
-                                El nombre para el expediente es obligatorio.
-                            </div>
-                        </div>
-                </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button> 
-                </div>
+    <!-- Modal Documentos -->
+    <div class="modal fade" id="documentos" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">Citatorios</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" style="width: 100%; text-align: center;">
+                    <thead style="background-color: #D2D3D5;">
+                    <tr>
+                        <th>Citatorios</th>
+                        <th>Acción</th>
+                    </tr>
+                    </thead>
+                    <tbody id="listaRegistros"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
-    </form>
-</div>
-<!-- Modal Constancias de no conciliación -->
-<div class="modal fade" id="noConciliacion" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Constancias de No Conciliación</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
-        <div class="modal-body">
-            <table class="table table-striped" style="width: 100%; text-align: center;">
-                <thead style="background-color: #D2D3D5;">
-                  <tr>
-                    <th>Citado</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody id="listaNoConciliacion"></tbody> 
-            </table>
-        </div>
-      </div>
     </div>
-</div>
-<div id="nuevo_poder" style ="display: none;">
-    <div>.</div>
-    <div class="loader"></div>
-</div>
+
+    <!-- Modal Expediente -->
+    <div class="modal fade" id="expediente" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <form  class='needs-validation novalidate' method='POST' action="{{ route('subir_expediente') }}" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="audiencia_id" id="expediente_audiencia_id">
+            <div class="modal-dialog modal-l">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">Subir expediente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label>Documento en PDF</label>
+                                <input type="file" name="documentoExpediente" class="form-control" accept=".pdf" required>
+                                <div class="invalid-feedback">
+                                    El doceumento es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group"><br>
+                                <label for="name">Nombre de expediente<span style="color:red;">(*)</span></label>
+                                <input type="text" name="nombreExpediente" class="form-control" required> 
+                                <div class="invalid-feedback">
+                                    El nombre para el expediente es obligatorio.
+                                </div>
+                            </div>
+                    </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button> 
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- Modal Constancias de no conciliación -->
+    <div class="modal fade" id="noConciliacion" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Constancias de No Conciliación</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" style="width: 100%; text-align: center;">
+                    <thead style="background-color: #D2D3D5;">
+                    <tr>
+                        <th>Citado</th>
+                        <th>Acción</th>
+                    </tr>
+                    </thead>
+                    <tbody id="listaNoConciliacion"></tbody> 
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div id="nuevo_poder" style ="display: none;">
+        <div>.</div>
+        <div class="loader"></div>
+    </div>
 
 @section('scripts')
     <script src="../public/assets/js/poderes/general.js"></script>

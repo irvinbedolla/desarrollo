@@ -10,6 +10,21 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <form action="{{ url()->current() }}" method="GET">
+                                        <div class="input-group">
+                                            <input type="text" name="buscar" class="form-control" placeholder="Buscar solicitud por NUE o Solicitante..." value="{{ request('buscar') }}">
+                                            <button class="btn btn-primary" type="submit" style="background-color: #4A001F; border-color: #4A001F;">
+                                                <i class="fas fa-search"></i> Buscar
+                                            </button>
+                                            @if(request('buscar'))
+                                                <a href="{{ url()->current() }}" class="btn btn-secondary">Limpiar Filtro</a>
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                              <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-1">
                                     <thead style="background-color: #4A001F;">
@@ -346,6 +361,28 @@
     <script src="../public/assets/js/poderes/general.js"></script>
     <script>
         $(document).ready(function () {
+            // 1. Evitar el error "Cannot reinitialise DataTable" destruyendo instancias previas automáticas
+            if ($.fn.DataTable.isDataTable('#example')) {
+                $('#example').DataTable().destroy();
+            }
+
+            // 2. Inicialización Unificada Inteligente
+            $('#example').DataTable({
+                "destroy": true,
+                "paging": true,        // Segmenta de 10 en 10 localmente las filas cargadas en pantalla
+                "pageLength": 10,
+                "searching": true,     // Activa el input rápido de DataTables (esquina superior derecha)
+                "ordering": true,      // Permite ordenar columnas al hacer clic
+                "info": true,          // Muestra el texto informativo de filas
+                "language": {
+                    "search": "Filtrar en esta pantalla:",
+                    "lengthMenu": "Mostrar _MENU_ registros",
+                    "info": "Mostrando del _START_ al _END_ de un bloque de _TOTAL_ solicitudes",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 filas",
+                    "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+                    "zeroRecords": "No se encontraron coincidencias en esta página. Use el buscador de arriba."
+                }
+            });
             $(document).on('click', '.btn-mostrar-registros', function() {
             //$('#btnMostrarRegistros').on('click', function() {
                 const listaRegistros = $('#listaRegistros');
