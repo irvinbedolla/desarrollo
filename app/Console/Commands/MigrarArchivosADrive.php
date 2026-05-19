@@ -49,10 +49,10 @@ class MigrarArchivosADrive extends Command
         ];
 
         // 2. Procesamiento por bloques
-        Poder::where('idAbogado', '>=', 1966)->chunk(50, function ($abogados) use ($service, $idCarpetaRaiz, $camposDocumentos) {
+        Poder::where('idAbogado', '>=', 2020)->chunk(50, function ($abogados) use ($service, $idCarpetaRaiz, $camposDocumentos) {
             
             foreach ($abogados as $abogado) {
-                $nombreCarpetaAbogado = "Poder_{$abogado->idAbogado}";
+                $nombreCarpetaAbogado = "Folio_{$abogado->idAbogado}";
                 $this->info("Procesando: {$nombreCarpetaAbogado}");
 
                 // Verificamos si realmente hay algún documento que subir antes de crear la carpeta vacía en Drive
@@ -94,9 +94,11 @@ class MigrarArchivosADrive extends Command
 
                     try {
                         $rutaString = (string) $rutaGuardadaEnBD;
-                        $pathLocal = str_contains($rutaString, 'documentos_abogados') 
-                                     ? $rutaString 
-                                     : "documentos_abogados/{$rutaString}";
+                        $rutaFisicaCorregida = str_replace('"', '_', $rutaString);
+                        
+                        $pathLocal = str_contains($rutaFisicaCorregida, 'documentos_abogados') 
+                                     ? $rutaFisicaCorregida 
+                                     : "documentos_abogados/{$rutaFisicaCorregida}";
 
                         if (!Storage::disk('local')->exists($pathLocal)) {
                             $this->warn("  - Falta archivo físico local en el servidor: {$campo}");

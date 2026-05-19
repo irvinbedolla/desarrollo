@@ -47,7 +47,13 @@
                                                 @endif
                                                 <td>{{$solicitud->estatus}}</td>
                                                 <td>
-                                                    <a class="btn btn-info" href="{{ route('solicitud_audiencia', $solicitud->id) }}?isAudiencia=No">Revisar</a>
+                                                    <button type="button"
+                                                        class="btn btn-info open-audiencias-modal"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modalAudiencias"
+                                                        data-id="{{ $solicitud->id }}">
+                                                        Revisar
+                                                    </button>
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $solicitud->id }}">Subir Documento</button><br>
@@ -124,7 +130,7 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Documentos Digitales</a></li>
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFincumplimientoAudiencia', $solicitud->id) }}"      target="_blank">Constancia de Incumplimiento</a></li>                                                                    
+                                                                    <!--li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFincumplimientoAudiencia', $solicitud->id) }}"      target="_blank">Constancia de Incumplimiento</a></li-->                                                                    
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
@@ -142,13 +148,21 @@
                                                                         <li><a class="dropdown-item" href="{{ route('PDFconvenioPTU_NO_S', $solicitud->id) }}" target="_blank" style="background-color: #d4edda; font-weight: bold;">Convenio PTU (No Labora)</a></li>
                                                                     @else
                                                                     <li>
-                                                                        <a class="btn btn-info" style="width: 100%"
+                                                                        <a class="btn btn-info btn-convenio-audiencia" style="width: 100%"
+                                                                           data-id="{{ $solicitud->id }}"
+                                                                           data-base="{{ $solicitud->estatus == 'Reinstalacion' ? route('PDFconvenioreinstalacion', $solicitud->id) : route('PDFconveniosolicitud', $solicitud->id) }}"
                                                                            href="{{ $solicitud->estatus == 'Reinstalacion' ? route('PDFconvenioreinstalacion', $solicitud->id) : route('PDFconveniosolicitud', $solicitud->id) }}"
                                                                            target="_blank">Convenio</a>
                                                                     </li>
                                                                     @endif
                                                                     {{--<li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFconveniosolicitud', $solicitud->id) }}" target="_blank">Convenio</a></li>--}}
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFcumplimientoTotal', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
+                                                                    <li>
+                                                                        <a class="btn btn-info btn-constancia-audiencia" style="width: 100%"
+                                                                           data-id="{{ $solicitud->id }}"
+                                                                           data-base="{{ route('PDFcumplimientoTotal', $solicitud->id) }}"
+                                                                           href="{{ route('PDFcumplimientoTotal', $solicitud->id) }}"
+                                                                           target="_blank">Constancia de cumplimiento</a>
+                                                                    </li>
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
@@ -225,6 +239,39 @@
 <div id="nuevo_usuario" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>
+</div>
+
+<div class="modal fade" id="modalAudiencias" tabindex="-1" aria-labelledby="modalAudienciasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAudienciasLabel">Audiencias</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" style="width: 100%; text-align: center;">
+                        <thead style="background-color: #D2D3D5;">
+                            <tr>
+                                <th>ID</th>
+                                <th>Estatus</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaAudienciasSolicitud"></tbody>
+                    </table>
+                </div>
+                <div id="audienciasSolicitudEmpty" class="text-center text-muted" style="display:none;">
+                    No se encontraron audiencias para esta solicitud.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal Documentos -->
@@ -348,6 +395,94 @@
         $(document).on('click', '.open-expediente-modal', function() {
             var idRegistro = $(this).data('id');            
             document.getElementById('expediente_audiencia_id').value = idRegistro;
+        });
+
+        //Modal de audiencias para Revisar
+        $(document).on('click', '.open-audiencias-modal', function() {
+            const solicitudId = $(this).data('id');
+            const lista = $('#listaAudienciasSolicitud');
+            const empty = $('#audienciasSolicitudEmpty');
+            lista.empty();
+            empty.hide();
+
+            const endpoint = `{{ url('/api/audiencias-por-solicitud') }}/${solicitudId}`;
+            const revisarBase = `{{ route('solicitud_audiencia', 0) }}?isAudiencia=No&audiencia_id=AUDIENCIA_ID`;
+
+            $.ajax({
+                url: endpoint,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(function(a) {
+                            const revisarUrl = revisarBase
+                                .replace('/0?', `/${solicitudId}?`)
+                                .replace('AUDIENCIA_ID', a.id);
+
+                            const fecha = a.fecha || '';
+                            const hora = a.hora ? (a.hora.substring(0,5) + ' HRS') : '';
+                            let estatus = a.estatus || '';
+                            if (estatus === 'No conciliacion reagendada') {
+                                estatus = 'Reagendada (Solicitud de nueva fecha)';
+                            } else if (estatus === 'Reagendada') {
+                                estatus = 'Reagendada (A notificar por el CCL)';
+                            }
+
+                            lista.append(`
+                                <tr>
+                                    <td>${a.id}</td>
+                                    <td>${estatus}</td>
+                                    <td>${fecha}</td>
+                                    <td>${hora}</td>
+                                    <td>
+                                        <a href="${revisarUrl}" class="btn btn-primary">Revisar</a>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    } else {
+                        empty.text('No se encontraron audiencias para esta solicitud.').show();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al obtener audiencias:', error);
+                    empty.text('Error de conexión con el servidor.').show();
+                }
+            });
+        });
+
+        async function getUltimaAudienciaIdPorSolicitud(solicitudId) {
+            try {
+                const endpoint = `{{ url('/api/audiencias-por-solicitud') }}/${solicitudId}`;
+                const resp = await fetch(endpoint, { headers: { 'Accept': 'application/json' } });
+                if (!resp.ok) return null;
+                const data = await resp.json();
+                if (!Array.isArray(data) || data.length === 0) return null;
+                const last = data[data.length - 1];
+                return last?.id ?? null;
+            } catch (e) {
+                console.error('Error al consultar última audiencia:', e);
+                return null;
+            }
+        }
+
+        function buildUrlWithAudienciaId(baseUrl, audienciaId) {
+            if (!audienciaId) return baseUrl;
+            const sep = baseUrl.includes('?') ? '&' : '?';
+            return `${baseUrl}${sep}audiencia_id=${audienciaId}`;
+        }
+
+        $(document).on('click', '.btn-convenio-audiencia, .btn-constancia-audiencia', async function(e) {
+            e.preventDefault();
+            const $a = $(this);
+            const solicitudId = $a.data('id');
+            const base = $a.data('base') || $a.attr('href');
+
+            const audienciaId = await getUltimaAudienciaIdPorSolicitud(solicitudId);
+            const finalUrl = buildUrlWithAudienciaId(base, audienciaId);
+            const target = $a.attr('target') || '_self';
+
+            window.open(finalUrl, target);
         });
     </script>
 @endsection

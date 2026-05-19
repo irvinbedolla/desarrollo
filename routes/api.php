@@ -40,6 +40,7 @@ Route::get('/obtenerEventos',       [TurnosController::class, 'obtenerEventos'])
 Route::get('/obtenerCumplimientos', [SeerController::class, 'obtenerCumplimientos']);
 Route::get('/obtenerCumplimientosFiltrado', [SeerController::class, 'obtenerCumplimientosFiltrado']);
 Route::get('/obtenerAudiencias',    [SeerController::class, 'obtenerAudiencias']);
+Route::get('/audiencias-por-solicitud/{id_solicitud}', [SeerController::class, 'audienciasPorSolicitud']);
 Route::get('/obtenerAudienciasParte3', [SeerController::class, 'obtenerAudienciasParte3']);
 Route::get('/dias-inhabiles-centro',[SeerController::class, 'diasInhabilesCentro']);
 

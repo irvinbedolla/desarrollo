@@ -41,7 +41,7 @@
             <a class="nav-link" href="{{ route('configuracion') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Administración</span>
             </a>
-            <a class="nav-link" href="{{ route('audiencia_index') }}">
+            <a class="nav-link" href="{{ route('todas_audiencias') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias</span>
             </a>
             <a class="nav-link" href="{{ route('solicitudes_index') }}">
@@ -114,7 +114,7 @@
             <a class="nav-link" href="{{ route('agenda') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
             </a>
-            <a class="nav-link" href="{{ route('audiencia_index') }}">
+            <a class="nav-link" href="{{ route('todas_audiencias') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias</span>
             </a>
             <a class="nav-link" href="{{ route('poderes') }}">
@@ -150,7 +150,7 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
             
-            <a class="nav-link" href="{{ route('audiencia_index') }}">
+            <a class="nav-link" href="{{ route('todas_audiencias') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias</span>
             </a>
             <!--
