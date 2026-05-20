@@ -428,7 +428,8 @@ select[name="municipio_citado"] option {
                                                             <option value="PRIVADA"        {{ $solicitante['tipo_vialidad'] == 'PRIVADA' ? "selected" : '' }} >Privada</option>
                                                             <option value="PROLONGACIÓN"   {{ $solicitante['tipo_vialidad'] == 'PROLONGACIÓN' ? "selected" : '' }} >Prolongación</option>
                                                             <option value="RETORNO"        {{ $solicitante['tipo_vialidad'] == 'RETORNO' ? "selected" : '' }} >Retorno</option>
-                                                            <option value="VIADUCTO"       {{ $solicitante['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>                                                           
+                                                            <option value="VIADUCTO"       {{ $solicitante['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>
+                                                            <option value="PASEO"       {{ $solicitante['tipo_vialidad'] == 'PASEO' ? "selected" : '' }} >Paseo</option>                                                           
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             El campo tipo de vialidad es obligatorio.
@@ -1022,7 +1023,8 @@ select[name="municipio_citado"] option {
                                                             <option value="PRIVADA"       {{ $citado['tipo_vialidad'] == 'PRIVADA' ? "selected" : '' }} >Privada</option>
                                                             <option value="PROLONGACIÓN"   {{ $citado['tipo_vialidad'] == 'PROLONGACIÓN' ? "selected" : '' }} >Prolongación</option>
                                                             <option value="RETORNO"        {{ $citado['tipo_vialidad'] == 'RETORNO' ? "selected" : '' }} >Retorno</option>
-                                                            <option value="VIADUCTO"       {{ $citado['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>                                                           
+                                                            <option value="VIADUCTO"       {{ $citado['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>
+                                                            <option value="PASEO"       {{ $citado['tipo_vialidad'] == 'PASEO' ? "selected" : '' }} >Paseo</option>                                                           
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             El campo vialidad es obligatorio.
@@ -1666,6 +1668,7 @@ select[name="municipio_citado"] option {
                                     <option value="PROLONGACIÓN">Prolongación</option>
                                     <option value="RETORNO">Retorno</option>
                                     <option value="VIADUCTO">Viaducto</option>
+                                    <option value="PASEO">Paseo</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     El campo vialidad es obligatorio.

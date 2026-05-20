@@ -260,6 +260,7 @@
                                                         <option value="PRIVADA">Privada</option>
                                                         <option value="RETORNO">Retorno</option>
                                                         <option value="VIADUCTO">Viaducto</option>
+                                                        <option value="PASEO">Paseo</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo vialidad es obligatorio.
