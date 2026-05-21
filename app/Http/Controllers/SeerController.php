@@ -6782,6 +6782,40 @@ class SeerController extends Controller
         $user = auth()->user();
         $fecha_actual = date('y-m-d');
 
+        $idSolicitud = $data["id"] ?? null;
+        if ($idSolicitud) {
+            $tipoSolicitud = SeerPerGeneral::where('id', $idSolicitud)->value('tipo_solicitud');
+
+            $sessionKey = "audiencia_data_{$idSolicitud}";
+            if (session()->has($sessionKey)) {
+                $sessionData = session($sessionKey);
+
+                if (isset($sessionData['citados'])) {
+                    foreach ($sessionData['citados'] as $citado) {
+
+                        if ((int)$tipoSolicitud === 1) {
+                            SeerCitados::where('id', $citado->id)->update([
+                                'id_abogado' => $citado->id_abogado,
+                                'id_historial' => $citado->id_historial,
+                            ]);
+                        }
+
+                        if ((int)$tipoSolicitud === 2) {
+                            SeerCitados::where('id', $citado->id)->update([
+                                'comparecencia' => $citado->comparecencia,
+                            ]);
+
+                            if (SeerCitados::where('id', $citado->id)->value('comparecencia') == NULL) {
+                                SeerCitados::where('id', $citado->id)->update([
+                                    'comparecencia' => 'No'
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         //Guardar registro en SeerConciliador
         $numero_audiencias = SeerPerConciliador::find($data["id"]);
         if(!isset($numero_audiencias)){
