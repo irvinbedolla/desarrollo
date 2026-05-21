@@ -629,6 +629,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/user-management/permissions', PermissionManagementController::class);
     });
 
+    //Plantillas
+        Route::get('/plantillas/index',                      [SeerController::class, 'plantillas_index'])->name('plantillas_index');
+        Route::get('/plantillas/ratificaciones',             [SeerController::class, 'plantillas_ratificaciones'])->name('plantillas_ratificaciones');
 });
 
 Route::get('/error', function () {

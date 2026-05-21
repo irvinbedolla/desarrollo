@@ -18364,4 +18364,12 @@ class SeerController extends Controller
         }
         return redirect()->route('todas_solicitudes')->with('success', 'Cambios guardados correctamente.');
     }
+
+    public function plantillas_index(){
+        return view('plantillas.index');
+    }
+
+    public function plantillas_ratificaciones(){
+        return view('plantillas.plantillas_solicitudes');
+    }
 }

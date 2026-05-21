@@ -77,6 +77,9 @@
             <a class="nav-link" href="{{ route('subir_doc_masivo') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Carga Masiva</span>
             </a>
+            <a class="nav-link" href="{{ route('plantillas_index') }}">
+                <i class="bi bi-file-text-fill"></i><span class="text-dark" onclick="estadistica()">Plantillas</span>
+            </a>
         @endrole
     @endauth
 
@@ -105,6 +108,9 @@
             </a>
             <a class="nav-link" href="{{ route('persona.historial') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
+            </a>
+            <a class="nav-link" href="{{ route('plantillas_index') }}">
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Plantillas</span>
             </a>
         @endrole
     @endauth
@@ -137,6 +143,9 @@
             </a>
             <a class="nav-link" href="{{ route('create_asesoria') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Asesorias</span>
+            </a>
+            <a class="nav-link" href="{{ route('plantillas_index') }}">
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Plantillas</span>
             </a>
         @endrole
     @endauth
@@ -180,6 +189,9 @@
             </a>
             <a class="nav-link" href="{{ route('reportes_conciliador') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
+            </a>
+            <a class="nav-link" href="{{ route('plantillas_index') }}">
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Plantillas</span>
             </a>
         @endrole
     @endauth
@@ -240,6 +252,9 @@
             </a>
             <a class="nav-link" href="{{ route('incidencias.busqueda.index') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencias</span>
+            </a>
+            <a class="nav-link" href="{{ route('plantillas_index') }}">
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Plantillas</span>
             </a>
         @endrole
     @endauth
@@ -321,6 +336,9 @@
             </a>
             <a class="nav-link" href="{{ route('create_asesoria') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Asesorias</span>
+            </a>
+            <a class="nav-link" href="{{ route('plantillas_index') }}">
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Plantillas</span>
             </a>
         @endrole
     @endauth
