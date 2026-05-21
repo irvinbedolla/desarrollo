@@ -228,19 +228,13 @@
                         <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
                     <p class="sangria">
                         d) Que el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> presentó solicitud para solicitar iniciar el procedimiento de conciliación 
-                        prejudicial ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, oficina <b>{{ $solicitud->delegacion }}</b>, por motivo de 
-                        @foreach ($motivos as $motivo) 
-                            {{ $motivo->motivo }}
-                            @if ($loop->last)
-                                .
-                            @else
-                                ,
-                            @endif
-                        @endforeach
-                        Misma que confirmó el día {{ \Carbon\Carbon::parse($solicitud->fecha_confirmación)->translatedFormat('d \d\e F \d\e\l Y') }}.
+                        prejudicial ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, oficina <b>{{ $solicitud->delegacion }}</b>.
                     </p>
                     <p class="sangria">     
                         e) Que el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, fijó la audiencia de conciliación para el día <b>{{ \Carbon\Carbon::parse($audiencia->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
+                    </p>
+                    <p class="sangria">     
+                        f) Que es su voluntad ser reinstalado al puesto que venía desempeñando con anterioridad para la parte <b>EMPLEADORA</b>.
                     </p>  
 
                     <b>CUARTA.</b> Declara la parte <b>EMPLEADORA</b>:
@@ -254,7 +248,7 @@
                                    
                     <b>QUINTA.</b> Declaran las <b>PARTES</b>:  
                         <p class="sangria">
-                            a)  el presente convenio se celebra con la finalidad de dar por terminado el procedimiento de conciliación prejudicial, seguido ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, 
+                            a) Que el presente convenio se celebra con la finalidad de dar por terminado el procedimiento de conciliación prejudicial, seguido ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, 
                             bajo el número de identificación único <b>{{ $solicitud->NUE }}</b>.
                         </p>
                         <p class="sangria">        
@@ -265,22 +259,23 @@
                     <center><b>C L Á U S U L A S:</b></center>
                     
                     <p><br>
-                        <b>PRIMERA</b>. Las <b>PARTES</b> han determinado que por así convenir a sus intereses, la reinstalación de la parte <b>TRABAJADORA</b> conforme a lo estipulado por el artículo 48 de la Ley Federal del Trabajo.<br> <br>
+                        <b>PRIMERA</b>. La parte <b>EMPLEADORA</b>  se obliga a que reinstalará a la parte <b>TRABAJADORA</b> en fecha <b>{{ \Carbon\Carbon::parse($fecha_reinstalacion)->translatedFormat('d \d\e F \d\e\l Y') }}</b> de conformidad con el artículo 48 de la Ley Federal del Trabajo; 
+                        en el mismo puesto que venía desempeñando, o en uno de igual categoría y condiciones, respetando íntegramente su antigüedad, salario, jornada, prestaciones, derechos adquiridos y demás condiciones generales de trabajo existentes con anterioridad a la terminación del vínculo laboral.
+                        <br><br>
+                        Asimismo, la parte <b>EMPLEADORA</b> se compromete a realizar el alta o reingreso correspondiente ante el Instituto Mexicano del Seguro Social, así como a reincorporar efectivamente a la parte <b>TRABAJADORA</b> a sus labores dentro del término pactado en el presente convenio.<br><br>
 
-                        <b>SEGUNDA</b>. La parte <b>TRABAJADORA</b> manifiesta bajo protesta de decir verdad, que el vínculo laboral lo mantuvo exclusivamente con la parte <b>EMPLEADORA</b>. Por lo anterior, 
-                            expresa que no existió relación laboral alguna con otras personas, incluido el personal que fungía como superior jerárquico en el centro de trabajo donde la parte <b>TRABAJADORA</b> 
-                            desempeñaba sus labores.<br><br>
+                        <b>SEGUNDA</b>. Las <b>PARTES</b> acuerdan que la parte <b>EMPLEADORA</b> dará cumplimiento de buena fe a la reinstalación pactada mediante la reincorporación efectiva de la parte <b>TRABAJADORA</b> a sus labores en las mismas condiciones que venía desempeñando, así como con el alta o reingreso 
+                        correspondiente ante el Instituto Mexicano del Seguro Social.<br><br>
                                     
-                        <b>TERCERA</b>. La parte <b>EMPLEADORA</b> acepta reinstalar a la <b>TRABAJADORA</b> y otorga en favor ésta el pago acordado conforme a las disposiciones de la Ley Federal del Trabajo, de conformidad con lo señalado en la cláusula siguiente. 
-                            Asimismo, la parte <b>TRABAJADORA</b> manifiesta su entera conformidad y aceptación de la reinstalación en el puesto, nivel y categoría que venía desempeñando, así como el pago estipulado que se describe en la siguiente cláusula CUARTA, 
-                            y la forma en que se obtuvieron los conceptos que se describen en dicha cláusula.<br>
+                        <b>TERCERA</b>. La parte <b>TRABAJADORA</b> manifiesta su entera conformidad y aceptación de la reinstalación en el puesto, nivel y categoría que venía desempeñando comprometiéndose a presentarse a laborar a partir de fecha <b>{{ \Carbon\Carbon::parse($fecha_reinstalacion)->translatedFormat('d \d\e F \d\e\l Y') }}</b>
+                        en el domicilio donde prestaba sus servicios para la parte <b>EMPLEADORA</b> y en su horario habitual, mismos que fueron precisados en las declaraciones del presente convenio, así mismo manifiesta estar conforme con el pago que se describe en la cláusula siguiente:<br><br>
                         
                         <b>CUARTA</b>. La parte <b>TRABAJADORA</b> recibirá de la parte <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }}</b>, 
                             conforme a los siguientes conceptos:</p>
 
                         <b>Prestaciones</b>
                         <br><br>
-                        <!--table class="table table-bordered table-compacta">
+                        <table class="table table-bordered table-compacta">
                             <thead>
                                 <tr>
                                     <th>Concepto</th>
@@ -292,27 +287,37 @@
                                 @foreach($prestaciones as $concepto)
                                     <tr>
                                         <td>{{ mb_strtoupper($concepto->descripcion, 'UTF-8') }}</td>
-                                        <td><b>${{ number_format($concepto->monto, 2) }}</b></td>
-                                        <td>{{ $conceptosTexto[$concepto->id] }}</td>
+                                        @if($concepto->descripcion == 'Reinstalacion')
+                                            <td>No Aplica</td>
+                                            <td>No Aplica</td>
+                                        @else
+                                            @if(isset($concepto->monto) && is_numeric($concepto->monto) && (float)$concepto->monto == 0.0)
+                                                <td><b>Reinstalación</b></td>
+                                                <td><b>Reinstalación</b></td>
+                                            @else
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</b></td>
+                                                <td>{{ $conceptosTexto[$concepto->id] }}</td>
+                                            @endif
+                                        @endif
                                     </tr>
                                 @endforeach
                             </tbody>
-                        </!--table--> 
+                        </table> 
 
-                        <div class="prestaciones-lista wrap-text">
+                        <!--div class="prestaciones-lista wrap-text">
                             _________________________________________________________________________________________________________
                             @foreach($prestaciones as $concepto)
                                 <span class="prestaciones-item">
-                                    <b>Concepto: </b>{{ mb_strtoupper($concepto->descripcion, 'UTF-8') }}<br>
+                                    <b>Concepto: </b>{{ mb_strtoupper($concepto->descripcion, 'UTF-8') }}
                                     @if($concepto->monto > 0)
-                                        <br><b>Monto: </b>{{ number_format($concepto->monto, 2)}} {{ $conceptosTexto[$concepto->id] }}<br>
+                                        <b>Monto: </b>{{ number_format($concepto->monto, 2)}} {{ $conceptosTexto[$concepto->id] }}<br>
                                     @endif
-                                    _________________________________________________________________________________________________________
                                 </span>
                             @endforeach
-                        </div>
+                            _________________________________________________________________________________________________________
+                        </div-->
 
-                        <br><br>                
+                        <br>                
 
                         <!-- Para las deducciones -->
                         @if(!empty($deducciones) && count($deducciones) > 0)
@@ -405,7 +410,13 @@
                                                 }
                                             @endphp
                                             <td>{{ $fechaText }}</td> @if($horaText) <td>{{ $horaText }} HRS</td> @endif
-                                            <td>${{ number_format($pago->monto, 2) }}</td>
+                                            @if(isset($pago->monto) && is_numeric($pago->monto) && (float)$pago->monto == 0.0)
+                                                <td>Reinstalación</td>
+                                            @elseif($pago->monto > 0)
+                                                <td>${{ number_format($pago->monto, 2) }}</td>
+                                            @else
+                                                <td></td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -460,7 +471,13 @@
                                                 }
                                             @endphp
                                             <td>{{ $fechaText }}</td> @if($horaText) <td>{{ $horaText }} HRS</td> @endif
-                                            <td>${{ number_format($pago->monto, 2) }}</td>
+                                            @if(isset($pago->monto) && is_numeric($pago->monto) && (float)$pago->monto == 0.0)
+                                                <td>Reinstalación</td>
+                                            @elseif($pago->monto > 0)
+                                                <td>${{ number_format($pago->monto, 2) }}</td>
+                                            @else
+                                                <td></td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -473,21 +490,25 @@
                             transcurra, sin que se dé cabal cumplimiento al convenio, con fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p>
                     @endif
                     <p>
-                        <b>SEXTA</b>. Las <b>PARTES</b> solicitan se apruebe y sancione este convenio, toda vez que se elaboró conforme a las disposiciones aplicables de la Ley Federal del Trabajo como 
+                        <b>SEXTA</b>. Las <b>PARTES</b> acuerdan que la exhibición del alta ante el Instituto Mexicano del Seguro Social, conjuntamente con la manifestación de reincorporación efectiva de la parte TRABAJADORA, 
+                        será suficiente para que el Centro de Conciliación Laboral tenga por cumplido de buena fe el presente convenio. No obstante, lo anterior, en caso de que la reinstalación no se lleve
+                        a cabo en los términos pactados, exista modificación unilateral de condiciones de trabajo, negativa de acceso al centro laboral, disminución salarial, actos de hostigamiento, simulación 
+                        de reinstalación o cualquier otro incumplimiento atribuible a la parte <b>EMPLEADORA</b>, quedarán a salvo los derechos de la parte <b>TRABAJADORA</b> para ejercitarlos en la vía y forma que legalmente corresponda.<br><br>
+
+                        <b>SÉPTIMA</b>. Las <b>PARTES</b> solicitan se apruebe y sancione este convenio, toda vez que se elaboró conforme a las disposiciones aplicables de la Ley Federal del Trabajo como 
                         resultado del diálogo de la conciliación entre la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>. Así mismo, manifiestan que se encuentran conformes con el presente acuerdo 
-                        por no contener cláusula contraria a la costumbre, a la moral, ni renuncia a los derechos de las <b>PARTES</b>.<br><br>
+                        por no contener cláusula contraria a la costumbre, a la moral, ni renuncia a los derechos de las <b>PARTES</b>, obligándose a su cabal cumplimiento, y dando por finalizada la controversia laboral.<br><br>
                                     
-                        <b>SÉPTIMA</b>. Las <b>PARTES</b> manifiestan que es su voluntad ratificar el presente convenio en todas y cada una de sus partes y la aprobación de su contenido, por lo que no se 
+                        <b>OCTAVA</b>. Las <b>PARTES</b> manifiestan que es su voluntad ratificar el presente convenio en todas y cada una de sus partes y la aprobación de su contenido, por lo que no se 
                         reservan acción legal o derecho alguno para ejercitar con posterioridad a la firma del presente convenio.<br><br>
                                     
-                        <b>OCTAVA</b>. Las <b>PARTES</b> solicitan ante el Centro Estatal de Conciliación Laboral que se les expida un tanto original del convenio, y en el momento en que se haya 
+                        <b>NOVENA</b>. Las <b>PARTES</b> solicitan ante el Centro Estatal de Conciliación Laboral que se les expida un tanto original del convenio, y en el momento en que se haya 
                         cumplido totalmente, se les expida acta en la que conste el cumplimiento de éste, en términos del artículo 684-E, fracción XIV, primer párrafo, de la Ley Federal del Trabajo.<br><br>
                                     
-                        <b>NOVENA</b>. Las <b>PARTES</b> manifiestan que en la celebración del presente convenio no existió violencia, mala fe, dolo, lesión o cualquier otro tipo de vicio del consentimiento 
+                        <b>DÉCIMA PRIMERA</b>. Las <b>PARTES</b> manifiestan que en la celebración del presente convenio no existió violencia, mala fe, dolo, lesión o cualquier otro tipo de vicio del consentimiento 
                         que pudiera nulificarlo.<br><br>
                     
-                          
-                        <b>DÉCIMA PRIMERA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir al Juzgado Laboral competente a 
+                        <b>DÉCIMA SEGUNDA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir al Juzgado Laboral competente a 
                         efecto de que se realice el Procedimiento de Ejecución que la Ley Federal del Trabajo contempla. <br>
                     </p> 
                     <div class="salto-inteligente"></div>

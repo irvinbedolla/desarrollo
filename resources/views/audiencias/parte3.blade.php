@@ -113,7 +113,7 @@
                                                 <option value="Conciliacion">Hubo Convenio</option>
                                                 <option value="No conciliacion">No Hubo Convenio</option>
                                                 <option value="Reagenda">No Hubo Convenio (Se desea reagendar)</option>
-                                                <!--option value="Reinstalacion">Reinstalación</!--option-->
+                                                <option value="Reinstalacion">Reinstalación</option>
                                                 <option value="Archivada por incomparecencia">Archivar</option>
                                             </select>
                                         </div>
@@ -410,6 +410,96 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
     <script>
 
+        function isFinalAudienciaSelected() {
+            return ($('#tipo_de_conclucion').val() || '') !== '' && ($('#tipo_de_conclucion').val() || '') !== 'Seleccione';
+        }
+
+        function ensureReinstalacionOption($select) {
+            if (!$select || !$select.length) return;
+            if (!isFinalAudienciaSelected()) {
+                $select.find('option[value="Reinstalación"]').remove();
+                return;
+            }
+            if ($select.find('option[value="Reinstalación"]').length === 0) {
+                $select.append('<option value="Reinstalación">Reinstalación</option>');
+            }
+        }
+
+        function toggleMontoPrestacionForReinstalacion($select) {
+            if (!$select || !$select.length) return;
+            const selected = $select.val();
+            const $row = $select.closest('.row');
+            const $montoCol = $row.find('input[name="monto_pago[]"]').closest('.col-xs-12, .col-sm-12, .col-md-6');
+            const $montoInput = $row.find('input[name="monto_pago[]"]');
+
+            if (selected === 'Reinstalación') {
+                $montoInput.val('0.00');
+                $montoInput.prop('disabled', false);
+                $montoCol.hide();
+                calcularTotal();
+            } else {
+                $montoCol.show();
+            }
+        }
+
+        function isReinstalacionSelectedInPrestaciones() {
+            return $('.tipo-pago-select').filter(function() { return $(this).val() === 'Reinstalación'; }).length > 0;
+        }
+
+        function applyCumplimientoMontoReinstalacionRule($cumplimientoRow) {
+            if (!$cumplimientoRow || !$cumplimientoRow.length) return;
+            const $monto = $cumplimientoRow.find('input[name="monto_pagos[]"]');
+            if (!$monto.length) return;
+            $monto.val('0.00').prop('readonly', true);
+        }
+
+        function clearCumplimientoMontoReinstalacionRule($cumplimientoRow) {
+            if (!$cumplimientoRow || !$cumplimientoRow.length) return;
+            const $monto = $cumplimientoRow.find('input[name="monto_pagos[]"]');
+            if (!$monto.length) return;
+            $monto.prop('readonly', false);
+        }
+
+        function applyReinstalacionRuleToFirstCumplimientoIfNeeded() {
+            if (!isReinstalacionSelectedInPrestaciones()) {
+                $('#newRowaPago').find('.inputFormRow2').each(function() {
+                    clearCumplimientoMontoReinstalacionRule($(this));
+                    $(this).find('.reinstalacion-notice').remove();
+                });
+                return;
+            }
+
+            const $rows = $('#newRowaPago').find('.inputFormRow2');
+            if (!$rows.length) return;
+
+            const $firstCreated = $rows.filter('[data-first-cumplimiento="1"]').first();
+
+            $rows.each(function() {
+                const $row = $(this);
+                const isFirstCreated = $firstCreated.length && $row.is($firstCreated);
+
+                if (isFirstCreated) {
+                    addReinstalacionNoticeIfNeeded($row);
+                    applyCumplimientoMontoReinstalacionRule($row);
+                } else {
+                    $row.find('.reinstalacion-notice').remove();
+                    clearCumplimientoMontoReinstalacionRule($row);
+                }
+            });
+        }
+
+        function addReinstalacionNoticeIfNeeded($cumplimientoRow) {
+            if (!isReinstalacionSelectedInPrestaciones()) return;
+            const isFirst = $('.inputFormRow2').length === 1;
+            if (!isFirst) return;
+            if ($cumplimientoRow.find('.reinstalacion-notice').length) return;
+
+            const html = '<div class="alert alert-warning reinstalacion-notice mt-2" style="width: 100%;">' +
+                'El horario seleccionado para este cumplimiento será la fecha indicada para la <b>Reinstalación</b>' +
+                '</div>';
+            $cumplimientoRow.find('.form-group').first().append(html);
+        }
+
         let filaActualParaAgendar = null; 
 
        document.getElementById("no_conciliacion").style.display = "none";
@@ -418,6 +508,15 @@
        document.getElementById("pagos").style.display = "none";
        
         $( document ).ready(function() {
+
+            $('#tipo_de_conclucion').on('change', function() {
+                $('.tipo-pago-select').each(function() {
+                    ensureReinstalacionOption($(this));
+                    toggleMontoPrestacionForReinstalacion($(this));
+                });
+
+                applyReinstalacionRuleToFirstCumplimientoIfNeeded();
+            });
 
             // Agregar registro
             $("#addRow").click(function () {
@@ -463,6 +562,10 @@
                 html += '</div>';
 
                 $('#newRow').append(html);
+
+                const $lastSelect = $('#newRow').find('.tipo-pago-select').last();
+                ensureReinstalacionOption($lastSelect);
+
                 //Aseguramos que el nuevo select respete required según el estatus actual
                 if (typeof syncPrestacionesRequired === 'function') {
                     syncPrestacionesRequired();
@@ -479,7 +582,7 @@
         $("#addPago").click(function () {
             let numeroPago = $('.numero_pago').length + 1;
             var html = '';
-            html += '<div class="inputFormRow2 row mb-2 align-items-end">';
+            html += '<div class="inputFormRow2 row mb-2 align-items-end" ' + (numeroPago === 1 ? 'data-first-cumplimiento="1"' : '') + '>';
             html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
             html += '<label for="confirm-password"><br>Fecha y hora de pago</label>';
@@ -543,6 +646,8 @@
             html += '</div>';
             $('#newRowaPago').append(html);
             actualizaNumeroPago();
+
+            applyReinstalacionRuleToFirstCumplimientoIfNeeded();
             
             //Esto reemplaza el container por los botones de opciones, para que aparezca debajo del selector de opciones
             $('#newRowaPago').find('#tipoPago').last().on('change', function() {
@@ -671,6 +776,7 @@
         $(document).on('click', '.removeRow2', function () {
             $(this).closest('.inputFormRow2').remove();
             actualizaNumeroPago();
+            applyReinstalacionRuleToFirstCumplimientoIfNeeded();
             setTimeout(function(){ if (typeof calcularTotal === 'function') { calcularTotal(); } }, 100);
         });
         //Actualiza los números de pago
@@ -744,6 +850,7 @@
         $(document).on('click', '.removeRow3', function () {
             $(this).closest('.col-xs-12').remove();
         });
+            applyReinstalacionRuleToFirstCumplimientoIfNeeded();
         });
         
         //CALCULO DE PAGO TOTAL
@@ -1179,6 +1286,10 @@
         $(document).on('change', '.tipo-pago-select', function () {
             var selected = $(this).val();
             var container = $(this).closest('.form-group').find('.otra-prestacion-input');
+
+            ensureReinstalacionOption($(this));
+            toggleMontoPrestacionForReinstalacion($(this));
+            applyReinstalacionRuleToFirstCumplimientoIfNeeded();
 
             if (selected === 'Otras') {
                 container.show();

@@ -49,7 +49,7 @@
     <div class="modal fade" id="modalAgregarCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <form class='needs-validation novalidate'  method='POST' action="{{route('conciliadores_permisos')}}">
             @csrf
-            <input type="text" name="id" id="modal-id">
+            <input type="hidden" name="id" id="modal-id" value="">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -61,7 +61,7 @@
                             <h4>Tipo</h4>
                             <div class="col-xs-12 col-sm-12 col-md-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="tipo" id="radioDefault1" value="Precencial">
+                                    <input class="form-check-input" type="radio" name="tipo" id="radioTipoPresencial" value="Precencial">
                                     <label class="form-check-label" for="checkDefault">
                                         Precencial
                                     </label>
@@ -69,7 +69,7 @@
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="tipo" id="radioDefault1" value="Virtual">
+                                    <input class="form-check-input" type="radio" name="tipo" id="radioTipoVirtual" value="Virtual">
                                     <label class="form-check-label" for="checkDefault">
                                         Virtual
                                     </label>
@@ -77,7 +77,7 @@
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="tipo" id="radioDefault1" value="Ambos">
+                                    <input class="form-check-input" type="radio" name="tipo" id="radioTipoAmbos" value="Ambos">
                                     <label class="form-check-label" for="checkDefault">
                                         Ambos
                                     </label>
@@ -157,9 +157,16 @@
 
 @section('scripts')
     <script>
-         $('.open-modal').click(function() {
-            const id = $(this).data('id'); // Obtiene el valor de data-id
-            document.getElementById('modal-id').value = id;
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalEl = document.getElementById('modalAgregarCitados');
+            if (!modalEl) return;
+
+            modalEl.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const id = button?.getAttribute('data-id') || '';
+                const input = document.getElementById('modal-id');
+                if (input) input.value = id;
+            });
         });
     </script>
     <script src="../public/js/usuarios/usuarios.js"></script>

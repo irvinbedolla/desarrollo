@@ -2,6 +2,9 @@
 @php
     $fechaActual = date('Y-m-d');
     $contador = 0;
+    $audienciaConclucionData = session('audiencia_conclucion_data_' . ($id ?? ''));
+    $conclucion = session('conclucion')
+        ?? (is_array($audienciaConclucionData) ? ($audienciaConclucionData['conclucion'] ?? null) : null);
 @endphp
 @section('content')
     <section class="section">
@@ -91,10 +94,16 @@
                                                     <tr>
                                                     <td  style="display:none">{{$concepto->id}}</td>
                                                         <td>{{ $concepto->descripcion}}</td>
-                                                        @if($concepto->monto)
-                                                        <td>${{ number_format($concepto->monto,2) }}</td>
+                                                        @php
+                                                            $esReinstalacionConcl = (($conciliadores['conclucion'] ?? null) === 'Reinstalacion') || (($conclucion ?? null) === 'Reinstalacion');
+                                                            $esMontoReinstalacionConcepto = $esReinstalacionConcl && is_numeric($concepto->monto) && (float) $concepto->monto == 0.0;
+                                                        @endphp
+                                                        @if($esMontoReinstalacionConcepto)
+                                                            <td>Reinstalación</td>
+                                                        @elseif($concepto->monto)
+                                                            <td>${{ number_format($concepto->monto,2) }}</td>
                                                         @else
-                                                        <td>No Aplica</td>
+                                                            <td>No Aplica</td>
                                                         @endif
                                                         <td>
                                                             @if($concepto->id)
@@ -181,10 +190,16 @@
                                                         <td  style="display:none">{{$pago->id}}</td>
                                                         <td> {{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}<br>{{ \Carbon\Carbon::parse($pago->hora)->format('H:i') }} hrs.</td>
                                                         <td>{{ $pago->descripcion}}</td>
-                                                        @if($pago->monto)
-                                                        <td>${{ number_format($pago->monto,2) }}</td>
+                                                        @php
+                                                            $esReinstalacionConcl = (($conciliadores['conclucion'] ?? null) === 'Reinstalacion') || (($conclucion ?? null) === 'Reinstalacion');
+                                                            $esMontoReinstalacionPago = $esReinstalacionConcl && is_numeric($pago->monto) && (float) $pago->monto == 0.0;
+                                                        @endphp
+                                                        @if($esMontoReinstalacionPago)
+                                                            <td>Reinstalación</td>
+                                                        @elseif($pago->monto)
+                                                            <td>${{ number_format($pago->monto,2) }}</td>
                                                         @else
-                                                        <td>No Aplica</td>
+                                                            <td>No Aplica</td>
                                                         @endif
                                                         <td>
                                                             @if($pago->id)
