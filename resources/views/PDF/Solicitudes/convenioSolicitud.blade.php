@@ -377,7 +377,7 @@
                     @endif  -->
 
                     @if($cantidadPagos > 1)            
-                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->updated_at)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará a la parte <b>TRABAJADORA en</b> <b>{{ $cantidadPagos }}</b> 
+                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará a la parte <b>TRABAJADORA en</b> <b>{{ $cantidadPagos }}</b> 
                             exhibiciones, hasta culminar la cantidad de 
                             <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
                         </p>
