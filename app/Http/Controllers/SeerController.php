@@ -5284,7 +5284,12 @@ class SeerController extends Controller
             'Sahuayo'         => ['Zamora', 'Sahuayo'],
         ];
 
-        // 2. Iniciamos la consulta base (Se define una sola vez)
+        // --- NUEVO: Obtener la fecha exacta de hace 7 días ---
+        // subDays(7) resta una semana a la fecha de hoy.
+        // toDateString() lo deja en formato 'YYYY-MM-DD' listo para SQL.
+        $haceUnaSemana = Carbon::now()->subDays(7)->toDateString();
+
+        // 2. Iniciamos la consulta base
         $query = SeerPerGeneral::join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->leftjoin('users','users.id','seer_general.user_id')
@@ -5303,27 +5308,28 @@ class SeerController extends Controller
             )
             ->where('validado_conciliador', 'Pendiente')
             ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+            
+            // --- NUEVA CONDICIÓN DE TIEMPO ---
+            // Filtra para que solo traiga fechas desde hace 7 días hasta hoy (menor a una semana de antigüedad)
+            ->where('seer_general.fecha', '>=', $haceUnaSemana)
+            
             ->orderBy('seer_general.fecha');
 
         // 3. Aplicamos lógica de filtros por Rol (Sin repetir la consulta)
         if (!in_array($rol, ['Super Usuario', 'Administrador'])) {
             
-            // Por defecto, solo ve su propia delegación
             $delegacionesPermitidas = [$delegacion_usuario];
 
-            // Lógica para roles que pueden ver sedes vinculadas
             if (in_array($rol, ['Conciliador', 'Delegado', 'Enlace', 'Auxiliar', 'Excepcion'])) {
                 
-                $accesoViculado = true; // Por defecto para Auxiliar, Enlace, etc.
+                $accesoViculado = true;
 
-                // Verificación específica para Conciliadores
                 if ($rol == 'Conciliador') {
                     $accesoViculado = PermisosConciliador::where('id_conciliador', $id_usuario)
                         ->where('tipo', 'Ambos')
                         ->exists();
                 }
 
-                // Si tiene acceso y la sede está en el mapa, expandimos las delegaciones
                 if ($accesoViculado && isset($mapaSedes[$delegacion_usuario])) {
                     $delegacionesPermitidas = $mapaSedes[$delegacion_usuario];
                 }
@@ -5331,9 +5337,14 @@ class SeerController extends Controller
 
             $query->whereIn('seer_general.delegacion', $delegacionesPermitidas);
         }
-        $query->whereNull('seer_general.incidencia')->orWhere('seer_general.incidencia', 0);
+        
+        // 4. CORRECCIÓN CRÍTICA: Agrupamiento del OR para que no rompa el filtro de fecha ni de delegación
+        $query->where(function($q) {
+            $q->whereNull('seer_general.incidencia')
+            ->orWhere('seer_general.incidencia', 0);
+        });
 
-        // 4. Ejecución final
+        // 5. Ejecución final
         $solicitudes = $query->get();
         
         return view('solicitudes.solicitudes_pendientes', compact('solicitudes'));
