@@ -46,7 +46,7 @@ use App\Http\Controllers\AsistenciaController;
 
     //Ruta Raiz
     Route::get('/', function () {
-        return view('welcome');
+        return view('pages/auth/login');
     });
 
     Route::get('/logon', function () {
@@ -420,6 +420,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfcPTUNLaboraRat/{id}',               [TurnosController::class, 'VerPDFConvenioPTU_rat'])->name('PDFconvenioPTU_NO_R'); //Convenio PTU ya NO labora el trabajador
         Route::get('/ratificaciones/vista_previaCitas/{id_solicitud}',  [TurnosController::class, 'vista_previa_citas'])->name('vista_previa_citas'); //Vista previa de la vista citas(primera parte del llenado de la ratificación)
         Route::post('/ratificaciones/guardarEdicion_citas',             [TurnosController::class, 'guardarEdicion_citas'])->name('guardarEdicion_citas');
+        Route::get('/ratificaciones/buscar-abogados-ajax',      [TurnosController::class, 'buscar_abogados_ajax'])->name('buscar_abogados_ajax');
     //Fin de Ratificaciones
     //PDF ABOGADOS
         Route::get('/PDF/acuseRegistro/{idAbogado}',        [PoderController::class, 'VerPDFregistroAbogado'])->name('PDFregistroAbogado'); //Acuse de registro exitoso para abogados
@@ -496,6 +497,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/audiencias/pagoA',                    [SeerController::class, 'pagoA_audiencia'])->name('pagoA_audiencia'); // cumplimiento en audiencias
         Route::post('/representante/quitar',                [SeerController::class, 'quitarRepresentante'])->name('representante.quitar'); //Eliminar/Quitar representante legal asiganado al iniciar la audiencia
         Route::delete('/audieniecias/deduccion_eliminar_pago/{id_solicitud}', [SeerController::class, 'eliminar_deduccion_audiencia'])->name('eliminar_deduccion_audiencia');
+        Route::get('/audiencias/buscar-abogados-ajax',      [SeerController::class, 'buscar_abogados_audiencia_ajax'])->name('buscar_abogados_audiencia_ajax');
     //Fin de Audiencias
     //Citados
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');

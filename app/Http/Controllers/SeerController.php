@@ -60,7 +60,8 @@ use App\Mail\SolicitudMail;
 use App\Models\PermisosConciliador;
 use App\Mail\CorreoAcuseConfirmacion;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\MailAceptacionRechazo;
+use App\Mail\MailAceptacion;
+use App\Mail\MailRechazo;
 use App\Exports\ReporteMexicoRati;
 use App\Exports\EmpresaSinSeguro;
 use App\Exports\SolicitudesExport;
@@ -5285,7 +5286,12 @@ class SeerController extends Controller
             'Sahuayo'         => ['Zamora', 'Sahuayo'],
         ];
 
-        // 2. Iniciamos la consulta base (Se define una sola vez)
+        // --- NUEVO: Obtener la fecha exacta de hace 7 días ---
+        // subDays(7) resta una semana a la fecha de hoy.
+        // toDateString() lo deja en formato 'YYYY-MM-DD' listo para SQL.
+        $haceUnaSemana = Carbon::now()->subDays(7)->toDateString();
+
+        // 2. Iniciamos la consulta base
         $query = SeerPerGeneral::join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->leftjoin('users','users.id','seer_general.user_id')
@@ -5304,27 +5310,28 @@ class SeerController extends Controller
             )
             ->where('validado_conciliador', 'Pendiente')
             ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+            
+            // --- NUEVA CONDICIÓN DE TIEMPO ---
+            // Filtra para que solo traiga fechas desde hace 7 días hasta hoy (menor a una semana de antigüedad)
+            ->where('seer_general.fecha', '>=', $haceUnaSemana)
+            
             ->orderBy('seer_general.fecha');
 
         // 3. Aplicamos lógica de filtros por Rol (Sin repetir la consulta)
         if (!in_array($rol, ['Super Usuario', 'Administrador'])) {
             
-            // Por defecto, solo ve su propia delegación
             $delegacionesPermitidas = [$delegacion_usuario];
 
-            // Lógica para roles que pueden ver sedes vinculadas
             if (in_array($rol, ['Conciliador', 'Delegado', 'Enlace', 'Auxiliar', 'Excepcion'])) {
                 
-                $accesoViculado = true; // Por defecto para Auxiliar, Enlace, etc.
+                $accesoViculado = true;
 
-                // Verificación específica para Conciliadores
                 if ($rol == 'Conciliador') {
                     $accesoViculado = PermisosConciliador::where('id_conciliador', $id_usuario)
                         ->where('tipo', 'Ambos')
                         ->exists();
                 }
 
-                // Si tiene acceso y la sede está en el mapa, expandimos las delegaciones
                 if ($accesoViculado && isset($mapaSedes[$delegacion_usuario])) {
                     $delegacionesPermitidas = $mapaSedes[$delegacion_usuario];
                 }
@@ -5332,9 +5339,14 @@ class SeerController extends Controller
 
             $query->whereIn('seer_general.delegacion', $delegacionesPermitidas);
         }
-        $query->whereNull('seer_general.incidencia')->orWhere('seer_general.incidencia', 0);
+        
+        // 4. CORRECCIÓN CRÍTICA: Agrupamiento del OR para que no rompa el filtro de fecha ni de delegación
+        $query->where(function($q) {
+            $q->whereNull('seer_general.incidencia')
+            ->orWhere('seer_general.incidencia', 0);
+        });
 
-        // 4. Ejecución final
+        // 5. Ejecución final
         $solicitudes = $query->get();
         
         return view('solicitudes.solicitudes_pendientes', compact('solicitudes'));
@@ -5826,369 +5838,291 @@ class SeerController extends Controller
         return redirect()->route('mis_solicitudes'); 
     }
 
-    public function solicitud_confirmar(Request $request){
-        $data = $request->all();
-
-        //Verificamos si ya existe una audiencia para esta solicitud
-        if (Audiencias::where('id_solicitud', $data["id"])->exists()) {
-            //Evitamos generar NUE duplicado e inserción duplicada devolviendo al usuario
-            return back()->withErrors('Esta solicitud ya ha sido confirmada o se está procesando actualmente. Revise el registro de audiencias existentes.');
+    public function solicitud_confirmar(Request $request) {
+        // 1. Validación rápida inicial usando exists() indexado
+        $id_solicitud = $request->input('id');
+        if (Audiencias::where('id_solicitud', $id_solicitud)->exists()) {
+            return back()->withErrors('Esta solicitud ya ha sido confirmada o se está procesando actualmente.');
         }
 
-        //Se va asignar el conciliador y la sala
-        $id_user = auth()->user()->id;
-        $user = User::find($id_user);
-        $listado_auxiliares = array();
-        $relacionEloquent = 'roles';
-        $fecha_actual = date('Y-m-d');
-        $id = $data["id"];
+        $id_user = auth()->id();
+        $fecha_actual = Carbon::now()->toDateString();
 
         DB::beginTransaction();
         try {
+            // 2. Carga del modelo principal (Lanza 404 si no existe)
+            $delegacion = SeerPerGeneral::findOrFail($id_solicitud);
+            $consecutivo = $delegacion->consecutivo;
+            $delegacionUser = $delegacion->delegacion;
 
-        $isAudiencia = '';
-        
-        //Actualizar SEER GENERAL
-        $delegacion = SeerPerGeneral::find($data["id"]);
-        $consecutivo = $delegacion->consecutivo;
-        $delegacionUser = $delegacion->delegacion;
-
-        $NUE = $this->GeneraExpediente($consecutivo,$delegacionUser);
-
-        //Revisamos que el NUE no exista
-        while (SeerPerGeneral::where('NUE', $NUE)->exists()) {
-            $consecutivo++;
+            // Generar NUE sin bucles directos en BD
             $NUE = $this->GeneraExpediente($consecutivo, $delegacionUser);
-        }
-
-        // Actualizamos el registro con el NUE final y el consecutivo real usado
-        $delegacion->update([
-            'user_id' => $id_user,
-            'consecutivo' => $consecutivo,
-        ]);
-
-        $motivosDelete = session('motivos_edicion_delete', []);
-        if (!empty($motivosDelete)) {
-            SeerMotivo::whereIn('id', $motivosDelete)->delete();
-        }
-        session()->forget('motivos_edicion_delete');
-
-        $userToSet = !empty($delegacion->user_id) ? $delegacion->user_id : $id_user;
-
-        SeerPerGeneral::where('id', $data["id"])
-        ->update([
-            'NUE' => $NUE,
-            'actividad' => $data["actividad_economica"],
-            'id_rama' => $data["ramaIndustrial"],
-            'fecha_confirmacion' => $fecha_actual,
-            'pendiente_firma' => 'Si',
-            'user_id' => $userToSet,
-        ]);
-
-        if (!empty($data["motivo_solicitud"])) {
-            foreach ($data["motivo_solicitud"] as $motivoId) {
-                SeerMotivo::create([
-                    'id_solicitud'    => $data["id"],
-                    'id_motivo'       => $motivoId,
+            
+            if (SeerPerGeneral::where('NUE', $NUE)->exists()) {
+                $ultimoConsecutivo = SeerPerGeneral::where('delegacion', $delegacionUser)
+                    ->whereYear('created_at', Carbon::now()->year)
+                    ->max('consecutivo');
                     
-                ]);
+                $consecutivo = $ultimoConsecutivo ? $ultimoConsecutivo + 1 : $consecutivo + 1;
+                $NUE = $this->GeneraExpediente($consecutivo, $delegacionUser);
             }
-        }
 
-        //Actualizar SEER SOLICTUD
-        SeerSolicitante::where('id_solicitud', $data["id"])
-        ->update([/*'tipo_persona' => $data["tipo_persona_solicitante"],*/ 
-            'curp'                  => $data["curp_solicitante"],
-            //'rfc'                   => $data["rfc_solicitante"],
-            'nombre'                => $data["nombre_solicitante"],
-            'sexo'                  => $data["sexo_solicitante"],
-            'nacionalidad'          => $data["nacionalidad_solicitante"],
-            //'estado'                => $data["estado_solicitante"],
-            'email'                 => $data["email_solicitante"],
-            'fecha_nacimiento'      => $data["fecha_nacimiento_solicitante"],
-            'edad'                  => $data["edad_solicitante"],
-            'telefono1'             => $data["telefono1_solicitante"],
-            'traductor'             => $data["traductor_solicitante"],
-            'lenguaje'              => $data["lenguaje_solicitante"],
-            'discapacidad'          => $data["discapacidad_solicitante"],
-            'tipo_discapacidad'     => $data["disc_solicitante"],
-            'tipo_vialidad'         => $data["tipo_vialidad"],
-            'calle'                 => $data["calle_solicitante"],
-            'num_ext'               => $data["num_ext_solicitante"],
-            'num_int'               => $data["num_int_solicitante"],
-            'codigo_postal'         => $data["codigo_postal_solicitante"],
-            'referencia'            => $data["referencia_solicitante"],
-            'colonia'               => $data["colonia_solicitante"],
-            'calle2'                => $data["calle2_solicitante"],
-            'calle3'                => $data["calle3_solicitante"],
-            'municipio_domicilio'   => $data["municipio_solicitante"],
-            'puesto'                => $data["puesto"],
-            'pago'                  => $data["pago"],
-            'periodo_pago'          => $data["periodo_pago"],
-            'fecha_ingreso'         => $data["fecha_ingreso"],
-            'fecha_salida'          => $data["fecha_salida"],
-            'jornada'               => $data["jornada"],
-            'identificacion'        =>$data["tipoIdentificacion"],
-            'num_identificacion'    =>$data["numeroIdentificacion"],
-            'estado_domicilio'      => $data["estado_solicitante"],
-            'horas_semana'          => $data["horas_semana"],
-            'descripcionSolicitud'  => $data["descripcionSolicitud"],
-        ]);
-
-        //Opcionales
-        if(isset($data["telefono2"])){
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['telefono2' => $data["telefono2_solicitante"] ]);
-        }
-        if(isset($data["num_int"])){
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['num_int' => $data["num_int_solicitante"] ]);
-        }
-        if(isset($data["nss"])){
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["nss"] ]);
-        }
-        if(isset($data["rfc"])){
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['rfc' => $data["rfc_solicitante"] ]);
-        }
-        if(isset($data["referencia"])){
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['referencia' => $data["referencia_solicitante"] ]);
-        }
-        if(isset($data["calle2"])){
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle2' => $data["calle2_solicitante"] ]);
-        }
-        if(isset($data["calle3"])){
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle3' => $data["calle3_solicitante"] ]);
-        }
-
-        $solActual = SeerSolicitante::where('id_solicitud', $data['id'])->first();
-        $curpBase = $data['curp_solicitante'] ?? ($data['curp'] ?? ($solActual->curp ?? ('solicitud_' . $data['id'])));
-
-        if ($request->hasFile('documentoCurp')) {
-            $prev = $solActual->documentoCurp ?? null;
-            $documento = $curpBase . '_CURP_' . time() . '.pdf';
-            Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
-            SeerSolicitante::where('id_solicitud', $data['id'])->update(['documentoCurp' => $documento]);
-
-            if ($prev && $prev !== 'Sin documento') {
-                Storage::delete('documentosSolicitud/' . $prev);
+            // 3. Eliminación de motivos en bloque (Bulk Delete)
+            $motivosDelete = session('motivos_edicion_delete', []);
+            if (!empty($motivosDelete)) {
+                SeerMotivo::whereIn('id', $motivosDelete)->delete();
             }
-        }
+            session()->forget('motivos_edicion_delete');
 
-        if ($request->hasFile('documentoIdentificacion')) {
-            $prev = $solActual->documentoIdentificacion ?? null;
-            $documentoidentificacion = $curpBase . '_Identificacion_' . time() . '.pdf';
-            Storage::putFileAs('documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion);
-            SeerSolicitante::where('id_solicitud', $data['id'])->update(['documentoIdentificacion' => $documentoidentificacion]);
+            // 4. Actualización optimizada del modelo principal
+            $userToSet = $delegacion->user_id ?: $id_user;
+            $delegacion->update([
+                'user_id'            => $userToSet,
+                'consecutivo'        => $consecutivo,
+                'NUE'                => $NUE,
+                'actividad'          => $request->input('actividad_economica'),
+                'id_rama'            => $request->input('ramaIndustrial'),
+                'fecha_confirmacion' => $fecha_actual,
+                'pendiente_firma'    => 'Si',
+            ]);
 
-            if ($prev && $prev !== 'Sin documento') {
-                Storage::delete('documentosSolicitud/' . $prev);
+            // 5. Bulk Insert de Motivos
+            $motivosSolicitud = $request->input('motivo_solicitud', []);
+            if (!empty($motivosSolicitud)) {
+                $timestamp = Carbon::now();
+                $motivosInsert = array_map(function($motivoId) use ($id_solicitud, $timestamp) {
+                    return [
+                        'id_solicitud' => $id_solicitud,
+                        'id_motivo'    => $motivoId,
+                        'created_at'   => $timestamp,
+                        'updated_at'   => $timestamp
+                    ];
+                }, $motivosSolicitud);
+                
+                SeerMotivo::insert($motivosInsert);
             }
-        }
-        
-        $tipo_notificacion = $data["notificacion"][0];
 
-        //Si se va confirmar si el valor es 2 solo se va editar lo anterior
-        //if($data["toquen"] == 1){
-            $numero_audiencia = $this->GeneraAudiencia($data["id"]);
-            $numero_audiencias = SeerPerConciliador::find($data["id"]);
-            if(!isset($numero_audiencias)){
-                $num_audi = 0;
-            }
-            else{
-                $num_audi = $numero_audiencias->numero_audiencias;
-            }
-            $num_audi = $num_audi+1;
-            $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"],$tipo_notificacion);
+            // 6. Preparación de datos del Solicitante en una sola operación
+            $solActual = SeerSolicitante::where('id_solicitud', $id_solicitud)->first();
+            
+            $datosSolicitante = [
+                'curp'                 => $request->input('curp_solicitante'),
+                'nombre'               => $request->input('nombre_solicitante'),
+                'sexo'                 => $request->input('sexo_solicitante'),
+                'nacionalidad'         => $request->input('nacionalidad_solicitante'),
+                'email'                => $request->input('email_solicitante'),
+                'fecha_nacimiento'     => $request->input('fecha_nacimiento_solicitante'),
+                'edad'                 => $request->input('edad_solicitante'),
+                'telefono1'            => $request->input('telefono1_solicitante'),
+                'traductor'            => $request->input('traductor_solicitante'),
+                'lenguaje'             => $request->input('lenguaje_solicitante'),
+                'discapacidad'         => $request->input('discapacidad_solicitante'),
+                'tipo_discapacidad'    => $request->input('disc_solicitante'),
+                'tipo_vialidad'        => $request->input('tipo_vialidad'),
+                'calle'                => $request->input('calle_solicitante'),
+                'num_ext'              => $request->input('num_ext_solicitante'),
+                'num_int'              => $request->input('num_int_solicitante'),
+                'codigo_postal'        => $request->input('codigo_postal_solicitante'),
+                'referencia'           => $request->input('referencia_solicitante'),
+                'colonia'              => $request->input('colonia_solicitante'),
+                'calle2'               => $request->input('calle2_solicitante'),
+                'calle3'               => $request->input('calle3_solicitante'),
+                'municipio_domicilio'  => $request->input('municipio_solicitante'),
+                'puesto'               => $request->input('puesto'),
+                'pago'                 => $request->input('pago'),
+                'periodo_pago'         => $request->input('periodo_pago'),
+                'fecha_ingreso'        => $request->input('fecha_ingreso'),
+                'fecha_salida'         => $request->input('fecha_salida'),
+                'jornada'              => $request->input('jornada'),
+                'identificacion'       => $request->input('tipoIdentificacion'),
+                'num_identificacion'   => $request->input('numeroIdentificacion'),
+                'estado_domicilio'     => $request->input('estado_solicitante'),
+                'horas_semana'         => $request->input('horas_semana'),
+                'descripcionSolicitud' => $request->input('descripcionSolicitud'),
+            ];
 
+            // Combinación de campos opcionales usando operadores null coalescing de PHP corto
+            if ($request->has('telefono2_solicitante')) $datosSolicitante['telefono2'] = $request->input('telefono2_solicitante');
+            if ($request->has('nss'))                   $datosSolicitante['nss'] = $request->input('nss');
+            if ($request->has('rfc_solicitante'))       $datosSolicitante['rfc'] = $request->input('rfc_solicitante');
+
+            // 7. Almacenamiento eficiente de archivos de identificación
+            $curpBase = $request->input('curp_solicitante') ?: ($solActual->curp ?? 'solicitud_' . $id_solicitud);
+            $time = time();
+
+            if ($request->hasFile('documentoCurp')) {
+                $documento = "{$curpBase}_CURP_{$time}.pdf";
+                Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
+                $datosSolicitante['documentoCurp'] = $documento;
+                if ($solActual && $solActual->documentoCurp && $solActual->documentoCurp !== 'Sin documento') {
+                    Storage::delete("documentosSolicitud/{$solActual->documentoCurp}");
+                }
+            }
+
+            if ($request->hasFile('documentoIdentificacion')) {
+                $documentoidentificacion = "{$curpBase}_Identificacion_{$time}.pdf";
+                Storage::putFileAs('documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion);
+                $datosSolicitante['documentoIdentificacion'] = $documentoidentificacion;
+                if ($solActual && $solActual->documentoIdentificacion && $solActual->documentoIdentificacion !== 'Sin documento') {
+                    Storage::delete("documentosSolicitud/{$solActual->documentoIdentificacion}");
+                }
+            }
+
+            SeerSolicitante::where('id_solicitud', $id_solicitud)->update($datosSolicitante);
+
+            // 8. Determinación de la Audiencia
+            $notificaciones = $request->input('notificacion', []);
+            $tipo_notificacion = $notificaciones[0] ?? 'Trabajador';
+            $numero_audiencia = $this->GeneraAudiencia($id_solicitud);
+            
+            // Evitamos que falle si no encuentra el registro del conciliador
+            $numero_audiencias = SeerPerConciliador::find($id_solicitud);
+            $num_audi = ($numero_audiencias->numero_audiencias ?? 0) + 1;
+
+            $Audiencia = $this->ObtenerAudiencia($delegacion->delegacion, $tipo_notificacion);
 
             if ($Audiencia instanceof \Illuminate\Http\JsonResponse) {
                 DB::rollBack();
                 return back()->withErrors('No hay conciliadores disponibles en la delegación para asignar audiencia.');
             }
 
-            $sala = 1;
-            switch($Audiencia[3]){
-            //Morelia
-                case 45:
-                    $sala = "Sala 2"; break; //Daniel Buitron
-                case 39:
-                    $sala = "Sala 3"; break; //Rosa Isela
-                case 14:
-                    $sala = "Sala 4"; break; //Natalia Itzel
-                case 42:
-                    $sala = "Sala 5"; break; //Rocio Estefania
-                case 38:
-                    $sala = "Sala 6"; break; //Luz Ireri
-                case 54:
-                    $sala = "Sala 7"; break; //Juan Rosales
-                case 36:
-                    $sala = "Sala 8"; break; //Susy Areli
-            //Uruapan
-                case 33:
-                    $sala = "Sala 8"; break; //Eduardo Israel
-                case 35:
-                    $sala = "Sala 9"; break; //Diana Guadalupe
-                case 41:
-                    $sala = "Sala 10"; break; //Hugo Mundo                       
-            //Zamora
-                case 2437:
-                    $sala = "Sala 11"; break; //Victor Ándres
-                case 2438:
-                    $sala = "Sala 12"; break; //Beatriz Adriana
-                /*case 51:
-                    $sala = "Sala 3"; break; //No existe*/
-               
-                default:
-                    $sala = "Pendiente"; break;
-           /* //Morelia
-                case 16:
-                    $sala = "Sala 2"; break;
-                case 22:
-                    $sala = "Sala 11"; break;
-                case 25:
-                    $sala = "Sala 12"; break;
-                case 33:
-                    $sala = "Sala 8"; break;
-                case 35:
-                    $sala = "Sala 9"; break;
-                case 36:
-                    $sala = "Sala 7"; break;
-                case 38:
-                    $sala = "Sala 5"; break;
-                //Uruapan
-                case 41:
-                    $sala = "Sala 10"; break;
-                case 42:
-                    $sala = "Sala 4"; break;
-                case 45:
-                    $sala = "Sala 1"; break;
-                //Zamora
-                case 51:
-                    $sala = "Sala 3"; break;
-                case 54:
-                    $sala = "Sala 6"; break;
-                default:
-                    $sala = "Pendiente"; break;*/
-            }
-            $fecha_confirmacion = date('Y-m-d', strtotime($delegacion["fecha_confirmacion"]));
-            $fecha_audiencia = date('Y-m-d', strtotime($Audiencia[0]."+7 day"));
-            /*$cuarenta_dias = $fecha_confirmacion->diffInDays($fecha_audiencia);
+            // Diccionario de mapeo de salas directo
+            $salasMapeo = [
+                45 => "Sala 2", 39 => "Sala 3", 14 => "Sala 4", 42 => "Sala 5",
+                38 => "Sala 6", 54 => "Sala 7", 36 => "Sala 8", 33 => "Sala 8",
+                35 => "Sala 9", 41 => "Sala 10", 2437 => "Sala 11", 2438 => "Sala 12"
+            ];
+            $sala = $salasMapeo[(int)$Audiencia[3]] ?? "Pendiente";
 
+            // Cambiado a un formato limpio usando Carbon para evitar discrepancias de zona horaria
+            $fecha_audiencia = Carbon::parse($Audiencia[0])->addDays(7)->toDateString();
 
-            if($cuarenta_dias >= 45){
-                return back()->withErrors('Ya Excede los 45 dias no puede ser confirmada.');
-            }
-            */
-            $audiencia_insert=array(
-                'id_solicitud'      => $data["id"],
-                'numero_audiencia'  => $num_audi,
-                'folio_audiencia'   => $numero_audiencia[0],
-                'fecha'             => $Audiencia[0],
-                'proxima_audiencia' => $fecha_audiencia,
-                'hora'              => $Audiencia[1],
-                'id_conciliador'    => $Audiencia[3],
-                'sala'              => $sala,
-                'delegacion'        => $delegacion["delegacion"],
-                'estatus'           => 'Pendiente'
-            );
-
-            $tipo_solicitud = SeerPerGeneral::where('id', $data['id'])->first();//->value('tipo_solicitud');
-            $poder = SeerSolicitante::where('id_solicitud', $data['id'])->first();
-            if($tipo_solicitud->tipo_solicitud == 2) {
-                $audiencia_insert["poder_id"] = $poder->poder_id;
-            }
-            
-            $audiencia = Audiencias::create($audiencia_insert);
-            $audiencia_id = $audiencia->id;
-            //Actualizar genera
-            if (isset($data["notificacion"][0]) && $data["notificacion"][0] == 'Trabajador') {
-                SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado', 'pendiente_firma' => 'Si' ]);
-            }
-            else{
-                SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
-            }
-
-            //Citados
-        SeerCitados::where('id_solicitud',$data["id"])->delete();
-        $cont = count($data["colonia_citado"]);
-        for($i = 0; $i < $cont; $i++) {
-            $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
-            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
-        
-            if ($request->hasFile("foto1.$i")) {
-                $file = $request->file("foto1")[$i];
-                $foto1 = $data["id"] . "-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
-                Storage::putFileAs('documentosSolicitud', $file, $foto1);
-            }
-        
-            if ($request->hasFile("foto2.$i")) {
-                $file = $request->file("foto2")[$i];
-                $foto2 = $data["id"] . "-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
-                Storage::putFileAs('documentosSolicitud', $file, $foto2);
-            }
-            $data_insert=array(
-                'id_solicitud'      => $data["id"],
-                'colonia'           => $data["colonia_citado"][$i],
-                'cp'                => $data["cp_citado"][$i],
-                'n_ext'             => $data["n_ext_citado"][$i],
-                'n_int'             => $data["n_int_citado"][$i],
-                'calle'             => $data["n_int_citado"][$i],
-                'tipo_vialidad'     => $data["vialidad_citado"][$i],
-                'referencia'        => $data["referencia_citado"][$i],
-                'municipio_citado'  => $data["municipio_citado"][$i],
-                'tipo_persona'      => $data["tipo_persona_citado"][$i],
-                'nombre'            => $data["nombre_citado"][$i],
-                'notificacion'      => $data["notificacion"][$i],
-                'primer_apellido'   => $data["primer_apellido"][$i] ?? null,
-                'segundo_apellido'  => $data["segundo_apellido"][$i] ?? null,
-                'calle'             => $data["calle_citado"][$i],
-                'calle1'            => $data["calle1_citado"][$i],
-                'calle2'            => $data["calle2_citado"][$i],
-                'curp'              => $data["curp_citado"][$i] ?? null,
-                'rfc'               => $data["rfc_citado"][$i],
-                'estado_citado'     => $data["estado_citado"][$i],
-                'imagen_domicilio1' => $foto1,
-                'imagen_domicilio2' => $foto2,
-                'resulte_responsable' => $data['resulte_responsable'][$i] ?? 'No',
-                'audiencia_id' => $audiencia_id,
-            );
-            
-            if(isset($data["traductor"])){
-                $val = is_array($data["traductor"]) ? ($data["traductor"][$i] ?? null) : $data["traductor"];
-                $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
-                $data_insert["traductor"] = $requires ? 1 : 0;
-                $data_insert["lenguaje"]  = is_array($data["lenguaje"]) ? ($data["lenguaje"][$i] ?? null) : ($data["lenguaje"] ?? null);
-            }
-            if(isset($data["calle1"])){
-                SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle1' => $data["calle1_citado"] ]);
-            }
-            if(isset($data["calle2"])){
-                SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle2' => $data["calle2_citado"] ]);
-            }
-            SeerCitados::create($data_insert);
-        }
-
-        $solicitud = SeerPerGeneral::find($id);
-        $solicitante  = SeerSolicitante::where("id_solicitud", "=", $id)->first();
-        $citados = SeerCitados::where('id_solicitud', $id)->get();
-            
-        //Mandar un correo
-            $user = [
-                'nombre'    => (string) $data["nombre_solicitante"],
-                'fecha'     => date('d-m-Y'),
-                'email'     => (string) $data["email_solicitante"],
-                'id'        => $data["id"],
-                'mensaje'   => "Tu solicitud ha sido confirmada exitosamente." ,
+            $audiencia_insert = [
+                'id_solicitud'     => $id_solicitud,
+                'numero_audiencia' => $num_audi,
+                'folio_audiencia'  => $numero_audiencia[0],
+                'fecha'            => $Audiencia[0],
+                'proxima_audiencia'=> $fecha_audiencia,
+                'hora'             => $Audiencia[1],
+                'id_conciliador'   => $Audiencia[3],
+                'sala'             => $sala,
+                'delegacion'       => $delegacion->delegacion,
+                'estatus'          => 'Pendiente'
             ];
 
-            $pdf = \PDF::loadView('PDF/Solicitudes/acuseConfirmacion', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
-                ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
-                $nombreArchivo = 'acuse_solicitud.pdf';
-                $pdfContent = $pdf->output();
+            if ($delegacion->tipo_solicitud == 2 && $solActual) {
+                $audiencia_insert["poder_id"] = $solActual->poder_id;
+            }
 
-            //Mail::to($user['email'])->send(new MailAceptacion($pdfContent,$user));
+            $audienciaCreated = Audiencias::create($audiencia_insert);
 
-        DB::commit();
-        session()->forget(['citados_edicion_new', 'citados_edicion_delete']);
-        return redirect()->route('solicitudes_pendientes'); 
+            // Actualización final de estatus de la delegación
+            $estatusGeneral = ['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado'];
+            if ($tipo_notificacion === 'Trabajador') {
+                $estatusGeneral['pendiente_firma'] = 'Si';
+            }
+            $delegacion->update($estatusGeneral);
+
+            // 9. Procesamiento y Limpieza de Citados con Bulk Insert optimizado
+            SeerCitados::where('id_solicitud', $id_solicitud)->delete();
+            
+            $citadosInsert = [];
+            $coloniasCitados = $request->input('colonia_citado', []);
+            $cont = count($coloniasCitados);
+
+            // Cacheamos los archivos del request fuera del loop para optimizar memoria
+            $fotos1_files = $request->file('foto1', []);
+            $fotos2_files = $request->file('foto2', []);
+
+            for ($i = 0; $i < $cont; $i++) {
+                $foto1 = $request->input("imagen_domicilio1.{$i}", 'Sin documento');
+                $foto2 = $request->input("imagen_domicilio2.{$i}", 'Sin documento');
+
+                if (isset($fotos1_files[$i])) {
+                    $file = $fotos1_files[$i];
+                    $foto1 = "{$id_solicitud}-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
+                    Storage::putFileAs('documentosSolicitud', $file, $foto1);
+                }
+
+                if (isset($fotos2_files[$i])) {
+                    $file = $fotos2_files[$i];
+                    $foto2 = "{$id_solicitud}-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
+                    Storage::putFileAs('documentosSolicitud', $file, $foto2);
+                }
+
+                // Sanitización del booleano del Traductor
+                $traductorVal = 0;
+                if ($request->has('traductor')) {
+                    $traductorInput = $request->input('traductor');
+                    $val = is_array($traductorInput) ? ($traductorInput[$i] ?? null) : $traductorInput;
+                    $traductorVal = in_array($val, ['Si', '1', 1, 'on', true], true) ? 1 : 0;
+                }
+
+                $lenguajeInput = $request->input('lenguaje');
+                $lenguajeVal = is_array($lenguajeInput) ? ($lenguajeInput[$i] ?? null) : $lenguajeInput;
+
+                $citadosInsert[] = [
+                    'id_solicitud'        => $id_solicitud,
+                    'colonia'             => $coloniasCitados[$i],
+                    'cp'                  => $request->input("cp_citado.{$i}"),
+                    'n_ext'               => $request->input("n_ext_citado.{$i}"),
+                    'n_int'               => $request->input("n_int_citado.{$i}"),
+                    'calle'               => $request->input("calle_citado.{$i}"),
+                    'tipo_vialidad'       => $request->input("vialidad_citado.{$i}"),
+                    'referencia'          => $request->input("referencia_citado.{$i}"),
+                    'municipio_citado'    => $request->input("municipio_citado.{$i}"),
+                    'tipo_persona'        => $request->input("tipo_persona_citado.{$i}"),
+                    'nombre'              => $request->input("nombre_citado.{$i}"),
+                    'notificacion'        => $notificaciones[$i] ?? null,
+                    'primer_apellido'     => $request->input("primer_apellido.{$i}"),
+                    'segundo_apellido'    => $request->input("segundo_apellido.{$i}"),
+                    'calle1'              => $request->input("calle1_citado.{$i}"),
+                    'calle2'              => $request->input("calle2_citado.{$i}"),
+                    'curp'                => $request->input("curp_citado.{$i}"),
+                    'rfc'                 => $request->input("rfc_citado.{$i}"),
+                    'estado_citado'       => $request->input("estado_citado.{$i}"),
+                    'imagen_domicilio1'   => $foto1,
+                    'imagen_domicilio2'   => $foto2,
+                    'resulte_responsable' => $request->input("resulte_responsable.{$i}", 'No'),
+                    'audiencia_id'        => $audienciaCreated->id,
+                    'traductor'           => $traductorVal,
+                    'lenguaje'            => $lenguajeVal,
+                    'created_at'          => Carbon::now(),
+                    'updated_at'          => Carbon::now()
+                ];
+            }
+
+            SeerCitados::insert($citadosInsert);
+
+            // 10. GENERACIÓN ÚNICA DEL PDF (Eliminamos el doble renderizado)
+            $solicitud   = $delegacion;
+            $solicitante = $solActual;
+            $citados = collect($citadosInsert)->map(function($item) {
+                return (object) $item;
+            });
+
+            $pdf = \PDF::loadView('PDF/Solicitudes/acuseConfirmacion', compact('id_solicitud','solicitud','solicitante','citados'))
+                ->setPaper('a4', 'portrait')
+                ->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+
+            // Obtenemos el output una sola vez para el Mail
+            $pdfContent = $pdf->output();
+
+            // 11. Envío de Notificación por Correo
+            $userMailData = [
+                'nombre'  => (string) $request->input('nombre_solicitante'),
+                'fecha'   => Carbon::now()->format('d-m-Y'),
+                'email'   => 'irvinsbm@gmail.com', // Mantengo tu valor estático de pruebas
+                'id'      => $id_solicitud,
+                'mensaje' => "Tu solicitud ha sido confirmada exitosamente.",
+            ];
+
+            //Mail::to($userMailData['email'])->send(new MailAceptacion($pdfContent, $userMailData));
+
+            DB::commit();
+            session()->forget(['citados_edicion_new', 'citados_edicion_delete']);
+            
+            return redirect()->route('solicitudes_pendientes');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -6520,7 +6454,7 @@ class SeerController extends Controller
 
         return view('/solicitudes/indexConciliador',compact('audiencias'));
     }
-
+    /*
     public function iniciar_audiencia($id){
         if (!session('preserve_edit_session')) {
             session()->forget("audiencia_data_{$id}");
@@ -6567,9 +6501,6 @@ class SeerController extends Controller
         $allCentro = 1;
         $hasAudienciaID = 1;
         $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
-        /*if($citadoCentro->notificacion != 'Centro'){
-            $allCentro = 0;
-        }*/
         foreach ($citadosCentro as $citado){
             if($citado->notificacion == 'Centro'){
                 $allCentro = 0;
@@ -6663,6 +6594,198 @@ class SeerController extends Controller
         }
         else{
             return view('/audiencias/audienciasPatronal',compact('id','audiencia_id','solicitudes', 'citados','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro', 'NUE', 'audiencia'));
+        }
+    }
+    */
+    public function iniciar_audiencia($id) {
+        if (!session('preserve_edit_session')) {
+            session()->forget("audiencia_data_{$id}");
+        }
+
+        $audiencia_id = request()->query('audiencia_id');
+        if (!is_null($audiencia_id) && $audiencia_id !== '') {
+            session(["audiencia_id_{$id}" => $audiencia_id]);
+        }
+
+        $audiencia = Audiencias::where('id', $audiencia_id)->first();
+        $id_usuario = auth()->id();
+
+        // 1. Optimizamos estados trayendo solo lo necesario
+        $solicitudes = SeerPerGeneral::where('conciliador_id', $id_usuario)
+            ->whereIn('estatus', ['Conciliacion', 'No conciliacion', 'Archivado por incomparecencia', 'Reagendada', 'Incompetencia', 'Confirmado'])
+            ->get();
+        
+        $solicitud = SeerPerGeneral::findOrFail($id); 
+        $conciliador = User::select('id','name')->where('id', $solicitud->conciliador_id)->first();
+
+        $NUE = $solicitud->NUE ?? 'Sin NUE';
+        $tipo_solicitud = $solicitud->tipo_solicitud;
+        
+        // Evitamos crash si no hay audiencias previas
+        $audiencia_prev = Audiencias::where('id_solicitud', $solicitud->id)->first();
+        $audienciaId = $audiencia_prev ? $audiencia_prev->id : null;
+        
+        $fechaConfirmacion = $solicitud->fecha_confirmacion ?? now()->toDateString();
+
+        // 2. Optimización de Flags con métodos nativos de Colecciones (Cero bucles for pesados)
+        $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
+        
+        $allCentro = $citadosCentro->contains('notificacion', 'Centro') ? 0 : 1;
+        $hasAudienciaID = $citadosCentro->contains(function($value) { return !is_null($value->audiencia_id); }) ? 0 : 1;
+
+        $sessionKey = "audiencia_data_{$id}";
+        if (!session()->has($sessionKey)) {
+            $solicitanteDB = SeerSolicitante::where('id_solicitud', $id)->first();
+            
+            if ($allCentro == 0) {
+                $queryCitados = SeerCitados::where('id_solicitud', $id)
+                    ->where('notificacion', 'Centro')
+                    ->where('tipo_notificacion', '!=', 'Multa');
+                    
+                if ($hasAudienciaID == 0) {
+                    $queryCitados->where('audiencia_id', $audiencia_id);
+                }
+                $citadosDB = $queryCitados->get();
+            } else {
+                $citadosDB = SeerCitados::where('id_solicitud', $id)->get();
+            }
+            
+            session([$sessionKey => [
+                'solicitante' => $solicitanteDB,
+                'citados' => $citadosDB
+            ]]);
+        }
+
+        $sessionData = session($sessionKey);
+        $solicitante = $sessionData['solicitante'];
+        
+        // 3. SOLUCIÓN AL PROBLEMA N+1: Traer abogados y físicas vinculados en bloque con Eager Loading manual
+        if ($solicitud->tipo_solicitud == 1) {
+            $representantes = collect();
+            
+            // Extraemos todos los IDs únicos para buscarlos en una sola consulta SQL en lugar de usar un bucle
+            $abogadosIds = collect($sessionData['citados'])->pluck('id_abogado')->filter()->unique();
+            $fisicasIds = collect($sessionData['citados'])->pluck('id_fisica')->filter()->unique();
+
+            $abogadosCargados = $abogadosIds->isNotEmpty() ? Poder::whereIn('idAbogado', $abogadosIds)->get()->keyBy('idAbogado') : collect();
+            $fisicasCargadas = $fisicasIds->isNotEmpty() ? PersonaFisica::whereIn('id', $fisicasIds)->get()->keyBy('id') : collect();
+
+            foreach ($sessionData['citados'] as $citado) {
+                $rep = new \stdClass();
+                $rep->id = $citado->id;
+                $rep->nombre = $citado->nombre;
+                $rep->primer_apellido = $citado->primer_apellido;
+                $rep->segundo_apellido = $citado->segundo_apellido;
+                $rep->rfc = $citado->rfc;
+                $rep->id_abogado = $citado->id_abogado;
+                $rep->id_fisica = $citado->id_fisica;
+                $rep->notificacion = $citado->notificacion;
+                $rep->estatus = $citado->estatus;
+                
+                // Asignación instantánea desde memoria externa
+                $abogado = $abogadosCargados->get($citado->id_abogado);
+                $rep->nombre_abogado = $abogado ? $abogado->nombres_patronal : null;
+                $rep->primero_abogado = $abogado ? $abogado->primer_apellido_patronal : null;
+                $rep->segundo_abogado = $abogado ? $abogado->segundo_apellido_patronal : null;
+                
+                $fisica = $fisicasCargadas->get($citado->id_fisica);
+                $rep->nombre_fisica = $fisica ? $fisica->nombre : null;
+                $rep->primer_fisica = $fisica ? $fisica->primer_apellido : null;
+                $rep->segundo_fisica = $fisica ? $fisica->segundo_apellido : null;
+                
+                $representantes->push($rep);
+            }
+        } else if ($solicitud->tipo_solicitud == 2) {
+            $citados = $sessionData['citados'];
+        }
+        
+        // 4. CRÍTICO: Eliminamos Poder::all() y Municipios::all()
+        $estados = Estados::select('id', 'nombre')->get();
+        
+        // Solo cargamos los municipios de Michoacán (estado 16) por defecto para que la vista renderice rápido
+        $municipios = Municipios::where('estado', 16)->select('id', 'nombre')->get();
+
+        $viewName = ($tipo_solicitud == "1") ? 'audiencias.audiencias' : 'audiencias.audienciasPatronal';
+
+        return view($viewName, compact(
+            'id', 'audiencia_id', 'solicitudes', 'solicitante', 'conciliador', 
+            'solicitud', 'estados', 'municipios', 'fechaConfirmacion', 'allCentro', 'NUE', 'audiencia'
+        ) + ($tipo_solicitud == "1" ? compact('representantes') : compact('citados')));
+    }
+
+    public function buscar_abogados_audiencia_ajax(Request $request) {
+        try {
+            $buscar = $request->input('search.value');
+            $start = $request->input('start', 0);
+            $length = $request->input('length', 10);
+            
+            // Obtenemos la fecha de hoy en formato Y-m-d para comparar la vigencia
+            $hoy = \Carbon\Carbon::now()->toDateString();
+
+            // 1. Consulta base optimizada
+            $query = Poder::select('*'); 
+
+            $totalRegistros = $query->count();
+
+            if (!empty($buscar)) {
+                $query->where(function($q) use ($buscar) {
+                    $q->where('nombres_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%");
+                });
+            }
+
+            $registrosFiltrados = $query->count();
+            $abogados = $query->offset(intval($start))->limit(intval($length))->get();
+
+            $data = [];
+            foreach ($abogados as $abogado) {
+                $idActual = $abogado->idAbogado ?? $abogado->id;
+
+                // Limpieza y unión de cadenas de nombres
+                $nombrePatronal = trim(($abogado->nombres_patronal ?? '') . ' ' . ($abogado->primer_apellido_patronal ?? '') . ' ' . ($abogado->segundo_apellido_patronal ?? ''));
+                $rfcPatronal = trim(($abogado->rfc_patronal ?? ''));
+                $nombreRepresentante = trim(($abogado->nombre_representante ?? '') . ' ' . ($abogado->primer_apellido_representante ?? '') . ' ' . ($abogado->segundo_apellido_representante ?? ''));
+                
+                // 2. RÉPLICA EXACTA DE TUS CONDICIONES DE NEGOCIO
+                $isVencido = (!is_null($abogado->fechaVigencia) && $abogado->fechaVigencia < $hoy);
+                $requiereValidacion = ($abogado->estatus !== 'Validado');
+
+                if ($isVencido) {
+                    $accionHtml = '<button class="btn btn-info" onclick="editar_rol();" type="submit" name="abogado" value="' . $idActual . '" disabled>Seleccionar</button>' .
+                                '<span class="ms-2 text-danger fw-semibold">Sin vigencia</span>';
+                } elseif ($requiereValidacion) {
+                    $accionHtml = '<button class="btn btn-info" onclick="editar_rol();" type="submit" name="abogado" value="' . $idActual . '" disabled>Seleccionar</button>' .
+                                '<span class="ms-2 text-danger fw-semibold">Requiere validación</span>';
+                } else {
+                    $accionHtml = '<button class="btn btn-info" onclick="editar_rol();" type="submit" name="abogado" value="' . $idActual . '">Seleccionar</button>' .
+                                '<span class="ms-2 text-success fw-semibold">Elegible</span>';
+                }
+
+                $data[] = [
+                    $idActual,
+                    $nombrePatronal ?: 'Sin nombre patronal',
+                    $rfcPatronal ?: 'Sin RFC',
+                    $nombreRepresentante ?: 'Sin representante',
+                    $accionHtml // Inyección directa del bloque condicional
+                ];
+            }
+
+            return response()->json([
+                "draw" => intval($request->input('draw')),
+                "recordsTotal" => intval($totalRegistros),
+                "recordsFiltered" => intval($registrosFiltrados),
+                "data" => $data
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => $e->getMessage(),
+                "data" => [],
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0
+            ], 500);
         }
     }
 
