@@ -12,7 +12,7 @@ use App\Models\Estados;
 use App\Models\User;
 use App\Models\HistorialAbogado;
 use Spatie\Permission\Models\Role;
-
+use Carbon\Carbon;
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -21,14 +21,196 @@ use Illuminate\Support\Facades\Storage;
 class PoderController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $id = auth()->user()->id;
+        $id = auth()->id();
         $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
-        $poderes = Poder::all();
-        return view('poderes.index', compact('poderes','userRole'));
+        $hoy = Carbon::now()->toDateString();
+
+        // Capturamos la variable del input nativo
+        $buscar = $request->input('buscar');
+
+        // 1. Iniciamos la consulta base sobre el modelo Poder
+        $query = Poder::query();
+
+        if (!empty($buscar)) {
+            // Si el registro NO está en los 50 iniciales, esta cláusula lo busca en TODO el universo de datos
+            $query->where(function($q) use ($buscar) {
+                $q->where('idAbogado', 'LIKE', "%{$buscar}%")
+                ->orWhere('nombres_patronal', 'LIKE', "%{$buscar}%")
+                ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
+                ->orWhere('segundo_apellido_patronal', 'LIKE', "%{$buscar}%")
+                ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
+                ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%")
+                ->orWhere('primer_apellido_representante', 'LIKE', "%{$buscar}%")
+                ->orWhere('segundo_apellido_representante', 'LIKE', "%{$buscar}%");
+            });
+            
+            $poderesIniciales = $query->get(); // Trae todas las coincidencias sin límite
+        } else {
+            // Carga inicial estándar para evitar saturación de memoria
+            $poderesIniciales = $query->limit(10)->get();
+        }
+
+        // 2. Procesamos las columnas, badges y atributos del modal para cada registro encontrado
+        foreach ($poderesIniciales as $poder) {
+            $poder->nombre_patronal_combinado = trim(($poder->nombres_patronal ?? '') . ' ' . ($poder->primer_apellido_patronal ?? '') . ' ' . ($poder->segundo_apellido_patronal ?? '')) ?: 'Sin nombre';
+            $poder->nombre_representante_combinado = trim(($poder->nombre_representante ?? '') . ' ' . ($poder->primer_apellido_representante ?? '') . ' ' . ($poder->segundo_apellido_representante ?? '')) ?: 'Sin representante';
+
+            // Badge de Estatus y Vigencia
+            $isVencido = (!is_null($poder->fechaVigencia) && $poder->fechaVigencia < $hoy);
+            if ($isVencido) {
+                $poder->estatus_badge = '<div>' . $poder->estatus . '</div><span class="badge bg-danger">Sin vigencia</span>';
+            } else {
+                $poder->estatus_badge = '<div>' . $poder->estatus . '</div><span class="badge bg-success">Vigente</span>';
+            }
+
+            // URL base de documentos
+            $pathDocs = asset('storage/app/documentos_abogados');
+
+            // Estructura de botón único para el Modal del Expediente Digital
+            $poder->documentos_modal_btn = '<button type="button" class="btn btn-sm btn-info btn-ver-expediente" 
+                data-bs-toggle="modal" 
+                data-bs-target="#modalExpedienteDigital" 
+                data-abogado="' . $poder->nombre_representante_combinado . '"
+                data-ine="' . ($poder->ineDocumento ? $pathDocs . '/' . $poder->ineDocumento : '') . '"
+                data-cedula="' . ($poder->cedulaDocumento ? $pathDocs . '/' . $poder->cedulaDocumento : '') . '"
+                data-representacion="' . ($poder->representacionDocumento ? $pathDocs . '/' . $poder->representacionDocumento : '') . '"
+                data-cartapoder="' . ($poder->cedula === "Sin carta poder" ? 'S/A' : ($poder->cedulaDocumento ? $pathDocs . '/' . $poder->cedulaDocumento : '')) . '"
+                data-registro="' . ($poder->estatus === "Validado" ? route('PDFregistroAbogado', $poder->idAbogado) : '') . '">
+                <i class="bi bi-folder2-open"></i> Ver Expediente
+            </button>';
+        }
+
+        return view('poderes.index', compact('userRole', 'poderesIniciales'));
+    }
+
+    public function buscar_poderes_ajax(Request $request)
+    {
+        try {
+            $buscar = $request->input('search.value'); // Captura el texto escrito en el buscador
+            $start = $request->input('start', 0);
+            $length = $request->input('length', 10);
+            $hoy = \Carbon\Carbon::now()->toDateString();
+            $userRole = auth()->user()->roles->pluck('name')->all();
+
+            // 1. Consulta base limpia
+            $query = Poder::query();
+            $totalRegistros = $query->count();
+
+            // 2. BUSCADOR GLOBAL AVANZADO (Folio, Patronal o Representante)
+            if (!empty($buscar)) {
+                $query->where(function($q) use ($buscar) {
+                    // Búsqueda directa por Folio Exacto o aproximado
+                    $q->where('idAbogado', 'LIKE', "%{$buscar}%")
+                    
+                    // Búsqueda en la Razón Social / Parte Patronal
+                    ->orWhere('nombres_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('segundo_apellido_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
+                    
+                    // Búsqueda en el Abogado / Representante Legal
+                    ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%")
+                    ->orWhere('primer_apellido_representante', 'LIKE', "%{$buscar}%")
+                    ->orWhere('segundo_apellido_representante', 'LIKE', "%{$buscar}%");
+                });
+            }
+
+            // Conteo exacto después de aplicar los filtros del buscador
+            $registrosFiltrados = $query->count();
+            
+            // Paginación segmentada desde la Base de Datos
+            $poderes = $query->offset(intval($start))->limit(intval($length))->get();
+
+            $data = [];
+            foreach ($poderes as $poder) {
+                // Procesamos filas usando la lógica de Badges y Modal Unificado
+                $this->procesarColumnasPoder($poder, $hoy, $userRole);
+
+                $data[] = [
+                    $poder->idAbogado,
+                    $poder->nombre_patronal_combinado,
+                    $poder->rfc_patronal ?? 'N/A',
+                    $poder->nombre_representante_combinado,
+                    $poder->estatus_badge,
+                    $poder->documentos_modal_btn,
+                    $poder->acciones_html . $poder->agregar_rep_html,
+                    $poder->eliminar_html
+                ];
+            }
+
+            return response()->json([
+                "draw" => intval($request->input('draw')),
+                "recordsTotal" => intval($totalRegistros),
+                "recordsFiltered" => intval($registrosFiltrados),
+                "data" => $data
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(["error" => $e->getMessage(), "data" => []], 500);
+        }
+    }
+
+    private function procesarColumnasPoder($poder, $hoy, $userRole)
+    {
+        $poder->nombre_patronal_combinado = trim(($poder->nombres_patronal ?? '') . ' ' . ($poder->primer_apellido_patronal ?? '') . ' ' . ($poder->segundo_apellido_patronal ?? '')) ?: 'Sin nombre';
+        $poder->nombre_representante_combinado = trim(($poder->nombre_representante ?? '') . ' ' . ($poder->primer_apellido_representante ?? '') . ' ' . ($poder->segundo_apellido_representante ?? '')) ?: 'Sin representante';
+
+        // 1. Estatus Completo con Badge de vigencia
+        $isVencido = (!is_null($poder->fechaVigencia) && $poder->fechaVigencia < $hoy);
+        if ($isVencido) {
+            $poder->estatus_badge = '<div>' . $poder->estatus . '</div><span class="badge bg-danger">Sin vigencia</span>';
+        } else {
+            $poder->estatus_badge = '<div>' . $poder->estatus . '</div><span class="badge bg-success">Vigente</span>';
+        }
+
+        // Base URL de tus archivos cargados
+        $pathDocs = asset('storage/app/documentos_abogados');
+
+        // 2. Botón único que abre el Modal de Expediente Digital
+        $poder->documentos_modal_btn = '<button type="button" class="btn btn-sm btn-info btn-ver-expediente" 
+            data-bs-toggle="modal" 
+            data-bs-target="#modalExpedienteDigital" 
+            data-abogado="' . $poder->nombre_representante_combinado . '"
+            data-ine="' . ($poder->ineDocumento ? $pathDocs . '/' . $poder->ineDocumento : '') . '"
+            data-cedula="' . ($poder->cedulaDocumento ? $pathDocs . '/' . $poder->cedulaDocumento : '') . '"
+            data-representacion="' . ($poder->representacionDocumento ? $pathDocs . '/' . $poder->representacionDocumento : '') . '"
+            data-cartapoder="' . ($poder->cedula === "Sin carta poder" ? 'S/A' : ($poder->cedulaDocumento ? $pathDocs . '/' . $poder->cedulaDocumento : '')) . '"
+            data-registro="' . ($poder->estatus === "Validado" ? route('PDFregistroAbogado', $poder->idAbogado) : '') . '">
+            <i class="bi bi-folder2-open"></i> Ver Expediente
+        </button>';
+
+        // Comprobamos si el usuario es Super Usuario
+        $esSuperUsuario = (isset($userRole[0]) && $userRole[0] === "Super Usuario");
+
+        // 3. Acciones de Edición e Historial (Historial protegido para Super Usuario)
+        $poder->acciones_html = '';
+        if (auth()->user()->can('editar-abogado')) {
+            $poder->acciones_html .= '<div class="d-flex flex-column gap-1">';
+            $poder->acciones_html .= '<a class="btn btn-sm btn-warning" href="' . route('poderes.edit', $poder->idAbogado) . '" onclick="editar_poder();"><i class="bi bi-pencil"></i> Editar</a>';
+            
+            // RESTRICCIÓN: Solo el Super Usuario ve el botón de Historial
+            if ($esSuperUsuario) {
+                $poder->acciones_html .= '<a class="btn btn-sm btn-secondary" href="' . route('poderes.history', $poder->idAbogado) . '"><i class="bi bi-clock-history"></i> Historial</a>';
+            }
+            
+            $poder->acciones_html .= '</div>';
+        }
+
+        // 4. Botón Agregar Representante (Abierto para los que editan)
+        $poder->agregar_rep_html = '<a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="' . $poder->idAbogado . '" data-tipo="' . $poder->tipo . '"><i class="bi bi-person-plus"></i> Agregar</a>';
+
+        // 5. Botón Eliminar (Restringido a Super Usuario + Cambio a Texto "Borrar" + Clase para Alerta)
+        $poder->eliminar_html = '';
+        if (auth()->user()->can('borrar-abogado') && $esSuperUsuario) {
+            $poder->eliminar_html = '<form method="POST" action="' . route('poderes.destroy', $poder->idAbogado) . '" class="form-eliminar-poder">
+                ' . csrf_field() . '
+                <input type="hidden" name="_method" value="DELETE">
+                <button class="btn btn-sm btn-danger" type="submit">Borrar</button>
+            </form>';
+        }
     }
 
     public function create()

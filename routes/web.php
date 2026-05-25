@@ -205,6 +205,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/poderes/update/{post}', [PoderController::class, 'update'])->name('poderes.update');
         Route::delete('/poderes/destroy/{id}', [PoderController::class, 'destroy'])->name('poderes.destroy');
         Route::post('/poderes/agregar_representante', [PoderController::class, 'agregarRepresentante'])->name('poderes.agregar_representante');
+        Route::get('/poderes/data-ajax', [PoderesController::class, 'buscar_poderes_ajax'])->name('poderes.index.ajax');
     //Fin Poder
     //Capacitaciones
         Route::get('/capacitaciones/index',                         [CapacitacionController::class, 'index'])->name('capacitaciones.index');

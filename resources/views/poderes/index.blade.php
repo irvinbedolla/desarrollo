@@ -20,163 +20,74 @@
                                 </div>
                             @endif
 
-                            @can('crear-abogado')
-                                <a class="btn btn-warning" href="{{ route('poder-crear') }}" target="_blank"> Nuevo</a>
-                            @endcan
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                @can('crear-abogado')
+                                    <a class="btn btn-warning" href="{{ route('poder-crear') }}" target="_blank">Nuevo</a>
+                                @endcan
+
+                                <form action="{{ url()->current() }}" method="GET" style="width: 400px; margin: 0;">
+                                    <div class="input-group">
+                                        <input type="text" name="buscar" class="form-control" placeholder="Buscar por Folio o Nombre..." value="{{ request('buscar') }}">
+                                        <button class="btn btn-primary" type="submit" style="background-color: #4A001F; border-color: #4A001F;">
+                                            <i class="fas fa-search"></i> Buscar
+                                        </button>
+                                        @if(request('buscar'))
+                                            <a href="{{ url()->current() }}" class="btn btn-secondary">Limpiar</a>
+                                        @endif
+                                    </div>
+                                </form>
+                            </div>
                             
                             @can('ver-abogado')
                                 <div class="table-responsive">
-                                    <table id="example" class="table table-striped mt-2">
+                                    <table id="tablaPoderesEstatica" class="table table-striped mt-2" style="width:100%">
                                         <thead style="background-color: #4A001F;">
-                                            <th style="color: #fff;">Folio</th>
-                                            <th style="color: #fff;">Tipo Persona</th>
-                                            <th style="color: #fff;">Nombre/Razón</th>
-                                            <th style="color: #fff;">Representante</th>
-                                            <th style="color: #fff;">Teléfono</th>
-                                            <th style="color: #fff;">Email</th>
-                                            <th style="color: #fff;">Fecha Vigencia</th>
-                                            <th style="color: #fff;">Vigencia Representación</th>
-                                            <th style="color: #fff;">Estatus</th>
-                                            <th style="color: #fff;">Identificación del patrón/Acta Constitutiva</th>
-                                            <th style="color: #fff;">Identificación representante</th>
-                                            <th style="color: #fff;">Documento que acredite la personería</th>
-                                            <th style="color: #fff;">Anexo</th>
-                                            <th style="color: #fff;"></th>
-                                            <th style="color: #fff;"></th>
-                                            <th style="color: #fff;"></th>
-                                            <th style="color: #fff;"></th>                                            
+                                            <tr>
+                                                <th style="color: #fff;">Folio</th>
+                                                <th style="color: #fff;">Nombre / Razón Social</th>
+                                                <th style="color: #fff;">RFC</th>
+                                                <th style="color: #fff;">Representante Legal</th>
+                                                <th style="color: #fff;">Estatus</th>
+                                                <th style="color: #fff;">Expediente Digital</th>
+                                                <th style="color: #fff;">Acciones</th>
+                                                <th style="color: #fff;">Eliminar</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($poderes as $persona)
+                                            @foreach($poderesIniciales as $poder)
+                                                @php
+                                                    $esSuperUsuario = (isset($userRole[0]) && $userRole[0] === "Super Usuario");
+                                                @endphp
                                                 <tr>
-                                                    <td>{{$persona->idAbogado}}</td>
-                                                    <td>{{$persona->tipo}}</td>
+                                                    <td>{{ $poder->idAbogado }}</td>
+                                                    <td>{{ $poder->nombre_patronal_combinado }}</td>
+                                                    <td>{{ $poder->rfc_patronal ?? 'N/A' }}</td>
+                                                    <td>{{ $poder->nombre_representante_combinado }}</td>
+                                                    <td>{!! $poder->estatus_badge !!}</td>
+                                                    <td>{!! $poder->documentos_modal_btn !!}</td>
                                                     <td>
-                                                        @if($persona->tipo == "Fisica")
-                                                            {{$persona->nombres_patronal." ".$persona->primer_apellido_patronal." ".$persona->segundo_apellido_patronal }}
-                                                        @elseif($persona->tipo == "Moral")
-                                                            {{$persona->nombres_patronal}}
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if($persona->reprecentante == "Si" || $persona->nombre_representante != null)
-                                                            {{$persona->nombre_representante." ".$persona->primer_apellido_representante." ".$persona->segundo_apellido_representante}}
-                                                        @else
-                                                            Sin representante legal
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if($persona->tipo == "Fisica")
-                                                            {{$persona->telefono_patronal }}
-                                                        @elseif($persona->tipo == "Moral")
-                                                            {{$persona->numero_representante}}
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if($persona->tipo == "Fisica")
-                                                            {{$persona->email_patronal }}
-                                                        @elseif($persona->tipo == "Moral")
-                                                            {{$persona->correo_representante}}
-                                                        @endif
-                                                    </td>
-                                                    <td>{{\Carbon\Carbon::parse($persona->fechaVigencia)->format('d/m/y')}}</td>
-                                                    <td>
-                                                        @if($persona->tipo == "Moral" || ($persona->tipo == "Fisica" && $persona->reprecentante == "Si"))
-                                                            @if($persona->fechaVigencia == NULL)
-                                                                Sin Validar
-                                                            @elseif($persona->fechaVigencia >= $fechaActual)
-                                                                Vigente
-                                                            @elseif($persona->fechaVigencia  < $fechaActual) 
-                                                                Vencido
-                                                            @endif
-                                                        @else
-                                                            No Aplica
-                                                        @endif
-                                                    </td>
-                                                    <td>{{$persona->estatus}}</td>
-                                                    {{--<td><a target="_blank" href="../storage/app/documentos_abogados/{{$persona->ineDocumento}}">PDF</a></td> 
-                                                    <td>
-                                                        @if($persona->cedulaDocumento == NULL)
-                                                            S/D
-                                                        @else
-                                                            <a target="_blank" href="../storage/app/documentos_abogados/{{$persona->cedulaDocumento}}">PDF</a>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if($persona->representacionDocumento == NULL)
-                                                            S/D
-                                                        @else 
-                                                            <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->representacionDocumento}}'>PDF</a>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if($persona->cedula === "Sin carta poder")
-                                                            S/A
-                                                        @else
-                                                            <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->cedulaDocumento}}'>PDF</a>
-                                                        @endif
-                                                    </td>--}}
-                                                    <td><a target="_blank" href="../storage/app/documentos_abogados/{{$persona->idAbogado}}/{{$persona->ineDocumento}}">PDF</a></td> 
-                                        
-                                                    <td>
-                                                        @if($persona->representacionDocumento == NULL)
-                                                            S/D
-                                                        @else 
-                                                            <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->idAbogado}}/{{$persona->representacionDocumento}}'>PDF</a>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if($persona->cedulaDocumento == NULL)
-                                                            S/D
-                                                        @else
-                                                            <a target="_blank" href="../storage/app/documentos_abogados/{{$persona->idAbogado}}/{{$persona->cedulaDocumento}}">PDF</a>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if($persona->cedula === "Sin carta poder")
-                                                            S/D
-                                                        @else
-                                                            <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->idAbogado}}/{{$persona->anexo_documento}}'>PDF</a>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                         @if($persona->estatus === "Validado")
-                                                            <a class="btn btn-info" href="{{ route('PDFregistroAbogado', $persona->idAbogado)}}" target="_blank">Documento</a>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @can('editar-abogado')
+                                                        <div class="d-flex gap-1 align-items-center">
                                                             <div class="d-flex flex-column gap-1">
-                                                                <a class="btn btn-info"
-                                                                href="{{ route('poderes.edit', $persona->idAbogado) }}"
-                                                                onclick="editar_poder();">
-                                                                    Editar
-                                                                </a>
-
-                                                                <a class="btn btn-warning"
-                                                                href="{{ route('poderes.history', $persona->idAbogado) }}">
-                                                                    Historial
-                                                                </a>
+                                                                <a class="btn btn-sm btn-warning" href="{{ route('poderes.edit', $poder->idAbogado) }}" onclick="editar_poder();"><i class="bi bi-pencil"></i> Editar</a>
+                                                                @if($esSuperUsuario)
+                                                                    <a class="btn btn-sm btn-secondary" href="{{ route('poderes.history', $poder->idAbogado) }}"><i class="bi bi-clock-history"></i> Historial</a>
+                                                                @endif
                                                             </div>
-                                                        @endcan
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex flex-column gap-1 h-100">
-                                                            <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $persona->idAbogado }}" data-tipo="{{ $persona->tipo }}">
-                                                                Agregar representante
-                                                            </a>
+                                                            @if (auth()->user()->can('editar-abogado'))
+                                                                <a href="#" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $poder->idAbogado }}" data-tipo="{{ $poder->tipo }}"><i class="bi bi-person-plus"></i> Agregar</a>
+                                                            @endif
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        @can('borrar-abogado')
-                                                            <form method="POST" action="{{ route('poderes.destroy', $persona->idAbogado) }} ">
-                                                                @csrf
-                                                                <input type="hidden" name="_method" value="DELETE">
-                                                                @if($userRole[0] == "Super Usuario")
-                                                                    <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
-                                                                @endif
-                                                            </form>
-                                                        @endcan
+                                                        @if($esSuperUsuario)
+                                                            @can('borrar-abogado')
+                                                                <form method="POST" action="{{ route('poderes.destroy', $poder->idAbogado) }}" class="form-eliminar-poder">
+                                                                    @csrf
+                                                                    <input type="hidden" name="_method" value="DELETE">
+                                                                    <button class="btn btn-sm btn-danger" type="submit">Borrar</button>
+                                                                </form>
+                                                            @endcan
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -184,12 +95,6 @@
                                     </table>
                                 </div>
                             @endcan
-
-                            <!-- Centramos la paginación a la derecha-->
-                            <div class="pagination justify-content-end">
-                            </div>
-
-                            
                         </div>
                     </div>
                 </div>
@@ -434,6 +339,45 @@
             </div>
         </form>
     </div>
+    <div class="modal fade" id="modalExpedienteDigital" tabindex="-1" aria-labelledby="modalExpedienteLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content" style="box-shadow: 0 5px 15px rgba(0,0,0,.5);">
+                <div class="modal-header" style="background-color: #4A001F; color: white;">
+                    <h5 class="modal-title" id="modalExpedienteLabel">Documentos del Representante</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3"><strong>Representante:</strong> <span id="expediente_nombre_abogado" class="text-muted"></span></p>
+                    
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-envelope-paper text-primary"></i> Carta Poder</span>
+                            <div id="wrapper_cartapoder"></div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-journal-bookmark text-primary"></i> Cédula Profesional</span>
+                            <div id="wrapper_cedula"></div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center" id="li_registro">
+                            <span><i class="bi bi-file-check text-success"></i> Constancia de Registro Oficial</span>
+                            <div id="wrapper_registro"></div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-file-earmark-text text-primary"></i> Documento de Representación</span>
+                            <div id="wrapper_representacion"></div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-card-heading text-primary"></i> Identificación Oficial</span>
+                            <div id="wrapper_ine"></div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 <div id="nuevo_poder" style ="display: none;">
@@ -488,5 +432,101 @@
                 }
             })
         }
+        $(document).ready(function() {
+            // Mover el modal al final del body para evitar conflictos de opacidad (Página en gris)
+            if ($('#modalExpedienteDigital').length) {
+                $('#modalExpedienteDigital').appendTo("body");
+            }
+
+            if ($.fn.DataTable.isDataTable('#tablaPoderesServerSide')) {
+                $('#tablaPoderesServerSide').DataTable().destroy();
+            }
+
+            $('#tablaPoderesServerSide').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "pageLength": 10,
+                "searching": true,
+                "ordering": false,
+                "deferLoading": 10,
+                "ajax": {
+                    "url": "{{ route('poderes.index.ajax') }}",
+                    "type": "GET"
+                },
+                "columnDefs": [
+                    {
+                        "targets": [4, 5, 6, 7],
+                        "render": function (data, type, row) {
+                            return data ? data : ''; 
+                        }
+                    }
+                ],
+                "language": {
+                    "processing": "Consultando base de datos...",
+                    "search": "Buscar Abogado o Razón Social:"
+                }
+            });
+
+            $(document).on('click', '.btn-ver-expediente', function(e) {
+                e.preventDefault();
+                
+                let abogado = $(this).data('abogado');
+                let ine = $(this).data('ine');
+                let cedula = $(this).data('cedula');
+                let rep = $(this).data('representacion');
+                let carta = $(this).data('cartapoder');
+                let registro = $(this).data('registro');
+
+                $('#expediente_nombre_abogado').text(abogado);
+
+                function buildLink(url, fallbackText = 'S/D') {
+                    if (!url || url === '') return '<span class="text-muted fw-semibold">' + fallbackText + '</span>';
+                    if (url === 'S/A') return '<span class="text-muted fw-semibold">S/A</span>';
+                    return '<a href="' + url + '" class="btn btn-xs btn-outline-danger py-0 px-2" target="_blank"><i class="bi bi-file-pdf"></i> PDF</a>';
+                }
+
+                $('#wrapper_ine').html(buildLink(ine));
+                $('#wrapper_cedula').html(buildLink(cedula));
+                $('#wrapper_representacion').html(buildLink(rep));
+                $('#wrapper_cartapoder').html(buildLink(carta, 'S/D'));
+
+                if (registro && registro !== '') {
+                    $('#li_registro').show();
+                    $('#wrapper_registro').html('<a href="' + registro + '" class="btn btn-xs btn-success py-0 px-2" target="_blank"><i class="bi bi-printer"></i> Imprimir</a>');
+                } else {
+                    $('#li_registro').hide();
+                }
+            });
+
+            $(document).on('submit', '.form-eliminar-poder', function(e) {
+                e.preventDefault(); // Detiene el envío inmediato del formulario
+                
+                let formulario = this;
+
+                // Opción A: Si utilizas SweetAlert2 en el proyecto
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: '¿Está seguro de eliminar este poder?',
+                        text: "Esta acción no se puede deshacer y eliminará el registro del abogado del sistema.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, borrar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            formulario.submit(); // Envía el formulario real a la ruta destroy
+                        }
+                    });
+                } 
+                // Opción B: Respaldo nativo si no está cargado SweetAlert2
+                else {
+                    if (confirm("¿Está seguro de que desea eliminar este poder? Esta acción no se puede revertir.")) {
+                        formulario.submit();
+                    }
+                }
+            });
+        });
     </script>
 @endsection
