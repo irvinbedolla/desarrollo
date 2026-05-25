@@ -2190,44 +2190,83 @@ class TurnosController extends Controller
         return view('/cumplimientos/pagar_ratificacion',compact('solicitudes','total'));
     }
 
-    public function vista_previa_ratificacion($id){
+    public function vista_previa_ratificacion($id) {
         $idSolicitud = $id;
-        $id_usuario = auth()->user()->id;
-        $user = User::find($id_usuario);           
-        //$conciliadores  = SeerPerConciliador::where('id_solicitud',$id)->first();
-        $solicitud      = Turnos::find($id);
-        $conciliador    = User::select('name')->where('id', $solicitud->id_conciliador)->first();
+        $solicitud = Turnos::findOrFail($id);
+        $conciliador = User::where('id', $solicitud->id_conciliador)->select('name')->first();
+        $representantes = Poder::find($solicitud->idAbogado);
 
-        $representantes = Poder::find($solicitud["idAbogado"]);
-        //$solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
-        $abogados = Poder::all();
-        //SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
-        $estados        = Estados::all();
-        $municipios     = Municipios::where('estado',16)->get();
-        $conceptos      = Concepto::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
-        $pagos          = Pagos::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
-        $deducciones    = Deducciones::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
-        // Obtener prestaciones y deducciones
-        /*$prestaciones = Concepto::where('id_solicitud', $id)->get();
-        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+        // OPTIMIZACIÓN: Ya no traemos los 3,000 registros aquí. El modal iniciará vacío o cargará vía AJAX.
+        $estados = Estados::select('id', 'nombre')->get();
+        $municipios = Municipios::where('estado', 16)->select('id', 'nombre')->get();
 
-        $conceptosTexto = [];
-        $deduccionesTexto = [];
+        $conceptos   = Concepto::where('id_solicitud', $id)->where('tipo_pago', 'Ratificacion')->get();
+        $pagos       = Pagos::where('id_solicitud', $id)->where('tipo_pago', 'Ratificacion')->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago', 'Ratificacion')->get();
 
-        foreach ($prestaciones as $concepto) {
-            $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
+        $pagoTotal = $conceptos->sum('monto') - $deducciones->sum('monto');
+
+        return view('ratificaciones.vista_previa', compact(
+            'idSolicitud', 'representantes', 'conciliador', 'solicitud', 
+            'estados', 'municipios', 'conceptos', 'pagos', 'deducciones', 'pagoTotal'
+        ));
+    }
+
+    // NUEVO MÉTODO: Responde exclusivamente a las búsquedas del modal en tiempo real
+    public function buscar_abogados_ajax(Request $request) {
+        $buscar = $request->input('search.value'); // Captura lo que el usuario escribe en DataTables
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10); // Límite de 10 registros solicitados
+
+        // Consulta base optimizada seleccionando solo columnas necesarias
+        $query = Poder::select(
+            'idAbogado', 
+            'nombres_patronal', 'primer_apellido_patronal', 'segundo_apellido_patronal', 
+            'rfc_patronal', 
+            'nombre_representante', 'primer_apellido_representante', 'segundo_apellido_representante'
+        );
+
+        // Total de registros sin filtrar
+        $totalRegistros = $query->count();
+
+        // Aplicar filtros dinámicos si el usuario escribe en la barra de búsqueda
+        if (!empty($buscar)) {
+            $query->where(function($q) use ($buscar) {
+                $q->where('nombres_patronal', 'LIKE', "%{$buscar}%")
+                ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
+                ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
+                ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%")
+                ->orWhere('primer_apellido_representante', 'LIKE', "%{$buscar}%");
+            });
         }
 
-        foreach ($deducciones as $deduccion) {
-            $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
-        }*/
+        // Total de registros que coinciden con la búsqueda
+        $registrosFiltrados = $query->count();
 
-        $totalPrestaciones = $conceptos->sum('monto');
-        $totalDeducciones = $deducciones->sum('monto');
-        $pagoTotal = $totalPrestaciones - $totalDeducciones;
+        // Paginación estricta desde la Base de Datos (Únicamente trae 10 resultados)
+        $abogados = $query->offset($start)->limit($length)->get();
 
-        return view('/ratificaciones/vista_previa',compact('idSolicitud','representantes','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones','pagoTotal'));
+        // Mapear los datos al formato JSON estructurado que requiere DataTables
+        $data = [];
+        foreach ($abogados as $abogado) {
+            $nombrePatronal = "{$abogado->nombres_patronal} {$abogado->primer_apellido_patronal} {$abogado->segundo_apellido_patronal}";
+            $nombreRepresentante = "{$abogado->nombre_representante} {$abogado->primer_apellido_representante} {$abogado->segundo_apellido_representante}";
+            
+            $data[] = [
+                $abogado->idAbogado,
+                trim($nombrePatronal),
+                $abogado->rfc_patronal ?? 'N/A',
+                trim($nombreRepresentante),
+                '<button class="btn btn-info" onclick="editar_rol();" type="submit" name="abogado" value="'.$abogado->idAbogado.'">Seleccionar</button>'
+            ];
+        }
 
+        return response()->json([
+            "draw" => intval($request->input('draw')),
+            "recordsTotal" => $totalRegistros,
+            "recordsFiltered" => $registrosFiltrados,
+            "data" => $data
+        ]);
     }
 
     public function editar_ratificacion_revisar(Request $request) {

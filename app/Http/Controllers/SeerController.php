@@ -6452,7 +6452,7 @@ class SeerController extends Controller
 
         return view('/solicitudes/indexConciliador',compact('audiencias'));
     }
-
+    /*
     public function iniciar_audiencia($id){
         if (!session('preserve_edit_session')) {
             session()->forget("audiencia_data_{$id}");
@@ -6499,9 +6499,6 @@ class SeerController extends Controller
         $allCentro = 1;
         $hasAudienciaID = 1;
         $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
-        /*if($citadoCentro->notificacion != 'Centro'){
-            $allCentro = 0;
-        }*/
         foreach ($citadosCentro as $citado){
             if($citado->notificacion == 'Centro'){
                 $allCentro = 0;
@@ -6595,6 +6592,198 @@ class SeerController extends Controller
         }
         else{
             return view('/audiencias/audienciasPatronal',compact('id','audiencia_id','solicitudes', 'citados','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro', 'NUE', 'audiencia'));
+        }
+    }
+    */
+    public function iniciar_audiencia($id) {
+        if (!session('preserve_edit_session')) {
+            session()->forget("audiencia_data_{$id}");
+        }
+
+        $audiencia_id = request()->query('audiencia_id');
+        if (!is_null($audiencia_id) && $audiencia_id !== '') {
+            session(["audiencia_id_{$id}" => $audiencia_id]);
+        }
+
+        $audiencia = Audiencias::where('id', $audiencia_id)->first();
+        $id_usuario = auth()->id();
+
+        // 1. Optimizamos estados trayendo solo lo necesario
+        $solicitudes = SeerPerGeneral::where('conciliador_id', $id_usuario)
+            ->whereIn('estatus', ['Conciliacion', 'No conciliacion', 'Archivado por incomparecencia', 'Reagendada', 'Incompetencia', 'Confirmado'])
+            ->get();
+        
+        $solicitud = SeerPerGeneral::findOrFail($id); 
+        $conciliador = User::select('id','name')->where('id', $solicitud->conciliador_id)->first();
+
+        $NUE = $solicitud->NUE ?? 'Sin NUE';
+        $tipo_solicitud = $solicitud->tipo_solicitud;
+        
+        // Evitamos crash si no hay audiencias previas
+        $audiencia_prev = Audiencias::where('id_solicitud', $solicitud->id)->first();
+        $audienciaId = $audiencia_prev ? $audiencia_prev->id : null;
+        
+        $fechaConfirmacion = $solicitud->fecha_confirmacion ?? now()->toDateString();
+
+        // 2. Optimización de Flags con métodos nativos de Colecciones (Cero bucles for pesados)
+        $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
+        
+        $allCentro = $citadosCentro->contains('notificacion', 'Centro') ? 0 : 1;
+        $hasAudienciaID = $citadosCentro->contains(function($value) { return !is_null($value->audiencia_id); }) ? 0 : 1;
+
+        $sessionKey = "audiencia_data_{$id}";
+        if (!session()->has($sessionKey)) {
+            $solicitanteDB = SeerSolicitante::where('id_solicitud', $id)->first();
+            
+            if ($allCentro == 0) {
+                $queryCitados = SeerCitados::where('id_solicitud', $id)
+                    ->where('notificacion', 'Centro')
+                    ->where('tipo_notificacion', '!=', 'Multa');
+                    
+                if ($hasAudienciaID == 0) {
+                    $queryCitados->where('audiencia_id', $audiencia_id);
+                }
+                $citadosDB = $queryCitados->get();
+            } else {
+                $citadosDB = SeerCitados::where('id_solicitud', $id)->get();
+            }
+            
+            session([$sessionKey => [
+                'solicitante' => $solicitanteDB,
+                'citados' => $citadosDB
+            ]]);
+        }
+
+        $sessionData = session($sessionKey);
+        $solicitante = $sessionData['solicitante'];
+        
+        // 3. SOLUCIÓN AL PROBLEMA N+1: Traer abogados y físicas vinculados en bloque con Eager Loading manual
+        if ($solicitud->tipo_solicitud == 1) {
+            $representantes = collect();
+            
+            // Extraemos todos los IDs únicos para buscarlos en una sola consulta SQL en lugar de usar un bucle
+            $abogadosIds = collect($sessionData['citados'])->pluck('id_abogado')->filter()->unique();
+            $fisicasIds = collect($sessionData['citados'])->pluck('id_fisica')->filter()->unique();
+
+            $abogadosCargados = $abogadosIds->isNotEmpty() ? Poder::whereIn('idAbogado', $abogadosIds)->get()->keyBy('idAbogado') : collect();
+            $fisicasCargadas = $fisicasIds->isNotEmpty() ? PersonaFisica::whereIn('id', $fisicasIds)->get()->keyBy('id') : collect();
+
+            foreach ($sessionData['citados'] as $citado) {
+                $rep = new \stdClass();
+                $rep->id = $citado->id;
+                $rep->nombre = $citado->nombre;
+                $rep->primer_apellido = $citado->primer_apellido;
+                $rep->segundo_apellido = $citado->segundo_apellido;
+                $rep->rfc = $citado->rfc;
+                $rep->id_abogado = $citado->id_abogado;
+                $rep->id_fisica = $citado->id_fisica;
+                $rep->notificacion = $citado->notificacion;
+                $rep->estatus = $citado->estatus;
+                
+                // Asignación instantánea desde memoria externa
+                $abogado = $abogadosCargados->get($citado->id_abogado);
+                $rep->nombre_abogado = $abogado ? $abogado->nombres_patronal : null;
+                $rep->primero_abogado = $abogado ? $abogado->primer_apellido_patronal : null;
+                $rep->segundo_abogado = $abogado ? $abogado->segundo_apellido_patronal : null;
+                
+                $fisica = $fisicasCargadas->get($citado->id_fisica);
+                $rep->nombre_fisica = $fisica ? $fisica->nombre : null;
+                $rep->primer_fisica = $fisica ? $fisica->primer_apellido : null;
+                $rep->segundo_fisica = $fisica ? $fisica->segundo_apellido : null;
+                
+                $representantes->push($rep);
+            }
+        } else if ($solicitud->tipo_solicitud == 2) {
+            $citados = $sessionData['citados'];
+        }
+        
+        // 4. CRÍTICO: Eliminamos Poder::all() y Municipios::all()
+        $estados = Estados::select('id', 'nombre')->get();
+        
+        // Solo cargamos los municipios de Michoacán (estado 16) por defecto para que la vista renderice rápido
+        $municipios = Municipios::where('estado', 16)->select('id', 'nombre')->get();
+
+        $viewName = ($tipo_solicitud == "1") ? 'audiencias.audiencias' : 'audiencias.audienciasPatronal';
+
+        return view($viewName, compact(
+            'id', 'audiencia_id', 'solicitudes', 'solicitante', 'conciliador', 
+            'solicitud', 'estados', 'municipios', 'fechaConfirmacion', 'allCentro', 'NUE', 'audiencia'
+        ) + ($tipo_solicitud == "1" ? compact('representantes') : compact('citados')));
+    }
+
+    public function buscar_abogados_audiencia_ajax(Request $request) {
+        try {
+            $buscar = $request->input('search.value');
+            $start = $request->input('start', 0);
+            $length = $request->input('length', 10);
+            
+            // Obtenemos la fecha de hoy en formato Y-m-d para comparar la vigencia
+            $hoy = \Carbon\Carbon::now()->toDateString();
+
+            // 1. Consulta base optimizada
+            $query = Poder::select('*'); 
+
+            $totalRegistros = $query->count();
+
+            if (!empty($buscar)) {
+                $query->where(function($q) use ($buscar) {
+                    $q->where('nombres_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%");
+                });
+            }
+
+            $registrosFiltrados = $query->count();
+            $abogados = $query->offset(intval($start))->limit(intval($length))->get();
+
+            $data = [];
+            foreach ($abogados as $abogado) {
+                $idActual = $abogado->idAbogado ?? $abogado->id;
+
+                // Limpieza y unión de cadenas de nombres
+                $nombrePatronal = trim(($abogado->nombres_patronal ?? '') . ' ' . ($abogado->primer_apellido_patronal ?? '') . ' ' . ($abogado->segundo_apellido_patronal ?? ''));
+                $rfcPatronal = trim(($abogado->rfc_patronal ?? ''));
+                $nombreRepresentante = trim(($abogado->nombre_representante ?? '') . ' ' . ($abogado->primer_apellido_representante ?? '') . ' ' . ($abogado->segundo_apellido_representante ?? ''));
+                
+                // 2. RÉPLICA EXACTA DE TUS CONDICIONES DE NEGOCIO
+                $isVencido = (!is_null($abogado->fechaVigencia) && $abogado->fechaVigencia < $hoy);
+                $requiereValidacion = ($abogado->estatus !== 'Validado');
+
+                if ($isVencido) {
+                    $accionHtml = '<button class="btn btn-info" onclick="editar_rol();" type="submit" name="abogado" value="' . $idActual . '" disabled>Seleccionar</button>' .
+                                '<span class="ms-2 text-danger fw-semibold">Sin vigencia</span>';
+                } elseif ($requiereValidacion) {
+                    $accionHtml = '<button class="btn btn-info" onclick="editar_rol();" type="submit" name="abogado" value="' . $idActual . '" disabled>Seleccionar</button>' .
+                                '<span class="ms-2 text-danger fw-semibold">Requiere validación</span>';
+                } else {
+                    $accionHtml = '<button class="btn btn-info" onclick="editar_rol();" type="submit" name="abogado" value="' . $idActual . '">Seleccionar</button>' .
+                                '<span class="ms-2 text-success fw-semibold">Elegible</span>';
+                }
+
+                $data[] = [
+                    $idActual,
+                    $nombrePatronal ?: 'Sin nombre patronal',
+                    $rfcPatronal ?: 'Sin RFC',
+                    $nombreRepresentante ?: 'Sin representante',
+                    $accionHtml // Inyección directa del bloque condicional
+                ];
+            }
+
+            return response()->json([
+                "draw" => intval($request->input('draw')),
+                "recordsTotal" => intval($totalRegistros),
+                "recordsFiltered" => intval($registrosFiltrados),
+                "data" => $data
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => $e->getMessage(),
+                "data" => [],
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0
+            ], 500);
         }
     }
 

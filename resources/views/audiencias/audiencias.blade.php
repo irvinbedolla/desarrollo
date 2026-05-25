@@ -317,60 +317,31 @@
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                <form method="POST" action="{{ route('seleccionar_abogado') }} ">
-                    @csrf
-                    <input type="hidden" id="modal-id" name="citado" value="">
-                    <input type="hidden" name="solicitud" value="{{$solicitud->id}}">
-                    <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
-                    <table id="tabla1" class="table-striped" style="width:100%">
-                        <thead style="background-color: #4A001F;">   
-                            <!--<th style="display: none;">ID</th>-->
-                            <th style="color: #fff;">Folio</th>
-                            <th style="color: #fff;">Nombre</th>
-                            <th style="color: #fff;">Representante</th>
-                            <th style="color: #fff;">Acciones</th>
-                        </thead>
-                        <tbody class="contenidobusqueda">
-                            @foreach($abogados as $abogado)
-                                <tr>
-                                    <td>{{$abogado->idAbogado}}</td>
-                                    <td>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</td>
-                                    <td style="color: #191717;">{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</td>
-                                    <td>
-                                        @php
-                                            //Vigencia vencida => fechaVigencia menor a hoy
-                                            $isVencido = (!is_null($abogado->fechaVigencia) && $abogado->fechaVigencia < $hoy);
-                                            $requiereValidacion = ($abogado->estatus != 'Validado');
-                                        @endphp
-                                        @if ($isVencido)
-                                            <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}" disabled>Seleccionar</button>
-                                            <span class="ms-2 text-danger fw-semibold">Sin vigencia</span>
-                                        @elseif ($requiereValidacion)
-                                            <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}" disabled>Seleccionar</button>
-                                            <span class="ms-2 text-danger fw-semibold">Requiere validación</span>
-                                        @else
-                                            <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}">Seleccionar</button>
-                                            <span class="ms-2 text-success fw-semibold">Elegible</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </form>
+                    <form method="POST" action="{{ route('seleccionar_abogado') }}">
+                        @csrf
+                        <input type="hidden" id="modal-id" name="citado" value="">
+                        <input type="hidden" name="solicitud" value="{{ $solicitud->id }}">
+                        <table id="tablaAudienciasServerSide" class="table table-striped" style="width:100%">
+                            <thead style="background-color: #4A001F;">   
+                                <th style="color: #fff;">Folio</th>
+                                <th style="color: #fff;">Nombre</th>
+                                <th style="color: #fff;">RFC</th>
+                                <th style="color: #fff;">Representante</th>
+                                <th style="color: #fff;">Acciones</th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </form>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar Registro Patronal</button>
-                <!--
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarDerecho">Agregar por propio derecho</button>
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalActualizaCitados">Actualizar citado</button>
-                -->
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
 </div>
+
 <!-- Modal Agregar Citados -->
 <div class="modal fade" id="modalAgregarCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST'  enctype="multipart/form-data" name="AgregarRepresentante" id="AgregarRepresentante" action="{{route('insertar_citado')}}">
@@ -1357,7 +1328,6 @@
         </div>
     </form>
 </div>
-
 <div class="modal fade" id="ModalDesistimiento" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST' action="{{route('desistimiento_audiencia')}}">
         @csrf
@@ -1496,7 +1466,6 @@
         </div>
     @endif
 </div>
-
 <div class="modal fade" id="ModalEmitirMultas" tabindex="-1" aria-labelledby="ModalEmitirMultasLabel" aria-hidden="true">
     <form class="needs-validation novalidate" method="POST" action="{{route('emitir_multas')}}">
         @csrf
@@ -1531,7 +1500,6 @@
         </div>
     </form>
 </div>
-
 <div class="modal fade" id="modalAgregarDerecho" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation' novalidate method='POST' enctype="multipart/form-data" name="AgregarPersonaFisica" id="AgregarPersonaFisica" action="{{route('insertar_citado_PF')}}">
         @csrf
@@ -1671,7 +1639,6 @@
         </div>
     </form>
 </div>
-
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>
@@ -1747,7 +1714,45 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-         $('.open-modal').click(function() {
+        if ($.fn.DataTable.isDataTable('#tablaAudienciasServerSide')) {
+            $('#tablaAudienciasServerSide').DataTable().destroy();
+        }
+
+        $('#tablaAudienciasServerSide').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "pageLength": 10,
+            "searching": true,
+            "ordering": false,
+            "ajax": {
+                "url": "{{ route('buscar_abogados_audiencia_ajax') }}",
+                "type": "GET"
+            },
+            // Renderizador de HTML para la columna de acciones dinámicas
+            "columnDefs": [
+                {
+                    "targets": 3, // Cuarta columna (Folio=0, Nombre=1, Representante=2, Acciones=3)
+                    "render": function (data, type, row) {
+                        return data; 
+                    }
+                }
+            ],
+            "language": {
+                "processing": "Consultando base de datos...",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "zeroRecords": "No se encontraron representantes",
+                "info": "Mostrando _START_ al _END_ de _TOTAL_ registros",
+                "infoEmpty": "0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                "search": "Filtrar por Nombre o Representante:",
+                "paginate": {
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        });
+
+        $('.open-modal').click(function() {
             const id = $(this).data('id'); // Obtiene el valor de data-id
 
             document.getElementById('modal-id').value = id;
