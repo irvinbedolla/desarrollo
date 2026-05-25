@@ -1312,7 +1312,7 @@
                                                                         </div>
                                                 
                                                                         <div class="col-sm-4">
-                                                                            <label>Citatorio</label><br>
+                                                                            <label>Notificacion: {{ $citado->notificacion }}</label><br>
                                                                             @if(!empty($citado->id))
                                                                                 <a class="btn btn-success btn-xs"
                                                                                 href="{{ route('pdfCitatorioAudiencia', [
@@ -1330,7 +1330,7 @@
                                                                         </div>
 
                                                                         <div class="col-sm-4">
-                                                                            <label>Comparecencia</label><br>
+                                                                            <label>Comparece en Audiencia</label><br>
                                                                             @if($general->tipo_solicitud == 1)
                                                                                 @if($citado->id_abogado)
                                                                                 <b>Si</b>
@@ -1677,7 +1677,6 @@
                                             </!--div-->
                                         </div>
                                     </div>
-                                    
                                     <div id="confirmacion" class="tabcontent">
                                         <div id="tabla_confirmar" class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12"><br>
