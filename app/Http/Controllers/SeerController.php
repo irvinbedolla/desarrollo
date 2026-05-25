@@ -92,7 +92,7 @@ class SeerController extends Controller
 
                 if ($poder && !empty($poder->ineDocumento) && $poder->ineDocumento !== 'Sin documento') {
                     $fileName = $poder->ineDocumento;
-                    $baseDir  = 'documentos_abogados/';
+                    $baseDir  = 'documentos_abogados/' . $poder->idAbogado . '/';
                 }
             }
         }
@@ -5254,6 +5254,8 @@ class SeerController extends Controller
                 'NumFolio'         => $folio,
             ];
             Mail::to($variables['email'])->send(new SolicitudMail($pdfContent, $variables));
+
+            $mensaje = '';
         
         return view('solicitudes.aviso',compact('id','mensaje','delegacion'));
     }
@@ -7077,26 +7079,35 @@ class SeerController extends Controller
                         'num_identificacion'        => $data["num_identificacion_pF"],
                 );
 
-                $nombre_ine = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_IDENTIFICACION.pdf";
-                $path = Storage::putFileAs(
-                    'documentos_abogados', $request->file('documentoIne_pFSR'), $nombre_ine
+                // Crear primero el registro para obtener idAbogado y guardar documentos en su carpeta.
+                $nuevoAbogado = Poder::create($data_insertar);
+                $idAbogado = $nuevoAbogado->idAbogado;
+                $carpetaAbogado = 'documentos_abogados/' . $idAbogado;
+
+                $nombre_ine_original = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_IDENTIFICACION.pdf";
+                $nombre_ine = $idAbogado . '_' . $nombre_ine_original;
+                Storage::putFileAs(
+                    $carpetaAbogado, $request->file('documentoIne_pFSR'), $nombre_ine
                 );
                 if(!isset($data["documentoAnexo_pFSR"])){
                     $nombre_anexo = "Sin anexo";
                 }
                 else{
-                    $nombre_anexo = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_ANEXO.pdf";
-                    $path = Storage::putFileAs(
-                        'documentos_abogados', $request->file('documentoAnexo_pFSR'), $nombre_anexo
+                    $nombre_anexo_original = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_ANEXO.pdf";
+                    $nombre_anexo = $idAbogado . '_' . $nombre_anexo_original;
+                    Storage::putFileAs(
+                        $carpetaAbogado, $request->file('documentoAnexo_pFSR'), $nombre_anexo
                     );
                 }
-                $data_insertar["ineDocumento"] = $nombre_ine;
-                $data_insertar["anexo_documeto"] = $nombre_anexo;
+
+                $nuevoAbogado->ineDocumento = $nombre_ine;
+                $nuevoAbogado->anexo_documeto = $nombre_anexo;
+                $nuevoAbogado->save();
                 
                 if(isset($data["num_int_pF"])){
                    $data_insertar["num_int_pF"] = $data["num_int_pF"];
                 }
-                     $nuevoAbogado = Poder::create($data_insertar);
+                     // $nuevoAbogado ya fue creado arriba para poder nombrar carpeta/archivos.
 
                      $id_user_historial = Auth::id() ?? 0;
                      $historialPayload = $nuevoAbogado->toArray();
@@ -7148,32 +7159,42 @@ class SeerController extends Controller
                         'num_identificacion'        => $data["num_identificacion_pFCR"],
                 );
 
-                $nombre_ine = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_IDENTIFICACION.pdf";
-                $path = Storage::putFileAs(
-                    'documentos_abogados', $request->file('documentoIne_pF'), $nombre_ine
+                // Crear primero el registro para obtener idAbogado y guardar documentos en su carpeta.
+                $nuevoAbogado = Poder::create($data_insertar);
+                $idAbogado = $nuevoAbogado->idAbogado;
+                $carpetaAbogado = 'documentos_abogados/' . $idAbogado;
+
+                $nombre_ine_original = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_IDENTIFICACION.pdf";
+                $nombre_ine = $idAbogado . '_' . $nombre_ine_original;
+                Storage::putFileAs(
+                    $carpetaAbogado, $request->file('documentoIne_pF'), $nombre_ine
                 );
-                $nombre_reprecentacion = $data["nombre_representante_pF"]." ".$data["primer_representante_pF"]." ".$data["segundo_representante_pF"]."-FISICA"."_REPRESENTACION.pdf";
-                $path = Storage::putFileAs(
-                    'documentos_abogados', $request->file('documentoRepresentacion_pF'), $nombre_reprecentacion
+                $nombre_reprecentacion_original = $data["nombre_representante_pF"]." ".$data["primer_representante_pF"]." ".$data["segundo_representante_pF"]."-FISICA"."_REPRESENTACION.pdf";
+                $nombre_reprecentacion = $idAbogado . '_' . $nombre_reprecentacion_original;
+                Storage::putFileAs(
+                    $carpetaAbogado, $request->file('documentoRepresentacion_pF'), $nombre_reprecentacion
                 );
-                $nombre_poder = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_PODER.pdf";
-                $path = Storage::putFileAs(
-                    'documentos_abogados', $request->file('documentoPoder_pF'), $nombre_poder
+                $nombre_poder_original = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_PODER.pdf";
+                $nombre_poder = $idAbogado . '_' . $nombre_poder_original;
+                Storage::putFileAs(
+                    $carpetaAbogado, $request->file('documentoPoder_pF'), $nombre_poder
                 );
                 if(!isset($data["documentoAnexo_pF"])){
                     $nombre_anexo = "Sin anexo";
                 }
                 else{
-                    $nombre_anexo = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_ANEXO.pdf";
-                    $path = Storage::putFileAs(
-                        'documentos_abogados', $request->file('documentoAnexo_pF'), $nombre_anexo
+                    $nombre_anexo_original = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_ANEXO.pdf";
+                    $nombre_anexo = $idAbogado . '_' . $nombre_anexo_original;
+                    Storage::putFileAs(
+                        $carpetaAbogado, $request->file('documentoAnexo_pF'), $nombre_anexo
                     );
                 }
 
-                $data_insertar["ineDocumento"] = $nombre_ine;
-                $data_insertar["representacionDocumento"] = $nombre_reprecentacion;
-                $data_insertar["cedulaDocumento"] = $nombre_poder;
-                $data_insertar["anexo_documeto"] = $nombre_anexo;
+                $nuevoAbogado->ineDocumento = $nombre_ine;
+                $nuevoAbogado->representacionDocumento = $nombre_reprecentacion;
+                $nuevoAbogado->cedulaDocumento = $nombre_poder;
+                $nuevoAbogado->anexo_documeto = $nombre_anexo;
+                $nuevoAbogado->save();
                 if(isset($data["num_int_pF"])){
                    $data_insertar["mun_int_patronal"] = $data["num_int_pF"];
                 }
@@ -7181,7 +7202,7 @@ class SeerController extends Controller
                     $data_insertar["fechaVigencia"] = $data["fecha_vigencia_pF"];
                 }
 
-                $nuevoAbogado = Poder::create($data_insertar);
+                // $nuevoAbogado ya fue creado arriba para poder nombrar carpeta/archivos.
 
                 $id_user_historial = Auth::id() ?? 0;
                 $historialPayload = $nuevoAbogado->toArray();
@@ -7230,32 +7251,42 @@ class SeerController extends Controller
                     'num_identificacion'            => $data["num_identificacion_Moral"]
             );
 
-            $nombre_ine = $data["razon"]."-MORAL"."_IDENTIFICACION.pdf";
-            $path = Storage::putFileAs(
-                'documentos_abogados', $request->file('documentoIne_Moral'), $nombre_ine
+            // Crear primero el registro para obtener idAbogado y guardar documentos en su carpeta.
+            $nuevoAbogado = Poder::create($data_insertar);
+            $idAbogado = $nuevoAbogado->idAbogado;
+            $carpetaAbogado = 'documentos_abogados/' . $idAbogado;
+
+            $nombre_ine_original = $data["razon"]."-MORAL"."_IDENTIFICACION.pdf";
+            $nombre_ine = $idAbogado . '_' . $nombre_ine_original;
+            Storage::putFileAs(
+                $carpetaAbogado, $request->file('documentoIne_Moral'), $nombre_ine
             );
-            $nombre_reprecentacion = $data["razon"]."-MORAL"."_REPRESENTACION.pdf";
-            $path = Storage::putFileAs(
-                'documentos_abogados', $request->file('documentoRepresentacion_Moral'), $nombre_reprecentacion
+            $nombre_reprecentacion_original = $data["razon"]."-MORAL"."_REPRESENTACION.pdf";
+            $nombre_reprecentacion = $idAbogado . '_' . $nombre_reprecentacion_original;
+            Storage::putFileAs(
+                $carpetaAbogado, $request->file('documentoRepresentacion_Moral'), $nombre_reprecentacion
             );
-            $nombre_poder = $data["razon"]."-MORAL"."_PODER.pdf";
-            $path = Storage::putFileAs(
-                'documentos_abogados', $request->file('documentoPoder'), $nombre_poder
+            $nombre_poder_original = $data["razon"]."-MORAL"."_PODER.pdf";
+            $nombre_poder = $idAbogado . '_' . $nombre_poder_original;
+            Storage::putFileAs(
+                $carpetaAbogado, $request->file('documentoPoder'), $nombre_poder
             );
             if(!isset($data["documentoAnexo"])){
                 $nombre_anexo = "Sin anexo";
             }
             else{
-                $nombre_anexo = $data["razon"]."-MORAL"."_ANEXO.pdf";
-                $path = Storage::putFileAs(
-                    'documentos_abogados', $request->file('documentoAnexo'), $nombre_anexo
+                $nombre_anexo_original = $data["razon"]."-MORAL"."_ANEXO.pdf";
+                $nombre_anexo = $idAbogado . '_' . $nombre_anexo_original;
+                Storage::putFileAs(
+                    $carpetaAbogado, $request->file('documentoAnexo'), $nombre_anexo
                 );
             }
 
-            $data_insertar["ineDocumento"] = $nombre_ine;
-            $data_insertar["representacionDocumento"] = $nombre_reprecentacion;
-            $data_insertar["cedulaDocumento"] = $nombre_poder;
-            $data_insertar["anexo_documeto"] = $nombre_anexo;
+            $nuevoAbogado->ineDocumento = $nombre_ine;
+            $nuevoAbogado->representacionDocumento = $nombre_reprecentacion;
+            $nuevoAbogado->cedulaDocumento = $nombre_poder;
+            $nuevoAbogado->anexo_documeto = $nombre_anexo;
+            $nuevoAbogado->save();
             if(isset($data["num_int"])){
                 $data_insertar["mun_int_patronal"] = $data["num_int"];
             }
@@ -7263,7 +7294,7 @@ class SeerController extends Controller
                 $data_insertar["fechaVigencia"] = $data["fecha_vigencia_Moral"];
             }
 
-            $nuevoAbogado = Poder::create($data_insertar);
+            // $nuevoAbogado ya fue creado arriba para poder nombrar carpeta/archivos.
 
             $id_user_historial = Auth::id() ?? 0;
             $historialPayload = $nuevoAbogado->toArray();
@@ -9203,6 +9234,39 @@ class SeerController extends Controller
             $pagoTotal = $totalPrestaciones - $totalDeducciones;
         }
 
+        $fecha_reinstalacion = null;
+        try {
+            if ($pagos instanceof \Illuminate\Support\Collection) {
+                $pagoReinst = $pagos->first(function ($p) {
+                    return isset($p->monto) && is_numeric($p->monto) && (float) $p->monto == 0.0 && !empty($p->fecha);
+                });
+                if ($pagoReinst && !empty($pagoReinst->fecha)) {
+                    $fecha_reinstalacion = $pagoReinst->fecha;
+                }
+            }
+
+            if (empty($fecha_reinstalacion)) {
+                $pagoReinstDb = Pagos::where('id_solicitud', $id)
+                    ->where('tipo_pago', 'Audiencia')
+                    ->where('monto', 0)
+                    ->orderBy('fecha', 'asc')
+                    ->first();
+                if ($pagoReinstDb && !empty($pagoReinstDb->fecha)) {
+                    $fecha_reinstalacion = $pagoReinstDb->fecha;
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('No se pudo determinar fecha_reinstalacion en VerPDFConvenioRei', [
+                'id_solicitud' => $id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        if (empty($fecha_reinstalacion)) {
+            $fecha_reinstalacion = $datosAudiencia->fecha_audiencia
+                ?? ($audiencia->fecha_audiencia ?? null);
+        }
+
         // Asegurar que $datosAudiencia tenga la propiedad monto (si se uso sesión puede no existir)
         if (isset($datosAudiencia) && is_object($datosAudiencia) && !property_exists($datosAudiencia, 'monto')) {
             // Tomar monto de la sesión si existe, si no usar el cálculo de prestaciones menos deducciones
@@ -9410,7 +9474,7 @@ class SeerController extends Controller
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
         'gratificacionETexto','gratificacionFTexto','otrasTexto',*/'pagosDif','conciliador','prestaciones','solicitante','citados','audiencia','pagoTotal','abogado',
         'conceptosTexto', 'deduccionesTexto','municipioEmpresa', 'estadoEmpresa','descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','datosAudiencia','delegado',
-        'abogadosConvenio', 'descripcionIdentificacionPMap', 'motivos'))
+        'abogadosConvenio', 'descripcionIdentificacionPMap', 'motivos', 'fecha_reinstalacion'))
         ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -11917,7 +11981,7 @@ class SeerController extends Controller
         ->get();
         
          //Documentos subidos
-        $documento_subidos = DocumentosSolicitud::where('id_solicitud',$id)->where('tramite','Audiencia')->get();
+        $documento_subidos = DocumentosSolicitud::where('id_solicitud',$documento_general->id)->where('tramite','Audiencia')->get();
 
         return view('solicitudes.verDocumentos',compact('documento_general','documento_solicitante','documento_abogado','documento_fisica','documento_subidos','documentos_comparecencia'));
      }

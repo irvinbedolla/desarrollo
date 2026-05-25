@@ -116,27 +116,27 @@
                                                             <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->cedulaDocumento}}'>PDF</a>
                                                         @endif
                                                     </td>--}}
-                                                    <td><a target="_blank" href="../storage/app/documentos_abogados/{{$persona->ineDocumento}}">PDF</a></td> 
+                                                    <td><a target="_blank" href="../storage/app/documentos_abogados/{{$persona->idAbogado}}/{{$persona->ineDocumento}}">PDF</a></td> 
                                         
                                                     <td>
                                                         @if($persona->representacionDocumento == NULL)
                                                             S/D
                                                         @else 
-                                                            <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->representacionDocumento}}'>PDF</a>
+                                                            <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->idAbogado}}/{{$persona->representacionDocumento}}'>PDF</a>
                                                         @endif
                                                     </td>
                                                     <td>
                                                         @if($persona->cedulaDocumento == NULL)
                                                             S/D
                                                         @else
-                                                            <a target="_blank" href="../storage/app/documentos_abogados/{{$persona->cedulaDocumento}}">PDF</a>
+                                                            <a target="_blank" href="../storage/app/documentos_abogados/{{$persona->idAbogado}}/{{$persona->cedulaDocumento}}">PDF</a>
                                                         @endif
                                                     </td>
                                                     <td>
                                                         @if($persona->cedula === "Sin carta poder")
                                                             S/D
                                                         @else
-                                                            <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->anexo_documento}}'>PDF</a>
+                                                            <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->idAbogado}}/{{$persona->anexo_documento}}'>PDF</a>
                                                         @endif
                                                     </td>
                                                     <td>
