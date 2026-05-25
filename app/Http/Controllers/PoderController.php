@@ -1041,50 +1041,59 @@ class PoderController extends Controller
                  'tipo_identificacion'           => $data["tipo_identificacion_pFCR"],
                  'num_identificacion'            => $data["num_identificacion_pFCR"]
          );
+
+     $data_insertar['ineDocumento'] = $poder->ineDocumento;
+     $data_insertar['representacionDocumento'] = $poder->representacionDocumento;
+     $data_insertar['cedulaDocumento'] = $poder->cedulaDocumento;
+     $data_insertar['anexo_documeto'] = 'Sin anexo';
  
-         //Acta Constitutiva
+         $nuevoAbogado = Poder::create($data_insertar);
+         $nuevoIdAbogado = $nuevoAbogado->idAbogado;
+         $carpetaAbogado = 'documentos_abogados/' . $nuevoIdAbogado;
+
          if ($poder->tipo == "Moral" && $request->hasFile('documentoActa_Moral')) {
-             $nombre_ine = $poder->nombres_patronal."-AGREGADO_ACTACONSTITUTIVA.pdf";
-             $path = Storage::putFileAs(
-                 'documentos_abogados', $request->file('documentoActa_Moral'), $nombre_ine
-             );
-             $data_insertar['ineDocumento'] = $nombre_ine;
-         } else {
-             //Si es Física (o Moral sin archivo nuevo), hereda el documento original 
-             $data_insertar['ineDocumento'] = $poder->ineDocumento;
+             $nombre_ine_original = $poder->nombres_patronal."-AGREGADO_ACTACONSTITUTIVA.pdf";
+             $nombre_ine = $nuevoIdAbogado . '_' . $nombre_ine_original;
+             Storage::putFileAs($carpetaAbogado, $request->file('documentoActa_Moral'), $nombre_ine);
+             $nuevoAbogado->ineDocumento = $nombre_ine;
          }
- 
+
          if ($request->hasFile('documentoRepresentacion_pF')) {
-             $nombre_reprecentacion = $data["nombre_representante_pF"]." ".$data["primer_representante_pF"]." ".$data["segundo_representante_pF"]."-AGREGADO_REPRESENTACION.pdf";
-             $path = Storage::putFileAs(
-                 'documentos_abogados', $request->file('documentoRepresentacion_pF'), $nombre_reprecentacion
-             );
-             $data_insertar['representacionDocumento'] = $nombre_reprecentacion;
+             $nombre_reprecentacion_original = $data["nombre_representante_pF"]." ".$data["primer_representante_pF"]." ".$data["segundo_representante_pF"]."-AGREGADO_REPRESENTACION.pdf";
+             $nombre_reprecentacion = $nuevoIdAbogado . '_' . $nombre_reprecentacion_original;
+             Storage::putFileAs($carpetaAbogado, $request->file('documentoRepresentacion_pF'), $nombre_reprecentacion);
+             $nuevoAbogado->representacionDocumento = $nombre_reprecentacion;
          }
- 
+
+         if (empty($nuevoAbogado->representacionDocumento)) {
+             $nuevoAbogado->representacionDocumento = $poder->representacionDocumento;
+         }
+
          if ($request->hasFile('documentoPoder_pF')) {
-             $nombre_poder = $poder->nombres_patronal." ".$poder->primer_apellido_patronal." ".$poder->segundo_apellido_patronal."-AGREGADO_PODER.pdf";
-             $path = Storage::putFileAs(
-                 'documentos_abogados', $request->file('documentoPoder_pF'), $nombre_poder
-             );
-             $data_insertar['cedulaDocumento'] = $nombre_poder;
+             $nombre_poder_original = $poder->nombres_patronal." ".$poder->primer_apellido_patronal." ".$poder->segundo_apellido_patronal."-AGREGADO_PODER.pdf";
+             $nombre_poder = $nuevoIdAbogado . '_' . $nombre_poder_original;
+             Storage::putFileAs($carpetaAbogado, $request->file('documentoPoder_pF'), $nombre_poder);
+             $nuevoAbogado->cedulaDocumento = $nombre_poder;
          }
- 
+
+         if (empty($nuevoAbogado->cedulaDocumento)) {
+             $nuevoAbogado->cedulaDocumento = $poder->cedulaDocumento;
+         }
+
          if ($request->hasFile('documentoAnexo_pF')) {
-             $nombre_anexo = $poder->nombres_patronal." ".$poder->primer_apellido_patronal." ".$poder->segundo_apellido_patronal."-AGREGADO_ANEXO.pdf";
-             $path = Storage::putFileAs(
-                 'documentos_abogados', $request->file('documentoAnexo_pF'), $nombre_anexo
-             );
-             $data_insertar['anexo_documeto'] = $nombre_anexo;
+             $nombre_anexo_original = $poder->nombres_patronal." ".$poder->primer_apellido_patronal." ".$poder->segundo_apellido_patronal."-AGREGADO_ANEXO.pdf";
+             $nombre_anexo = $nuevoIdAbogado . '_' . $nombre_anexo_original;
+             Storage::putFileAs($carpetaAbogado, $request->file('documentoAnexo_pF'), $nombre_anexo);
+             $nuevoAbogado->anexo_documeto = $nombre_anexo;
          } else {
-             $data_insertar['anexo_documeto'] = "Sin anexo";
+             $nuevoAbogado->anexo_documeto = "Sin anexo";
          }
  
          if(isset($data["fecha_vigencia_pF"])){
-             $data_insertar["fechaVigencia"] = $data["fecha_vigencia_pF"];
+             $nuevoAbogado->fechaVigencia = $data["fecha_vigencia_pF"];
          }
- 
-         $nuevoAbogado = Poder::create($data_insertar);
+
+         $nuevoAbogado->save();
          
          $historialPayload = $nuevoAbogado->toArray();
          unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
