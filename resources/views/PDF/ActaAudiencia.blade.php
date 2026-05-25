@@ -99,7 +99,6 @@
                 <p><center><b>
                     CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br>
                     ACTA DE AUDIENCIA DE CONCILIACIÓN     </b></center></p><br>
-
                 <p>
                     En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ \Carbon\Carbon::parse($solicitud->hora)->format('H:i') }} horas del
                     {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, hora y día señalados para la celebración de la Audiencia de Conciliación 
@@ -108,8 +107,56 @@
                     Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, 684-F, 684-G y 684-I, de la 
                     Ley Federal del Trabajo, artículo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
+                    
+                    {{-- PARTE SOLICITANTE --}}
+                    @if($abogado->reprecentante === 'No' && $abogado->tipo === 'Fisica')
+                        La parte <b>empleadora @if(is_null($abogado->primer_apellido_patronal) && is_null($abogado->segundo_apellido_patronal)) {{ $abogado->nombres_patronal }} @else {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }} @endif</b> 
+                        se identifica con <b>{{ mb_strtoupper($abogado->tipo_identificacion, 'UTF-8') }}</b>, Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, se declara ser una persona mayor de edad, por lo 
+                        que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                    @elseif($abogado->reprecentante == 'Si')
+                        La parte <b>empleadora @if(is_null($abogado->primer_apellido_patronal) && is_null($abogado->segundo_apellido_patronal)) {{ $abogado->nombres_patronal }} @else {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }} @endif</b>
+                        comparece a través de su <b>representante legal {{ $abogado->nombre_representante }} {{ $abogado->primer_apellido_representante }} {{ $abogado->segundo_apellido_representante }}</b>, quien se
+                        identifica con <b>{{ mb_strtoupper($abogado->tipo_identificacion, 'UTF-8') }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, así como <b>{{ $abogado->descipcion_poder }}</b>.
+                    @elseif($abogado->reprecentante == 'No'  && $abogado->tipo == 'Moral')
+                        La parte <b>empleadora @if(is_null($abogado->primer_apellido_patronal) && is_null($abogado->segundo_apellido_patronal)) {{ $abogado->nombres_patronal }} @else {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }} @endif</b> 
+                        se identifica con <b>{{ $abogado->tipo_identificacion }}</b>, de número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, declara ser una persona
+                        mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                    @endif
+                </p> 
+                    
+                    {{--La parte solicitante manifiesta que presento solicitud el dia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} para iniciar el procedimiento de conciliacion 
+                    prejudicial ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <br><br>--}}
 
-                    La parte citada <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> quien se identifica con 
+                    La parte trabajadora:
+                    {{--@foreach ($citados as $citado)--}}
+                        {{--@if($solicitud->tipo_solicitud == 1)--}}
+                           {{-- @if($citado->tipo_persona == "Moral")
+                                <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}, comparece a través de su representante legal {{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b> quien se identifica con 
+                                <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>, en términos de la  <b>{{  $citado->abogado->descipcion_poder }},</b> 
+                                identificaciones que concuerdan  con sus rasgos fisicos y que en este acto se agrega copia de las mismas al expediente para los efectos legales y administrativos correspondientes.<br>
+                            @else
+                                @if($citado->abogado->reprecentante == "Si")
+                                    <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}, comparece a través de su representante legal {{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b> quien se identifica con 
+                                    <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>, en términos de la  <b>{{  $citado->abogado->descipcion_poder }}</b>
+                                    </b><br>
+                                @else--}}
+                                    <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador ?? ''}}</b> quien comparece por derecho propio y se identifica con
+                                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b>, de Número <b>{{ $solicitud->num_identificacion}}</b> expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b>,
+                                    y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.<br><br>
+                                {{--@endif
+                            @endif
+                        @else
+                            @php
+                                $descCitado = NULL;
+                                if (isset($descripcionIdentificacionCitado) && array_key_exists($citado->id, $descripcionIdentificacionCitado)) {
+                                    $descCitado = $descripcionIdentificacionCitado[$citado->id];
+                                }
+                            @endphp
+                            <b>{{ $citado->nombre }} {{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>, quien se identifica con <b>{{ $citado->tipo_identificacion_comparecencia }}</b>, de número <b>{{ $citado->num_identificacion_comparecencia }}</b> 
+                            expedida a su favor por <b>{{ $descCitado }}</b>, se declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                        @endif
+                    @endforeach --}}
+                    {{--La parte citada <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> quien se identifica con 
                     <b>{{ mb_strtoupper($solicitud->tipo_identificacion, 'UTF-8') }}</b>, de Número <b>{{ $solicitud->num_identificacion }}</b> expedida a su favor por 
                     <b>{{ $descripcionIdentificacionS }}</b> y, por la parte solicitante
                     <b>@if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa))
@@ -117,11 +164,13 @@
                        @else {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }} @endif</b>se identifica con 
                     <b>{{ mb_strtoupper($abogado->tipo_identificacion, 'UTF-8') }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por 
                     <b>{{ $descripcionIdentificacionP }}</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al 
-                    expediente electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
+                    expediente electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>--}}
+                    De lo anterior, una vez realizando el respectivo cotejo con identificaciones, mismas que concuerdan fisionómicamente con las partes y, que en este acto, se agrega copia cotejada 
+                    al expediente electrónico para que conste como corresponda; esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial</b>.<br><br>
 
-                    Por tanto, esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial.</b><br><br>
+                    <!--Por tanto, esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial.</b><br><br>-->
 
-                    Se hace del conocimiento del trabajador(a) que podrá comparecer asistido por abogado(a) o persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse 
+                    Se hace del conocimiento del trabajador(a) que puede comparecer asistido por abogado(a) o persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse 
                     de un Procedimiento de Conciliación y no de un juicio; por lo que respecta al empleador, éste podrá comparecer a través de su representante, siempre y cuando cuente con las 
                     facultades suficientes para obligarse en su nombre y lo acredite ante esta instancia.<br><br>
 
