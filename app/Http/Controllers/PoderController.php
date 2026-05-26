@@ -74,10 +74,10 @@ class PoderController extends Controller
                 data-bs-toggle="modal" 
                 data-bs-target="#modalExpedienteDigital" 
                 data-abogado="' . $poder->nombre_representante_combinado . '"
-                data-ine="' . ($poder->ineDocumento ? $pathDocs . '/' . $poder->ineDocumento : '') . '"
-                data-cedula="' . ($poder->cedulaDocumento ? $pathDocs . '/' . $poder->cedulaDocumento : '') . '"
-                data-representacion="' . ($poder->representacionDocumento ? $pathDocs . '/' . $poder->representacionDocumento : '') . '"
-                data-cartapoder="' . ($poder->cedula === "Sin carta poder" ? 'S/A' : ($poder->cedulaDocumento ? $pathDocs . '/' . $poder->cedulaDocumento : '')) . '"
+                data-ine="' . ($poder->ineDocumento ? $pathDocs . '/' . $poder->idAbogado . '/' . $poder->ineDocumento : '') . '"
+                data-cedula="' . ($poder->cedulaDocumento ? $pathDocs . '/' . $poder->idAbogado . '/' . $poder->cedulaDocumento : '') . '"
+                data-representacion="' . ($poder->representacionDocumento ? $pathDocs . '/' . $poder->idAbogado . '/' . $poder->representacionDocumento : '') . '"
+                data-cartapoder="' . ($poder->cedula === "Sin carta poder" ? 'S/A' : ($poder->cedulaDocumento ? $pathDocs . '/' . $poder->idAbogado . '/' . $poder->cedulaDocumento : '')) . '"
                 data-registro="' . ($poder->estatus === "Validado" ? route('PDFregistroAbogado', $poder->idAbogado) : '') . '">
                 <i class="bi bi-folder2-open"></i> Ver Expediente
             </button>';
