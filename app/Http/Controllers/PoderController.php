@@ -919,7 +919,9 @@ class PoderController extends Controller
                         'estatus'                   => "Pendiente",
                         'reprecentante'             => "No",
                         'tipo_identificacion'       => $data["tipo_identificacion_pF"],
-                        'num_identificacion'        => $data["num_identificacion_pF"]
+                        'num_identificacion'        => $data["num_identificacion_pF"],
+						'ineDocumento'               => 'PENDIENTE',
+						'anexo_documeto'             => 'Sin anexo'
                 );
 
                 // Creamos primero el registro para conocer idAbogado y poder crear la carpeta con ese nombre.
@@ -943,14 +945,14 @@ class PoderController extends Controller
                     );
                 }
 
+                if(isset($data["num_int_pF"])){
+                    $nuevoAbogado->mun_int_patronal = $data["num_int_pF"];
+                }
+
                 // Guardamos los nombres ya con prefijo y carpeta.
                 $nuevoAbogado->ineDocumento = $nombre_ine;
                 $nuevoAbogado->anexo_documeto = $nombre_anexo;
                 $nuevoAbogado->save();
-                
-                if(isset($data["num_int_pF"])){
-                    $data_insertar["mun_int_patronal"] = $data["num_int_pF"];
-                }
                 
                 $historialPayload = $nuevoAbogado->toArray();
                 unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
