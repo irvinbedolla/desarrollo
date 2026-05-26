@@ -37,15 +37,22 @@ class PoderController extends Controller
         if (!empty($buscar)) {
             // Si el registro NO está en los 50 iniciales, esta cláusula lo busca en TODO el universo de datos
             $query->where(function($q) use ($buscar) {
-                $q->where('idAbogado', 'LIKE', "%{$buscar}%")
-                ->orWhere('nombres_patronal', 'LIKE', "%{$buscar}%")
-                ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
-                ->orWhere('segundo_apellido_patronal', 'LIKE', "%{$buscar}%")
-                ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
-                ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%")
-                ->orWhere('primer_apellido_representante', 'LIKE', "%{$buscar}%")
-                ->orWhere('segundo_apellido_representante', 'LIKE', "%{$buscar}%");
-            });
+    $q->where('idAbogado', 'LIKE', "%{$buscar}%")
+      ->orWhere('nombres_patronal', 'LIKE', "%{$buscar}%")
+      ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
+      ->orWhere('segundo_apellido_patronal', 'LIKE', "%{$buscar}%")
+      ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
+      
+      // Concatenación estándar compatible (une las columnas usando espacios fijos)
+      ->orWhere(\DB::raw("CONCAT(COALESCE(nombres_patronal,''), ' ', COALESCE(primer_apellido_patronal,''), ' ', COALESCE(segundo_apellido_patronal,''))"), 'LIKE', "%{$buscar}%")
+      
+      ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%")
+      ->orWhere('primer_apellido_representante', 'LIKE', "%{$buscar}%")
+      ->orWhere('segundo_apellido_representante', 'LIKE', "%{$buscar}%")
+      
+      // Concatenación para el Representante
+      ->orWhere(\DB::raw("CONCAT(COALESCE(nombre_representante,''), ' ', COALESCE(primer_apellido_representante,''), ' ', COALESCE(segundo_apellido_representante,''))"), 'LIKE', "%{$buscar}%");
+});
             
             $poderesIniciales = $query->get(); // Trae todas las coincidencias sin límite
         } else {

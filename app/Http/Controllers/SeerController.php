@@ -6732,6 +6732,7 @@ class SeerController extends Controller
                     $q->where('nombres_patronal', 'LIKE', "%{$buscar}%")
                     ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
                     ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('idAbogado', '=', "$buscar")
                     ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%");
                 });
             }
