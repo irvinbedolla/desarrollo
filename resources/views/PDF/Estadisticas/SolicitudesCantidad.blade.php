@@ -98,35 +98,41 @@
                 
 
                 <!-- Reporte cumplimientos Monto -->
-                <div class="section-title">Reporte General de Ratificaciones</div>
+                <div class="section-title">Reporte General de Cumplimientos en Ratificaciones</div>
                     <table class="table-report">
                        <thead>
                             <tr>
                                 <th style="width: 40%;">Concepto</th>
-                                <th>Cantidad</th>
+                                <th>Cantidad de cumplimientos</th>
                                 <th>Monto Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="bg-light">
                                 <td class="text-left">Total General</td>
-                                <td>{{ ($pagosRatificacionPagado->ratificaciones + $pagosRatificacionPendiente->ratificaciones) }}</td>
+                                <td>{{ ($pagosRatificacion->ratificaciones) }}</td>
+                                <!--<td>{{ ($pagosRatificacionPagado->ratificaciones + $pagosRatificacionPendiente->ratificaciones) }}</td>-->
                                 <td>${{ number_format(($pagosRatificacionMontoPendiente->ratificacionesMonto + $pagosRatificacionMontoPagado->ratificacionesMonto), 2) }}</td>
                             </tr>
                             <tr>
-                                <td class="text-left">Ratificaciones Pagadas</td>
+                                <td class="text-left">Cumplimientos Pagados</td>
                                 <td>{{ $pagosRatificacionPagado->ratificaciones }}</td>
                                 <td class="text-success">${{ number_format($pagosRatificacionMontoPagado->ratificacionesMonto, 2) }}</td>
                             </tr>
                             <tr>
-                                <td class="text-left">Ratificaciones Pendientes</td>
+                                <td class="text-left">Cumplimientos Pendientes</td>
                                 <td>{{ $pagosRatificacionPendiente->ratificaciones }}</td>
                                 <td class="text-danger">${{ number_format($pagosRatificacionMontoPendiente->ratificacionesMonto, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">Cumplimientos No Pagados por Incomparecencia</td>
+                                <td>{{ $pagosRatificacionNoPagado->ratificaciones }}</td>
+                                <td class="text-danger">${{ number_format($pagosRatificacionMontoNoPagado->ratificacionesMonto, 2) }}</td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <div class="section-title">Promedio Ratificaciones Diarias</div>
+                    <div class="section-title">Promedio Diario de Cumplimientos en Ratificaciones</div>
                         <table class="table-report">
                             <thead>
                                 <tr>
