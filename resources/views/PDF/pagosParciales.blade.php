@@ -175,6 +175,13 @@
                             </td>
                         </tr>
                     </table>  
+
+                    @if(!empty($inicialesConcluye))
+                        <br><br>
+                        <div style="text-align:left; padding-right:2cm;">
+                            <small><b>{{ $inicialesConcluye }}</b></small>
+                        </div>
+                    @endif
                     <br>
                     <p style="font-size: 10px;">
                         LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA @if($pagosDif>1)CONSTANCIA DE CUMPLIMIENTO PARCIAL DE CONVENIO @endif

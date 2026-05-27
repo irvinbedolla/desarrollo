@@ -35,6 +35,27 @@ use Illuminate\Support\Facades\Log;
 class TurnosController extends Controller 
 {
 
+    private function inicialesDeSolicitud($solicitud): string
+    {
+        if (!$solicitud) {
+            return '';
+        }
+
+        $userId = null;
+        if (!empty($solicitud->conclucion_id)) {
+            $userId = $solicitud->conclucion_id;
+        } elseif (!empty($solicitud->user_id)) {
+            $userId = $solicitud->user_id;
+        }
+
+        if (empty($userId)) {
+            return '';
+        }
+
+        $usuario = User::select('id', 'name')->find($userId);
+        return $usuario ? $this->obtenerInicialesNombre($usuario->name) : '';
+    }
+
     public function ver_documento_subido($id)
     {
         $doc = DocumentosSolicitud::findOrFail($id);
@@ -517,6 +538,7 @@ class TurnosController extends Controller
         $año_actual = date('Y');
         $fecha_actual = date('Y-m-d');
         $hora_actual =  date("H:i:s");
+        $user = auth()->user()->id;
         if(isset($data["folio"])){
             request()->validate([
                 'folio'             => 'required',
@@ -636,7 +658,7 @@ class TurnosController extends Controller
                 'num_ext'           => $data["N_Ext"],
                 'codigo_postal'     => $data["cp"],
                 'idAbogado'         => $data["folio"],
-                'user_id'           => 0,
+                'user_id'           => $user,
                 'fecha'             => $data["fecha"],
                 'hora'              => $data["hora"],
                 'hora_fin'          => $data["hora"],
@@ -1031,6 +1053,8 @@ class TurnosController extends Controller
 
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
+
+        $inicialesConcluye = $this->inicialesDeSolicitud($solicitud);
         $delegacion = $solicitud->delegacion;
         $delegadosEspeciales = [
                 'Zitácuaro'        => 11,
@@ -1132,7 +1156,8 @@ class TurnosController extends Controller
                 'id', 'solicitud', 'dias_descanso', 'salario_diario', 'salario_mensual', 'pagos', 
                 'diarioTexto', 'mensualTexto', 'montoTexto', 'conceptosTexto', 'deduccionesTexto', 
                 'pagosDif', 'conciliador', 'abogado', 'municipioEmpresa', 'estadoEmpresa', 'pagoTotal', 
-                'descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','delegado'
+                'descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','delegado',
+                'inicialesConcluye'
             )
         )->render();
 
@@ -1184,6 +1209,26 @@ class TurnosController extends Controller
         return "{$letras} PESOS {$centavos}/100";*/
     }
 
+    private function obtenerInicialesNombre(?string $nombre): string
+    {
+        $nombre = trim((string) $nombre);
+        if ($nombre === '') {
+            return '';
+        }
+
+        $partes = preg_split('/\s+/u', $nombre, -1, PREG_SPLIT_NO_EMPTY);
+        if (!$partes) {
+            return '';
+        }
+
+        $iniciales = '';
+        foreach ($partes as $parte) {
+            $iniciales .= mb_substr($parte, 0, 1, 'UTF-8');
+        }
+
+        return mb_strtoupper($iniciales, 'UTF-8');
+    }
+
     //PDF Acta de multa
     public function VerPDFMulta($id){
         $solicitud = Turnos::find($id);
@@ -1221,6 +1266,7 @@ class TurnosController extends Controller
     //PDF Constancia de cumplimiento
     public function VerPDFCumplimiento($id){
         $solicitud = Turnos::find($id);
+        $inicialesConcluye = $this->inicialesDeSolicitud($solicitud);
         $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Ratificacion')->get();
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("turnos.id", "=", $id)
@@ -1244,7 +1290,7 @@ class TurnosController extends Controller
                 ->select('users.id', 'users.name', 'users.delegacion')
                 ->first();
         }
-        $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos','delegado'))->render();
+    $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos','delegado','inicialesConcluye'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1258,6 +1304,7 @@ class TurnosController extends Controller
     //PDF Acta de Audiencia
     public function VerPDFAudiencia($id){
         $solicitud = Turnos::find($id);
+        $inicialesConcluye = $this->inicialesDeSolicitud($solicitud);
         $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Ratificacion')->get();
 
         if($solicitud->id_historial){
@@ -1313,8 +1360,8 @@ class TurnosController extends Controller
         $identificacionPoder = $abogado->tipo_identificacion;
         $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
 
-        $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
-        'descripcionIdentificacionP','abogado','conceptosTexto'))->render();
+    $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
+    'descripcionIdentificacionP','abogado','conceptosTexto','inicialesConcluye'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1328,6 +1375,7 @@ class TurnosController extends Controller
     //PDF Constancia de Incumplimiento
     public function VerPDFIncumplimiento($id){
         $solicitud = Turnos::find($id);
+        $inicialesConcluye = $this->inicialesDeSolicitud($solicitud);
         $pagos = Pagos::find($id);
        
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
@@ -1336,7 +1384,7 @@ class TurnosController extends Controller
         ->first();
         $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
 
-        $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+    $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos','inicialesConcluye'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1351,6 +1399,7 @@ class TurnosController extends Controller
     public function VerPDFInParcial($id){
         $pagos = Pagos::find($id);
         $solicitud = Turnos::find($pagos["id_solicitud"]);
+        $inicialesConcluye = $this->inicialesDeSolicitud($solicitud);
         $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
 
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
@@ -1358,7 +1407,7 @@ class TurnosController extends Controller
         ->select('users.name')
         ->first();
         
-        $html = view('PDF/incumplimientoParcial', compact('id', 'solicitud','conciliador','pagos','salario_diario'))->render();
+    $html = view('PDF/incumplimientoParcial', compact('id', 'solicitud','conciliador','pagos','salario_diario','inicialesConcluye'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1373,6 +1422,7 @@ class TurnosController extends Controller
     public function VerPDFPagos($id){
         $pagos = Pagos::find($id);
         $solicitud = Turnos::find($pagos["id_solicitud"]);
+        $inicialesConcluye = $this->inicialesDeSolicitud($solicitud);
         $pagosDif = Pagos::where('id_solicitud', $pagos->id_solicitud)->count();
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
@@ -1396,7 +1446,7 @@ class TurnosController extends Controller
                 ->select('users.id', 'users.name', 'users.delegacion')
                 ->first();
         }
-        $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos','pagosDif','delegado'))->render();
+    $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos','pagosDif','delegado','inicialesConcluye'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1776,8 +1826,10 @@ class TurnosController extends Controller
             /*'domicilio'                     => $data["domicilio"],*/
             'NUE'                           => $expediente,
             'id_conciliador'                => $data["conciliador_id"],
-            'user_id'                       => $id_usuario,
-            'estatus'                       => $estatus]
+            /*'user_id'                       => $id_usuario,*/
+            'estatus'                       => $estatus,
+            'conclucion_id'                    => $id_usuario
+            ]
         );
         
         $id_solicitud =  $data["id"];

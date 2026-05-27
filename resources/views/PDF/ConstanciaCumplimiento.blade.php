@@ -183,6 +183,13 @@
                                 </td>
                             </tr>
                         </table> 
+
+                        @if(!empty($inicialesConcluye))
+                            <br><br>
+                            <div style="text-align:left; padding-right:2cm;">
+                                <small><b>{{ $inicialesConcluye }}</b></small>
+                            </div>
+                        @endif
                         <br>
                         <p style="font-size: 10px;">
                             LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA CONSTANCIA DE CUMPLIMIENTO TOTAL DE CONVENIO DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
