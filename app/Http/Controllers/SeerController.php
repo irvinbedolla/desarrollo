@@ -6727,13 +6727,27 @@ class SeerController extends Controller
 
             $totalRegistros = $query->count();
 
+            // CORRECCIÓN: Se cambió $q por $query y se agrupó el contenido en un closure para evitar romper los filtros
             if (!empty($buscar)) {
                 $query->where(function($q) use ($buscar) {
-                    $q->where('nombres_patronal', 'LIKE', "%{$buscar}%")
+                    $q->where('idAbogado', 'LIKE', "%{$buscar}%")
+                    
+                    // 1. Columnas individuales de la Parte Patronal
+                    ->orWhere('nombres_patronal', 'LIKE', "%{$buscar}%")
                     ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
+                    ->orWhere('segundo_apellido_patronal', 'LIKE', "%{$buscar}%")
                     ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
-                    ->orWhere('idAbogado', '=', "$buscar")
-                    ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%");
+                    
+                    // 2. Concatenación de la Parte Patronal con conversión explícita de Collation
+                    ->orWhere(\DB::raw("CONVERT(CONCAT_WS(' ', nombres_patronal, primer_apellido_patronal, segundo_apellido_patronal) USING utf8mb4)"), 'LIKE', "%{$buscar}%")
+                    
+                    // 3. Columnas individuales del Representante Legal
+                    ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%")
+                    ->orWhere('primer_apellido_representante', 'LIKE', "%{$buscar}%")
+                    ->orWhere('segundo_apellido_representante', 'LIKE', "%{$buscar}%")
+                    
+                    // 4. Concatenación del Representante Legal con conversión explícita de Collation
+                    ->orWhere(\DB::raw("CONVERT(CONCAT_WS(' ', nombre_representante, primer_apellido_representante, segundo_apellido_representante) USING utf8mb4)"), 'LIKE', "%{$buscar}%");
                 });
             }
 
@@ -6769,7 +6783,7 @@ class SeerController extends Controller
                     $nombrePatronal ?: 'Sin nombre patronal',
                     $rfcPatronal ?: 'Sin RFC',
                     $nombreRepresentante ?: 'Sin representante',
-                    $accionHtml // Inyección directa del bloque condicional
+                    $accionHtml 
                 ];
             }
 

@@ -35,24 +35,26 @@ class PoderController extends Controller
         $query = Poder::query();
 
         if (!empty($buscar)) {
-            // Si el registro NO está en los 50 iniciales, esta cláusula lo busca en TODO el universo de datos
             $query->where(function($q) use ($buscar) {
-    $q->where('idAbogado', 'LIKE', "%{$buscar}%")
-      ->orWhere('nombres_patronal', 'LIKE', "%{$buscar}%")
-      ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
-      ->orWhere('segundo_apellido_patronal', 'LIKE', "%{$buscar}%")
-      ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
-      
-      // Concatenación estándar compatible (une las columnas usando espacios fijos)
-      ->orWhere(\DB::raw("CONCAT(COALESCE(nombres_patronal,''), ' ', COALESCE(primer_apellido_patronal,''), ' ', COALESCE(segundo_apellido_patronal,''))"), 'LIKE', "%{$buscar}%")
-      
-      ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%")
-      ->orWhere('primer_apellido_representante', 'LIKE', "%{$buscar}%")
-      ->orWhere('segundo_apellido_representante', 'LIKE', "%{$buscar}%")
-      
-      // Concatenación para el Representante
-      ->orWhere(\DB::raw("CONCAT(COALESCE(nombre_representante,''), ' ', COALESCE(primer_apellido_representante,''), ' ', COALESCE(segundo_apellido_representante,''))"), 'LIKE', "%{$buscar}%");
-});
+            $q->where('idAbogado', 'LIKE', "%{$buscar}%")
+            
+            // 1. Columnas individuales de la Parte Patronal
+            ->orWhere('nombres_patronal', 'LIKE', "%{$buscar}%")
+            ->orWhere('primer_apellido_patronal', 'LIKE', "%{$buscar}%")
+            ->orWhere('segundo_apellido_patronal', 'LIKE', "%{$buscar}%")
+            ->orWhere('rfc_patronal', 'LIKE', "%{$buscar}%")
+            
+            // 2. CORREGIDO: El operador LIKE y el parámetro van fuera del DB::raw
+            ->orWhere(\DB::raw("CONVERT(CONCAT_WS(' ', nombres_patronal, primer_apellido_patronal, segundo_apellido_patronal) USING utf8mb4)"), 'LIKE', "%{$buscar}%")
+            
+            // 3. Columnas individuales del Representante Legal
+            ->orWhere('nombre_representante', 'LIKE', "%{$buscar}%")
+            ->orWhere('primer_apellido_representante', 'LIKE', "%{$buscar}%")
+            ->orWhere('segundo_apellido_representante', 'LIKE', "%{$buscar}%")
+            
+            // 4. CORREGIDO: El operador LIKE y el parámetro van fuera del DB::raw
+            ->orWhere(\DB::raw("CONVERT(CONCAT_WS(' ', nombre_representante, primer_apellido_representante, segundo_apellido_representante) USING utf8mb4)"), 'LIKE', "%{$buscar}%");
+        });
             
             $poderesIniciales = $query->get(); // Trae todas las coincidencias sin límite
         } else {
