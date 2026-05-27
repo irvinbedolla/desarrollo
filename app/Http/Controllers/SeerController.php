@@ -7201,6 +7201,8 @@ class SeerController extends Controller
                         'idUsuario'                 => $id_usuario,
                         'tipo_identificacion'       => $data["tipo_identificacion_pF"],
                         'num_identificacion'        => $data["num_identificacion_pF"],
+						'ineDocumento'               => 'PENDIENTE',
+						'anexo_documeto'             => 'Sin anexo'
                 );
 
                 // Crear primero el registro para obtener idAbogado y guardar documentos en su carpeta.
@@ -7224,13 +7226,14 @@ class SeerController extends Controller
                     );
                 }
 
+                if(isset($data["num_int_pF"])){
+                    $nuevoAbogado->mun_int_patronal = $data["num_int_pF"];
+                }
+
                 $nuevoAbogado->ineDocumento = $nombre_ine;
                 $nuevoAbogado->anexo_documeto = $nombre_anexo;
                 $nuevoAbogado->save();
-                
-                if(isset($data["num_int_pF"])){
-                   $data_insertar["num_int_pF"] = $data["num_int_pF"];
-                }
+
                      // $nuevoAbogado ya fue creado arriba para poder nombrar carpeta/archivos.
 
                      $id_user_historial = Auth::id() ?? 0;
