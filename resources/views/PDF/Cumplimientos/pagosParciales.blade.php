@@ -68,7 +68,7 @@
             }
         </style>
     </head>
-    @php
+   {{-- @php
         $nombramiento_delegado='';
         if($solicitud->delegacion === 'Morelia' || $solicitud->delegacion === 'Zitácuaro'){
             $nombramiento_delegado='DIRECTOR DE LA DELEGACIÓN REGIONAL DE MORELIA';
@@ -78,6 +78,19 @@
         }
         if($solicitud->delegacion === 'Zamora' || $solicitud->delegacion === 'Sahuayo') {
             $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE ZAMORA';
+        }  
+    @endphp--}}
+    @php
+        $nombramiento_delegado = '';
+        
+        if ($solicitud->delegacion === 'Morelia' || $solicitud->delegacion === 'Zitácuaro') {
+            $nombramiento_delegado = "DIRECTOR DE LA DELEGACIÓN REGIONAL MORELIA\nDEL CENTRO DE CONCILIACIÓN LABORAL\nDEL ESTADO DE MICHOACÁN DE OCAMPO";
+        }    
+        if ($solicitud->delegacion === 'Uruapan' || $solicitud->delegacion === 'Lázaro Cárdenas') {
+            $nombramiento_delegado = "DIRECTOR DE LA DELEGACIÓN REGIONAL URUAPAN\nDEL CENTRO DE CONCILIACIÓN LABORAL\nDEL ESTADO DE MICHOACÁN DE OCAMPO";
+        }
+        if ($solicitud->delegacion === 'Zamora' || $solicitud->delegacion === 'Sahuayo') {
+            $nombramiento_delegado = "DIRECTORA DE LA DELEGACIÓN REGIONAL ZAMORA\nDEL CENTRO DE CONCILIACIÓN LABORAL\nDEL ESTADO DE MICHOACÁN DE OCAMPO";
         }  
     @endphp
     <body>
@@ -98,8 +111,8 @@
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                     </table>
-                </div><br><br><br><br>
-                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br><br>
+                </div><br><br><br>
+                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
 
                 <p><b>
                     Trabajador(a): {{ $solicitud->nombre_trabajador }} <br> 
@@ -107,9 +120,11 @@
                     Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>
                     Fecha y hora de cumplimiento: {{\Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y')}} a las {{\Carbon\Carbon::parse($solicitud->update)->translatedFormat('h:i')}} horas.<br>
                     Asistencia de los interesados: Si<br>
-                    Convenio conciliatorio: Si
+                    Convenio conciliatorio: Si<br>
+
+                    <center><b>CONSTANCIA DE PAGO DE CUMPLIMIENTO</b></center><br>
                 </b></p>  
-                <p><center><b>CONSTANCIA DE PAGO DE CUMPLIMIENTO</b></center></p><br>
+               
                 <p>
                     <b>Fundamentación:</b> Artículos 33 párrafo segundo, 590-E, 590-F, 684-C y 684-E fracciones XIII y XIV, 684-F fracción VII de la Ley Federal del Trabajo, artículo 8 fracción I, II y III 
                     de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y artículo 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de 
@@ -124,14 +139,14 @@
 
                     <p><b>{{ $pagos->observaciones}}</b></p> 
 
-                    Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b><br><br>
+                    Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b>
                 </p>
                 <div class="salto-inteligente"></div>
                 <div class="contenedor-firmas">
                     <p>
                         <b>Con fecha {{ $pagos->updated_at->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de Pago, con 
                         fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
-                    </p><br><br>
+                    </p>
                     <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
                         <tr>
                             <td style="width:50%; vertical-align:top; padding:0 5px;"><b>Doy fe</b><br><br><br><br>
@@ -144,8 +159,8 @@
                             </td>
                         <td style="width:50%; vertical-align:top; padding:0 5px;"><b>Vo. Bo.</b><br><br><br><br>
                                 <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
-                                <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
-                                   {{ $nombramiento_delegado }}                                  
+                                <b>{{ mb_strtoupper($delegado ? $delegado->name : 'N/A', 'UTF-8') }}<br>
+                                    {!! nl2br(e($nombramiento_delegado)) !!}                                 
                                 </b>
                             </td>
                         </tr>

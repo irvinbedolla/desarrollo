@@ -67,15 +67,16 @@
         </style>
     </head>
     @php
-        $nombramiento_delegado='';
-        if($solicitud->delegacion === 'Morelia' || $solicitud->delegacion === 'Zitácuaro'){
-            $nombramiento_delegado='DIRECTOR DE LA DELEGACIÓN REGIONAL DE MORELIA';
+        $nombramiento_delegado = '';
+        
+        if ($solicitud->delegacion === 'Morelia' || $solicitud->delegacion === 'Zitácuaro') {
+            $nombramiento_delegado = "DIRECTOR DE LA DELEGACIÓN REGIONAL MORELIA\nDEL CENTRO DE CONCILIACIÓN LABORAL\nDEL ESTADO DE MICHOACÁN DE OCAMPO";
         }    
-        if($solicitud->delegacion === 'Uruapan' || $solicitud->delegacion === 'Lázaro Cárdenas'){
-            $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE URUAPAN';
+        if ($solicitud->delegacion === 'Uruapan' || $solicitud->delegacion === 'Lázaro Cárdenas') {
+            $nombramiento_delegado = "DIRECTOR DE LA DELEGACIÓN REGIONAL URUAPAN\nDEL CENTRO DE CONCILIACIÓN LABORAL\nDEL ESTADO DE MICHOACÁN DE OCAMPO";
         }
-        if($solicitud->delegacion === 'Zamora' || $solicitud->delegacion === 'Sahuayo') {
-            $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE ZAMORA';
+        if ($solicitud->delegacion === 'Zamora' || $solicitud->delegacion === 'Sahuayo') {
+            $nombramiento_delegado = "DIRECTORA DE LA DELEGACIÓN REGIONAL ZAMORA\nDEL CENTRO DE CONCILIACIÓN LABORAL\nDEL ESTADO DE MICHOACÁN DE OCAMPO";
         }  
     @endphp
     <body>
@@ -139,8 +140,8 @@
                             <td style="width: 100%; vertical-align: top; padding: 0 5px; text-align: center;">
                                 <div style="border-top: 2px solid #000; width: 50%; margin: 0 auto 5px auto;"></div>
                                 <b>
-                                    {{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
-                                    {{ $nombramiento_delegado }}
+                                    {{ mb_strtoupper($delegado ? $delegado->name : 'N/A', 'UTF-8') }}<br>
+                                    {!! nl2br(e($nombramiento_delegado)) !!}
                                 </b>
                             </td>
                         </tr>

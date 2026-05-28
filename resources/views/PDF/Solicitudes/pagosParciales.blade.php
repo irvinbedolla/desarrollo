@@ -86,9 +86,9 @@
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br>
 
-                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br><br>
+                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
                 <p><b>
                     Trabajador(a): {{ $solicitanteNombre }} <br> 
                     Empresa/Patrón: @foreach ($citados as $citado)
@@ -97,9 +97,11 @@
                     Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>
                     Fecha y hora de audiencia: @if($pagos->id_solicitud == NULL) {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> @else {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ \Carbon\Carbon::parse($audiencia->hora)->translatedFormat('H:i') }} horas.<br> @endif
                     Asistencia de los interesados: Si<br>
-                    Convenio conciliatorio: Si
+                    Convenio conciliatorio: Si<br>
+
+                    <center><b>CONSTANCIA DE PAGO PARCIAL DE CONVENIO</b></center><br>
                 </b></p>  
-                <p><center><b>CONSTANCIA DE PAGO PARCIAL DE CONVENIO</b></center></p><br>
+               
                 <p>
                     <b>Fundamentación:</b> Artículos 33 párrafo segundo, 590-E, 590-F, 684-C y 684-E fracciones XIII y XIV, 684-F fracción VII de la Ley Federal del Trabajo, artículo 8 fracción I, II y III 
                     de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y artículo 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de 
@@ -114,14 +116,14 @@
 
                     <p><b>{{ $pagos->observaciones}}</b></p>
 
-                    Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b><br><br>
+                    Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b>
                 </p>
                 <div class="salto-inteligente"></div>
                 <div class="contenedor-firmas">
                     <p>
                         <b>Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de Pago Parcial del Convenio de Conciliación, con 
                         fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
-                    </p><br>     
+                    </p>   
                     <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
                         <tr>
                             <td style="width:50%; vertical-align:top; padding:0 5px;"><b>Doy fe</b><br><br><br><br>

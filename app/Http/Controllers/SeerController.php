@@ -1822,8 +1822,10 @@ class SeerController extends Controller
         }
         else if($data["tipo_reporte"] == "Productividad"){
             // 1. Consulta Unificada para Ratificaciones
-            $ratificacionesData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+            /*$ratificacionesData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
                 ->join('turnos', 'turnos.id', 'pago_solicitud.id_solicitud')
+                ->where('pago_solicitud.tipo_pago', 'Ratificacion')*/
+            $ratificacionesData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
                 ->where('pago_solicitud.tipo_pago', 'Ratificacion')
                 ->when($sede !== "Todos", function ($q) use ($sede) {
                     if ($sede === "TodosDelegado") {
@@ -1847,13 +1849,23 @@ class SeerController extends Controller
                     return $q->where('pago_solicitud.delegacion', $sede);
                 })
                 ->selectRaw("
-                    COUNT(pago_solicitud.id) as total_count,
+                    COUNT(*) as total_count, SUM(pago_solicitud.monto) as total_monto,
+                    COUNT(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 END) as pagado_sin_pena_count,
+                    COUNT(CASE WHEN pago_solicitud.estatus = 'Pagado con pena convencional' THEN 1 END) as pagado_con_pena_count,
+                    COUNT(CASE WHEN pago_solicitud.estatus IN ('Pagado', 'Pagado con pena convencional') THEN 1 END) as pagado_count,
+                    SUM(CASE WHEN pago_solicitud.estatus IN ('Pagado', 'Pagado con pena convencional')THEN pago_solicitud.monto ELSE 0 END) as pagado_monto,
+                    COUNT(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 END) as pendiente_count,
+                    SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as pendiente_monto,
+                    COUNT(CASE WHEN pago_solicitud.estatus = 'No pagado' THEN 1 END) as noPagado_count,
+                    SUM(CASE WHEN pago_solicitud.estatus = 'No pagado' THEN pago_solicitud.monto ELSE 0 END) as noPagado_monto
+                ")
+                   /* COUNT(pago_solicitud.id) as total_count,
                     SUM(pago_solicitud.monto) as total_monto,
                     COUNT(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 END) as pagado_count,
                     SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as pagado_monto,
                     COUNT(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 END) as pendiente_count,
                     SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as pendiente_monto
-                ")
+                ")*/
             ->first();
             $promediosRatificaciones = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
                 ->join('turnos', 'turnos.id', 'pago_solicitud.id_solicitud')
@@ -1901,8 +1913,10 @@ class SeerController extends Controller
             $pagosRatificacionMonto          = (object)['ratificacionesMonto' => $ratificacionesData->total_monto];
             $pagosRatificacionPagado         = (object)['ratificaciones' => $ratificacionesData->pagado_count];
             $pagosRatificacionMontoPagado    = (object)['ratificacionesMonto' => $ratificacionesData->pagado_monto];
-            $pagosRatificacionPendiente      = (object)['ratificaciones' => $ratificacionesData->pendiente_count];
+           $pagosRatificacionPendiente       = (object)['ratificaciones' => $ratificacionesData->pendiente_count];
             $pagosRatificacionMontoPendiente = (object)['ratificacionesMonto' => $ratificacionesData->pendiente_monto];
+            $pagosRatificacionNoPagado       = (object)['ratificaciones' => $ratificacionesData->noPagado_count];
+            $pagosRatificacionMontoNoPagado  = (object)['ratificacionesMonto' => $ratificacionesData->noPagado_monto];
     
             // 2. Consulta Unificada para Audiencias
             $audienciasData = Audiencias::whereBetween('audiencias.fecha', [$fecha_inicial, $fecha_final])
@@ -2124,7 +2138,7 @@ class SeerController extends Controller
 
 
             $pdf = \PDF::loadView('PDF/Estadisticas/SolicitudesCantidad',compact('fecha_inicial','fecha_final','solicitudes','usuariosTotal','usuariosDias','promedios'
-                ,'pagosRatificacion','pagosRatificacionMonto'
+                ,'pagosRatificacion','pagosRatificacionMonto','pagosRatificacionNoPagado','pagosRatificacionMontoNoPagado'
                 ,'pagosAudiencias','pagosAudienciasMonto','pagosRatificacionPagado','pagosRatificacionMontoPagado'
                 ,'pagosRatificacionPendiente','pagosRatificacionMontoPendiente', 'pagosAudienciasPagado', 'pagosAudienciasMontoPagado', 'pagosAudienciaPendiente', 'pagosAudienciaMontoPendiente','promediosPagos','promediosRatificaciones'));
             return $pdf->stream('Productividad.pdf');
@@ -8079,13 +8093,26 @@ class SeerController extends Controller
         $conciliador = $conciliador->where("seer_general.id", "=", $id)
         ->select('users.name')
         ->first();
-        $delegadosEspeciales = [
+       /* $delegadosEspeciales = [
             'Zitácuaro'        => 11,
             'Lázaro Cárdenas'  => 43,
             'Sahuayo'          => 26,
-        ];
+        ];*/
         $delegacion = $solicitud->delegacion;
-        if (array_key_exists($delegacion, $delegadosEspeciales)) {
+        $delegado = null;
+        if (!empty($solicitud->delegado_id)) {
+            $delegado = User::select('id', 'name', 'delegacion')->find($solicitud->delegado_id);
+        }
+
+        if (!$delegado) {
+            $delegado = User::where('delegacion', $delegacion)
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Delegado');
+                })
+                ->select('users.id', 'users.name', 'users.delegacion')
+                ->first();
+        }
+        /*if (array_key_exists($delegacion, $delegadosEspeciales)) {
             $delegado = User::select('id', 'name', 'delegacion')
             ->find($delegadosEspeciales[$delegacion]);
         } else {
@@ -8095,7 +8122,7 @@ class SeerController extends Controller
             })
             ->select('users.id', 'users.name', 'users.delegacion')
             ->first();
-        }
+        }*/
         $citados = SeerCitados::where("id_solicitud",$id)
         ->where('tipo_notificacion', '!=', 'Multa')
         ->select('nombre','primer_apellido','segundo_apellido')
@@ -12130,11 +12157,11 @@ class SeerController extends Controller
    //PDF Constancia de cumplimiento
     public function VerPDFCumplimiento($id){
         $pagos = Pagos::find($id);
-        $delegadosEspeciales = [
+        /*$delegadosEspeciales = [
             'Zitácuaro'        => 11,
             'Lázaro Cárdenas'  => 43,
             'Sahuayo'          => 26,
-        ];
+        ];*/
         if($pagos["id_solicitud"] == 0){
             $solicitud = Pagos::find($id);
             $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
@@ -12142,7 +12169,7 @@ class SeerController extends Controller
             ->select('users.name')
             ->first();
             $delegacion = $solicitud->delegacion;
-            if (array_key_exists($delegacion, $delegadosEspeciales)) {
+            /*if (array_key_exists($delegacion, $delegadosEspeciales)) {
                 $delegado = User::select('id', 'name', 'delegacion')
                     ->find($delegadosEspeciales[$delegacion]);
             } else {
@@ -12152,24 +12179,48 @@ class SeerController extends Controller
                     })
                     ->select('users.id', 'users.name', 'users.delegacion')
                     ->first();
+            }*/
+            $delegado = null;
+            if (!empty($solicitud->delegado_id)) {
+                $delegado = User::select('id', 'name', 'delegacion')->find($solicitud->delegado_id);
             }
-            $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos','delegado'))->render();
+            if (!$delegado) {
+                $delegado = User::where('delegacion', $delegacion)
+                    ->whereHas('roles', function ($query) {
+                        $query->where('name', 'Delegado');
+                    })
+                    ->select('users.id', 'users.name', 'users.delegacion')
+                    ->first();
+            }       
+            $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos','delegado','delegacion'))->render();
         }else{
             $solicitud = Turnos::find($pagos["id_solicitud"]);
             $delegacion = $solicitud->delegacion;
-            $delegado = User::where('delegacion', $delegacion)
+            /*$delegado = User::where('delegacion', $delegacion)
                 ->whereHas('roles', function ($query) {
                     $query->where('name', 'Delegado');
                 })
                 ->select('users.id', 'users.name', 'users.delegacion')
-                ->first();
+                ->first();*/
+            $delegado = null;
+            if (!empty($solicitud->delegado_id)) {
+                $delegado = User::select('id', 'name', 'delegacion')->find($solicitud->delegado_id);
+            }
+            if (!$delegado) {
+                $delegado = User::where('delegacion', $delegacion)
+                    ->whereHas('roles', function ($query) {
+                        $query->where('name', 'Delegado');
+                    })
+                    ->select('users.id', 'users.name', 'users.delegacion')
+                    ->first();
+            }
             $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
             $conciliador = $conciliador->where("turnos.id", "=", $solicitud["id"])
             ->select('users.name')
             ->first();
             // Obtener el número de pagos
             $pagosDif = Pagos::where("id_solicitud", $pagos->id_solicitud)->count();
-            $html = view('PDF/pagosParciales', compact('id', 'solicitud','conciliador','pagos','pagosDif','delegado'))->render();
+            $html = view('PDF/pagosParciales', compact('id', 'solicitud','conciliador','pagos','pagosDif','delegado','delegacion'))->render();
         }
 
         $pdf = \PDF::loadHTML($html)
