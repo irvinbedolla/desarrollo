@@ -56,6 +56,17 @@
                 z-index: -1;
             } 
         </style>
+
+        <style>
+            .etiqueta-iniciales-pie {
+                position: fixed;
+                bottom: 60px;
+                left: 3cm;
+                right: 2cm;
+                text-align: left;
+                font-size: 12px;
+            }
+        </style>
         
     </head>
     <body>
@@ -103,10 +114,9 @@
                 <center><p><b>___________________________________<br>{{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br>FUNCIONARIO/A CONCILIADOR/A<br>
                     DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>         
 
-                @if(!empty($inicialesConcluye))
-                    <br><br>
-                    <div style="text-align:left; padding-right:2cm;">
-                        <small><b>{{ $inicialesConcluye }}</b></small>
+                @if(!empty($etiquetaIniciales))
+                    <div class="etiqueta-iniciales-pie">
+                        <small><b>{{ $etiquetaIniciales }}</b></small>
                     </div>
                 @endif
             </div>

@@ -81,6 +81,17 @@
                 page-break-inside: avoid; 
             }
         </style>
+
+        <style>
+            .etiqueta-iniciales-pie {
+                position: fixed;
+                bottom: 60px;
+                left: 3cm;
+                right: 2cm;
+                text-align: left;
+                font-size: 12px;
+            }
+        </style>
     </head>
     @php
         $nombramiento_delegado='';
@@ -407,9 +418,9 @@
 
                         <br><br>
 
-                        @if(!empty($inicialesConcluye))
-                            <div style="text-align:left; padding-right:2cm;">
-                                <small><b>{{ $inicialesConcluye }}</b></small>
+                        @if(!empty($etiquetaIniciales))
+                            <div class="etiqueta-iniciales-pie">
+                                <small><b>{{ $etiquetaIniciales }}</b></small>
                             </div>
                         @endif
                         <br><br>
