@@ -106,13 +106,13 @@
     @endphp
     @php
         $nombramiento_delegado='';
-        if($solicitud->delegacion === 'Morelia' || $solicitud->delegacion === 'Zitácuaro'){
+        if($ratificacion->delegacion === 'Morelia' || $ratificacion->delegacion === 'Zitácuaro'){
             $nombramiento_delegado='DIRECTOR DE LA DELEGACIÓN REGIONAL DE MORELIA';
         }    
-        if($solicitud->delegacion === 'Uruapan' || $solicitud->delegacion === 'Lázaro Cárdenas'){
+        if($ratificacion->delegacion === 'Uruapan' || $ratificacion->delegacion === 'Lázaro Cárdenas'){
             $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE URUAPAN';
         }
-        if($solicitud->delegacion === 'Zamora' || $solicitud->delegacion === 'Sahuayo') {
+        if($ratificacion->delegacion === 'Zamora' || $ratificacion->delegacion === 'Sahuayo') {
             $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE ZAMORA';
         }  
     @endphp
