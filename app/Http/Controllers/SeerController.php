@@ -12239,7 +12239,7 @@ class SeerController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $delegacion = $user->delegacion;
-        if($userRole[0] == "Enlace"){
+        if($userRole[0] == "Enlace" || $userRole[0] == "Estadistica"){
             if($delegacion == "Morelia"){
                 $delegaciones = ["Morelia", "Zitácuaro"];
             }

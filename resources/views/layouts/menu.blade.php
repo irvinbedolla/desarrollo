@@ -53,7 +53,7 @@
             <a id="menu-pendiente-firma" class="nav-link" href="{{ route('firma_citatorio') }}">
                 <i class="bi bi-bank"></i>
                 <span class="text-dark" onclick="mis_citas()">Pendiente de Firma
-                    <span id="badge-pendiente-firma" class="menu-badge" style="display:none;">0</span>
+                    <!--<span id="badge-pendiente-firma" class="menu-badge" style="display:none;">0</span>-->
                 </span>
             </a>
             <a class="nav-link" href="{{ route('notificaciones') }}">
@@ -259,6 +259,9 @@
             </a>
             <a class="nav-link" href="{{ route('solicitudes_index') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
+            </a>
+            <a class="nav-link" href="{{ route('notificaciones_consultar') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Notificaciones</span>
             </a>
         @endrole
     @endauth    
