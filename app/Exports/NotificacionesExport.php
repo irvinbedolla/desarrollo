@@ -109,16 +109,29 @@ class NotificacionesExport implements WithMultipleSheets
         });
 
         // 3. Calculamos los totales
-        $totalesPorNotificador = $notificacionesDomicilio->groupBy('nombre_notificador')->map(function ($row) {
-            return [
-                'nombre' => $row->first()->nombre_notificador ?? 'Sin asignar',
-                'total' => $row->count(),
-                'notificadas' => $row->whereIn('estatus', ['Notificada','Finalizado exitosamente','Recibe pero no firma','Exitosa por Instructivo'])->count(),
-                'no_notificadas' => $row->whereIn('estatus', ['No notificada','No exitosa se constituye','No exitosa no se constituye'])->count(),
-                'pendientes' => $row->whereIn('estatus', ['Pendiente', 'Sin asignar'])->count(),
-                'exhorto' => $row->whereIn('estatus', ['Exhorto'])->count(),
-            ];
-        });
+
+        $totalesPorNotificador = $notificacionesDomicilio
+            ->groupBy(function ($item) {
+                $estatus = trim((string) ($item->estatus ?? ''));
+                if (strcasecmp($estatus, 'Notificada en Audiencia') === 0) {
+                    return 'Notificación en Audiencia';
+                }
+
+                $nombreNotificador = trim((string) ($item->nombre_notificador ?? ''));
+                return $nombreNotificador !== '' ? $nombreNotificador : 'Sin asignar';
+            })
+            ->map(function ($row, $grupo) {
+                return [
+                    'nombre' => $grupo,
+                    'total' => $grupo === 'Notificación en Audiencia'
+                        ? $row->count()
+                        : $row->whereNotIn('estatus', ['Notificada en Audiencia'])->count(),
+                    'notificadas' => $row->whereIn('estatus', ['Notificada','Finalizado exitosamente','Recibe pero no firma','Exitosa por Instructivo'])->count(),
+                    'no_notificadas' => $row->whereIn('estatus', ['No notificada','No exitosa se constituye','No exitosa no se constituye'])->count(),
+                    'pendientes' => $row->whereIn('estatus', ['Pendiente', 'Sin asignar'])->count(),
+                    'exhorto' => $row->whereIn('estatus', ['Exhorto'])->count(),
+                ];
+            });
 
 
         // 4. Retornamos las hojas pasando los datos específicos a cada una
