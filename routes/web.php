@@ -72,14 +72,14 @@ use App\Http\Controllers\AsistenciaController;
         Route::post('/chat/crearUno/',  [Controller::class, 'storeUno'])->name('RespuestasChat.storeUno');
 
     //Ruta calendario
-        Route::get('/calendario',               [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
-        Route::get('/citas/eventos',            [App\Http\Controllers\CitaController::class, 'citas'])->name('citas.eventos');
-        Route::get('/pagos/eventos',            [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
-        Route::get('/pagos/conciliadores',      [App\Http\Controllers\CitaController::class, 'conciliadores'])->name('conciliador.eventos');
-        Route::get('/audiencias/eventos',       [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.eventos');
-        Route::get('/ratificaciones/eventos',   [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
-        Route::get('citas/exportar-excel',      [CitaController::class, 'exportarExcel']);
-
+        Route::get('/calendario',                   [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
+        Route::get('/citas/eventos',                [App\Http\Controllers\CitaController::class, 'citas'])->name('citas.eventos');
+        Route::get('/pagos/eventos',                [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
+        Route::get('/pagos/conciliadores',          [App\Http\Controllers\CitaController::class, 'conciliadores'])->name('conciliador.eventos');
+        Route::get('/audiencias/eventos',           [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.eventos');
+        Route::get('/ratificaciones/eventos',       [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
+        Route::get('citas/exportar-excel',          [CitaController::class, 'exportarExcel']);
+        Route::get('/obtenerBloqueosCalendario',    [AdministracionController::class, 'obtenerBloqueosCalendario'])->name('calendario.bloqueos');
     //Ruta Solicitud para los Centros
         Route::get('levantar_solicitudCentro',                      [SeerController::class, 'solicitudesLineaCentro'])->name('solicitudEnLineaCentro');
         Route::get('tipoIndustriaCentro/{tipo_solicitud}',          [SeerController::class, 'IndustriasCentro'])->name('solicitud.industriaCentro');
@@ -93,7 +93,6 @@ use App\Http\Controllers\AsistenciaController;
         Route::post('/finalizaCentro',                    [SeerController::class, 'guardar_solicitudCentro_post'])->name('seer.finalizaCentro');
         // Mantener compatibilidad por si algún link viejo aún apunta a GET
         Route::get('/finalizaCentro/{id}',                [SeerController::class, 'guardar_solicitudCentro'])->name('seer.finalizaCentro_get');
-
     //Rutas pantallas
     Route::get('/pantallaMorelia',                  [HomeController::class, 'pantallaMorelia']);
     Route::get('/pantallaUruapan',                  [HomeController::class, 'pantallaUruapan']);
@@ -110,6 +109,7 @@ use App\Http\Controllers\AsistenciaController;
     
     //Rutas de citas
     Route::get('citas',                         [TurnosController::class, 'create_publico'])->name('create_cita');
+    Route::get('AgendaRatificacion',            [TurnosController::class, 'create_publico'])->name('create_cita');
     Route::post('/citas/store_publico',         [TurnosController::class, 'store_publico'])->name('turnos.publico');
     Route::get('/validar_folio_abogado/{folio}',[TurnosController::class, 'validarFolio'])->name('validar_folio_abogado'); //valida si existe ya un abogado
     Route::get('/Confirmacion/{id}',            [CitaDireccionController::class, 'codigoQR'])->name('revisarCitaQR');
@@ -644,7 +644,7 @@ Route::get('/error', function () {
 Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);
 
 require __DIR__ . '/auth.php';
-
+/*
 //Devuelve el conteo de registros pendientes de firma para el usuario logueado
 Route::middleware(['auth', 'throttle:120,1'])->get('/poll/pendiente-firma', function () {
     $userId = Auth::id();
@@ -657,3 +657,4 @@ Route::middleware(['auth', 'throttle:120,1'])->get('/poll/pendiente-firma', func
     }
     return response()->json(['count' => (int) $count]);
 })->name('poll.pendiente_firma');
+*/
