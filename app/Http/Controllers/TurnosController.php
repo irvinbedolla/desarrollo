@@ -2658,19 +2658,21 @@ class TurnosController extends Controller
         $nombreArchivo = 'Convenio_PTU_NRati' . $ratificacion->trabajador .'.pdf';
         return $pdf->stream($nombreArchivo);            
     }
+
     public function vista_previa_citas($id){
-        $idSolicitud = $id;
-        $id_usuario = auth()->user()->id;
-        $user = User::find($id_usuario);           
+        $idSolicitud    = $id;
+        $id_usuario     = auth()->user()->id;
+        $user           = User::find($id_usuario);           
         $solicitud      = Turnos::find($id);
 
         $representantes = Poder::find($solicitud["idAbogado"]);
-        $abogados = Poder::all();
+        $abogados       = Poder::all();
         $estados        = Estados::all();
         $municipios     = Municipios::where('estado',16)->get();
 
-        return view('/ratificaciones/edicionVistaCitas',compact('idSolicitud','representantes','solicitud','abogados'));
+        return view('/ratificaciones/edicionVistaCitas',compact('idSolicitud','representantes','solicitud','abogados','estados','municipios'));
     }
+
     public function guardarEdicion_citas(Request $request){
         $data = $request->all();
         $id_solicitud = $data["id"];
@@ -2729,6 +2731,8 @@ class TurnosController extends Controller
         else{
             $Especifique = 0;
         }
+        //Obtener el abogado actual y obtener el historial mas reciente 
+        $ultimoRegistro = HistorialAbogado::where('id_abogado', $data["folio"])->latest()->first();
         $updateData = [
             'idAbogado'           =>  $data["folio"],
             'primero_trabajador'  =>  $data["primero"],
@@ -2760,6 +2764,15 @@ class TurnosController extends Controller
             'PrimaAntigüedad'     => $PrimaAntigüedad,
             'Otras'               => $Otras,
             'Especifique'         => $Especifique,
+            'estado_rat'          => $data["estado_rat"],
+            'municipio_rat'       => $data["municipio_rat"],
+            'tipo_vialidad'       => $data["tipo_vialidad"],
+            'calle'               => $data["vialidad_calle"],
+            'colonia'             => $data["colonia"],
+            'num_ext'             => $data["N_Ext"],
+            'num_int'             => $data["N_Int"],
+            'codigo_postal'       => $data["cp"],
+            'id_historial'        => $ultimoRegistro->id ?? NULL,
         ];
 
         if ($request->hasFile('documentoidentificacion')) {
@@ -2796,7 +2809,8 @@ class TurnosController extends Controller
         $año_actual = date('Y');
         $fecha_actual = date('Y-m-d');
         $hora_actual =  date("H:i:s");
-        $user = auth()->user()->id;
+        $user = 0;
+     
         if(isset($data["folio"])){
             request()->validate([
                 'folio'             => 'required',
@@ -2837,139 +2851,80 @@ class TurnosController extends Controller
             $numero_consecutivo++;
         }
 
-        if(isset($data["folio"])){
-            $representante  = Poder::find($data["folio"]);
-            $ultimoRegistro = HistorialAbogado::where('id_abogado', $data["folio"])->latest()->first();
 
-            if(!isset($representante)){
-                return back()->with('error', 'El representante legal no existe');
-            }
-            if($representante["tipo"] == "Fisica"){
-                $email  = $representante["email_patronal"];
-                $telefono = $representante["telefono_patronal"];
-                $curp   = $representante["curp_patronal"];
-            }
-            else{
-                $email  = $representante["correo_representante"];
-                $telefono = $representante["numero_representante"];
-                $curp   = $representante["curp_representante"];
-            }
-            $data_insertar= array(
-                'consecutivo'       => $numero_consecutivo,    
-                'empresa'           => $representante["nombres_patronal"],
-                'primero_empresa'   => $representante["primer_apellido_patronal"],
-                'segundo_empresa'   => $representante["segundo_apellido_patronal"],
-                'nombre_empresa'    => $representante["nombres_patronal"],
-                'primero_trabajador'=> $data["primero_trabajador"],
-                'segundo_trabajador'=> $data["segundo_trabajador"] ?? null,
-                'trabajador'        => $data["trabajador"],
-                'edad'              => $data["trabajador_edad"],
-                'sexo'              => $data["trabajador_sexo"],
-                'trabajador_curp'   => $data["trabajador_curp"],
-                //'documentoCurp'     => $data["documentoCurp"],
-                'tipo_identificacion'=> $data["tipo_identificacion"],
-                'documentoidentificacion'=> $data["documentoidentificacion"],
-                'fecha_inicio'      => $data["fecha_inicio"],
-                'fecha_termino'     => $data["fecha_termino"],
-                'categoria'         => $data["categoria"],
-                'tipo_pago'         => $data["tipo_pago"],
-                'monto'             => $data["monto"],
-                'frecuencia'        => $data["frecuencia"],
-                'dias'              => $data["dias"],
-                'auxiliar'          => 0,
-                'lugar_auxiliar'    => "Recepción",
-                'delegacion'        => $data["sede"],
-                'estatus'           => 'Confirmado',
-                'exepcion'          => 'No',
-                'ine'               => $representante["ineDocumento	"],
-                'representacion'    => $representante["representacionDocumento"],
-                'email'             => $email,
-                'telefono'          => $telefono,
-                'JLCA'              => "No",
-                'motivo'            => $data["motivo"],
-                'curp_solicitante'  => $curp,
-                'salario'           => $data["salario"],
-                //Municipio de ururpan
-                'municipio_rat'     => "",
-                //Datos de representante legal
-                'tipo_vialidad'     => $representante["tipo_vialidad"],
-                'calle'             => $representante["vialidad_calle"],
-                'colonia'           => $representante["colonia"],
-                'num_ext'           => $representante["N_Ext"],
-                'codigo_postal'     => $representante["cp"],
+        $representante  = Poder::find($data["folio"]);
+        $ultimoRegistro = HistorialAbogado::where('id_abogado', $data["folio"])->latest()->first();
 
-                'idAbogado'         => $data["folio"],
-                'user_id'           => $user,
-                'fecha'             => $data["fecha"],
-                'hora'              => $data["hora"],
-                'hora_fin'          => $data["hora"],
-                'num_identificacion'=> $data["num_identificacion"],
-                'estado_rat'        => 16,
-                'año'               => $año_actual,
-                'id_historial'      => $ultimoRegistro->id ?? NULL,
-                'nacionalidad'      => "MEXICANA",
-            ); 
-            $nombre = $data["trabajador"];
-            
+        if(!isset($representante)){
+            return back()->with('error', 'El representante legal no existe');
+        }
+        if($representante["tipo"] == "Fisica"){
+            $email  = $representante["email_patronal"];
+            $telefono = $representante["telefono_patronal"];
+            $curp   = $representante["curp_patronal"];
         }
         else{
-            $data_insertar= array(
-                'consecutivo'               => $numero_consecutivo,    
-                'empresa'                   => $data["empresa"],
-                'primero_empresa'           => $data["primero_empresa"],
-                'segundo_empresa'           => $data["segundo_empresa"],
-                'nombre_empresa'            => $data["nombre_empresa"],
-                'email'                     => $data["email"],
-                'telefono'                  => $data["telefono"],
-                'documentoIne'              => $data["documentoIne"],
-                'documentoPoder'            => $data["documentoPoder"],
-                'primero_trabajador'        => $data["primero_trabajador"],
-                'segundo_trabajador'        => $data["segundo_trabajador"] ?? null,
-                'trabajador'                => $data["trabajador"],
-                'edad'                      => $data["trabajador_edad"],
-                'sexo'                      => $data["trabajador_sexo"],
-                'trabajador_curp'           => $data["trabajador_curp"],
-                'documentoCurp'             => $data["documentoCurp"],
-                'tipo_identificacion'       => $data["tipo_identificacion"],
-                'documentoidentificacion'   => $data["documentoidentificacion"],
-                'fecha_inicio'              => $data["fecha_inicio"],
-                'fecha_termino'             => $data["fecha_termino"],
-                'categoria'                 => $data["categoria"],
-                'tipo_pago'                 => $data["tipo_pago"],
-                'monto'                     => $data["monto"],
-                'frecuencia'                => $data["frecuencia"],
-                'dias'                      => $data["dias"],
-                'fecha'                     => $data["fecha"],
-                'hora'                      => $data["hora"],
-                'hora_fin'                  => $data["hora"],
-                'auxiliar'                  => 0,
-                'lugar_auxiliar'            => "Recepción",
-                'delegacion'                => $data["sede"],
-                'estatus'                   => 'Pendiente',
-                'exepcion'                  => 'No',
-                'ine'                       => $data["documentoIne"],
-                'representacion'            => $data["documentoPoder"],
-                'email'                     => $data["email"],
-                'telefono'                  => $data["telefono"],
-                'JLCA'                      => "No",
-                'motivo'                    => $data["motivo"],
-                'curp_solicitante'          => $data["curp"],
-                'salario'                   => $data["salario"],
-                //DATOS DE REPRESENTANTE
-                'municipio_rat'             => $data["municipio_rat"],
-                'tipo_vialidad'             => $data["tipo_vialidad"],
-                'calle'                     => $data["vialidad_calle"],
-                'colonia'                   => $data["colonia"],
-                'num_ext'                   => $data["N_Ext"],
-                'codigo_postal'             => $data["cp"],
-                'estado_rat'                => 16,
-                'año'                       => $año_actual,
-                'nacionalidad'              => "MEXICANA",
-            ); 
-            $nombre = $data["trabajador"];
-            $email  = $data["email"];
-            $curp   = $data["curp"];
+            $email  = $representante["correo_representante"];
+            $telefono = $representante["numero_representante"];
+            $curp   = $representante["curp_representante"];
         }
+        $data_insertar= array(
+            'consecutivo'       => $numero_consecutivo,    
+            'empresa'           => $representante["nombres_patronal"],
+            'primero_empresa'   => $representante["primer_apellido_patronal"],
+            'segundo_empresa'   => $representante["segundo_apellido_patronal"],
+            'nombre_empresa'    => $representante["nombres_patronal"],
+            'primero_trabajador'=> $data["primero_trabajador"],
+            'segundo_trabajador'=> $data["segundo_trabajador"] ?? null,
+            'trabajador'        => $data["trabajador"],
+            'edad'              => $data["trabajador_edad"],
+            'sexo'              => $data["trabajador_sexo"],
+            'trabajador_curp'   => $data["trabajador_curp"],
+                //'documentoCurp'     => $data["documentoCurp"],
+            'tipo_identificacion'=> $data["tipo_identificacion"],
+            'documentoidentificacion'=> $data["documentoidentificacion"],
+            'fecha_inicio'      => $data["fecha_inicio"],
+            'fecha_termino'     => $data["fecha_termino"],
+            'categoria'         => $data["categoria"],
+            'tipo_pago'         => $data["tipo_pago"],
+            'monto'             => $data["monto"],
+            'frecuencia'        => $data["frecuencia"],
+            'dias'              => $data["dias"],
+            'auxiliar'          => 0,
+            'lugar_auxiliar'    => "Recepción",
+            'delegacion'        => $data["sede"],
+            'estatus'           => 'Confirmado',
+            'exepcion'          => 'No',
+            'ine'               => $representante["ineDocumento	"],
+            'representacion'    => $representante["representacionDocumento"],
+            'email'             => $email,
+            'telefono'          => $telefono,
+            'JLCA'              => "No",
+            'motivo'            => $data["motivo"],
+            'curp_solicitante'  => $curp,
+            'salario'           => $data["salario"],
+            //Municipio de ururpan
+            'municipio_rat'     => 16102,
+            //Datos de representante legal
+            'tipo_vialidad'     => $representante["tipo_vialidad_patronal"],
+            'calle'             => $representante["vialidad_patronal"],
+            'colonia'           => $representante["colonia_patronal"],
+            'num_ext'           => $representante["num_ext_patronal"],
+            'codigo_postal'     => $representante["cp_patronal"],
+
+            'idAbogado'         => $data["folio"],
+            'user_id'           => $user,
+            'fecha'             => $data["fecha"],
+            'hora'              => $data["hora"],
+            'hora_fin'          => $data["hora"],
+            'num_identificacion'=> $data["num_identificacion"],
+            'estado_rat'        => 16,
+            'año'               => $año_actual,
+            'id_historial'      => $ultimoRegistro->id ?? NULL,
+            'nacionalidad'      => "MEXICANA",
+        ); 
+        $nombre = $data["trabajador"];
+    
 
         //Variables opcionales
         if(isset($data["Aguinaldo"])){
@@ -3009,26 +2964,12 @@ class TurnosController extends Controller
 
         //Documentos si cargaron el folio
         if(isset($data["folio"])){
-            $representante  = Poder::find($data["folio"]);
             if($representante["tipo"] == "Fisica"){
                 $nombre_ine             = $representante["nombre_patronal"]."".$representante["primer_apellido_patronal"]."".$representante["segundo_apellido_patronal"]."-".$representante["empresa"]."_IDENTIFICACION.pdf";
             }
             else{
                $nombre_ine             = $representante["nombres_patronal"]."_IDENTIFICACION.pdf";
             }
-        }
-        else{
-            //Se carga el INE del abogado
-            $nombre_ine = $data["nombre_empresa"]."".$data["primero_empresa"]."".$data["segundo_empresa"]."-".$data["empresa"]."_IDENTIFICACION.pdf";
-            $path = Storage::putFileAs(
-                'documentos_ratificacion', $request->file('documentoIne'), $nombre_ine
-            );
-            
-            //Se carga el Poder del abogado
-            $nombre_representación = $data["nombre_empresa"]."".$data["primero_empresa"]."".$data["segundo_empresa"]."-".$data["empresa"]."_PODER.pdf";
-            $path = Storage::putFileAs(
-                'documentos_ratificacion', $request->file('documentoPoder'), $nombre_representación
-            );
         }
         
         $trabajador_identificacion  = $data["trabajador_curp"]."_IDENTIFICACION.pdf";
@@ -3040,14 +2981,6 @@ class TurnosController extends Controller
         $data_insertar["representacion"]            = "";   
         $data_insertar["documentoidentificacion"]   = $trabajador_identificacion;  
 
-
-        if(isset($data["cuantificacion"])){
-            $cuantificacion  = $data["trabajador_curp"]."_CUANTIFICACION.pdf";
-            $path = Storage::putFileAs(
-                'documentos_ratificacion', $request->file('cuantificacion'), $cuantificacion
-            );
-            $data_insertar["documentoCuanti"] = $cuantificacion;
-        }
         if(isset($data["N_Int"])){
             $data_insert["num_int"] =  $data["N_Int"];
         }

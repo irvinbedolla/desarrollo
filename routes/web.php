@@ -109,7 +109,7 @@ use App\Http\Controllers\AsistenciaController;
     
     //Rutas de citas
     Route::get('citas',                         [TurnosController::class, 'create_publico'])->name('create_cita');
-    Route::get('AgendaRatificacion',            [TurnosController::class, 'create_ratiMultiple'])->name('create_cita');
+    Route::get('AgendaRatificacion',            [TurnosController::class, 'create_ratiMultiple'])->name('create_cita-12');
     Route::post('/citas/store_publico',         [TurnosController::class, 'store_publico'])->name('turnos.publico');
     Route::post('/citas/storeRatificacion',     [TurnosController::class, 'guardarRatificacion'])->name('guardarRatificacion');
     Route::get('/validar_folio_abogado/{folio}',[TurnosController::class, 'validarFolio'])->name('validar_folio_abogado'); //valida si existe ya un abogado
@@ -359,8 +359,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/finalizaAux/{id}',                     [SeerController::class, 'guardar_solicitudAux'])->name('seer.finalizaAux');
         Route::post('/finalizaAuxP/{id}',                   [SeerController::class, 'guardar_solicitudAuxP'])->name('seer.finalizaAuxP');
         Route::get('/VerpdfcumplimientoTotal/{id}',         [SeerController::class, 'VerPDFCumplimientoTotal'])->name('PDFcumplimientoTotal');
-        Route::get('/audiencias/edicion/{id}/{audiencia_id}', [SeerController::class, 'edicion_solConcluida'])->name('edicion_solConcluida'); //Vista de edición cuando la audiencia ya finalizó
-        Route::post('/audiencias/Guardar_edicionS', [SeerController::class, 'Guarda_edicion_solConcluida'])->name('Guarda_edicion_solConcluida');
+        Route::get('/audiencias/edicion/{id}/{audiencia_id}', [SeerController::class, 'edicion_audienciaConcluida'])->name('edicion_audienciaConcluida'); //Vista de edición cuando la audiencia ya finalizó
+        Route::post('/audiencias/Guardar_edicionA', [SeerController::class, 'Guarda_edicion_audienciaConcluida'])->name('Guarda_edicion_audienciaConcluida');
+        //Route::get('/audiencias/edicion/{id}/{audiencia_id}', [SeerController::class, 'edicion_solConcluida'])->name('edicion_solConcluida'); //Vista de edición cuando la audiencia ya finalizó
+        //Route::post('/audiencias/Guardar_edicionS', [SeerController::class, 'Guarda_edicion_solConcluida'])->name('Guarda_edicion_solConcluida');
     //Fin de Solicitudes
     //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',                        [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
@@ -424,7 +426,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         Route::get('/ratificaciones/vista_previaCitas/{id_solicitud}',  [TurnosController::class, 'vista_previa_citas'])->name('vista_previa_citas'); //Vista previa de la vista citas(primera parte del llenado de la ratificación)
         Route::post('/ratificaciones/guardarEdicion_citas',             [TurnosController::class, 'guardarEdicion_citas'])->name('guardarEdicion_citas');
-        Route::get('/ratificaciones/buscar-abogados-ajax',      [TurnosController::class, 'buscar_abogados_ajax'])->name('buscar_abogados_ajax');
+        Route::get('/ratificaciones/buscar-abogados-ajax',              [TurnosController::class, 'buscar_abogados_ajax'])->name('buscar_abogados_ajax');
     //Fin de Ratificaciones
     //PDF ABOGADOS
         Route::get('/PDF/acuseRegistro/{idAbogado}',        [PoderController::class, 'VerPDFregistroAbogado'])->name('PDFregistroAbogado'); //Acuse de registro exitoso para abogados

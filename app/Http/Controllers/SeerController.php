@@ -18521,7 +18521,197 @@ class SeerController extends Controller
             return $pdf->stream('Reporte_General.pdf');
         }
     }
-    public function edicion_solConcluida($id, $audiencia_id){ 
+    public function edicion_audienciaConcluida($id, $audiencia_id){ 
+        $solicitudOriginal = SeerPerGeneral::findOrFail($id);
+        //$audienciaAEditar = Audiencias::findOrFail($audiencia_id);
+        
+        /*$datosConciliador = SeerPerConciliador::where('id_solicitud', $id)
+                            ->where('audiencia_id', $audiencia_id)
+                            ->first();  */
+        $authId = auth()->user()->id; 
+        $user = User::find($authId);
+        $sede = $user->delegacion;
+        $conciliadorId = $authId;
+
+        $audienciaAEditar = Audiencias::where('id_solicitud', $id)
+        ->whereIn('estatus', [
+            'Conciliacion',
+            'No conciliacion',
+            'Reinstalacion'
+        ])
+        ->orderByDesc('fecha')
+        ->orderByDesc('hora')
+        ->first();
+        $manifestaciones = null;
+
+        if ($audienciaAEditar) {
+            $manifestaciones = SeerPerConciliador::where('id_solicitud', $id)
+                ->latest('id')
+                ->first();
+        }
+
+        $conceptos   = Concepto::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
+        $pagos       = Pagos::where('id_solicitud', $id)->whereIn('tipo_pago', ['Audiencia', 'Conciliador'])->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
+
+        $montoPena = $audienciaAEditar->pena_convencional ?? 0;
+        $direccion_convenio = $audienciaAEditar->direccion_convenio ?? '';
+        $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
+        
+        $totalPrestaciones = $conceptos->sum('monto');
+        $totalDeducciones = $deducciones->sum('monto');
+        $pagoTotal = $totalPrestaciones - $totalDeducciones;
+        $raw_fecha = Audiencias::where('id_solicitud', $id)->latest('id')->value('fecha');
+        $raw_hora  = Audiencias::where('id_solicitud', $id)->latest('id')->value('hora');
+
+        $audiencia_fecha = Carbon::parse($raw_fecha)->format('Y-m-d');
+        $audiencia_hora = Carbon::parse($raw_hora)->format('H:i:s');
+        return view('/audiencias/edita_audienciaConcluida', compact('solicitudOriginal','audienciaAEditar','conciliadorId','audiencia_fecha','audiencia_hora',
+            'conceptos','pagos','deducciones','sede','pagoTotal','montoPena','direccion_convenio','solicitante','id','audiencia_id','manifestaciones'
+        ));
+    }
+    public function Guarda_edicion_audienciaConcluida(Request $request){
+        $data = $request->all();
+        $id_solicitud = $data["id"];
+        $audiencia_id = $data["audiencia_id"]; 
+        $monto = 0;
+        $fecha_actual = date('y-m-d');
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        //$sede = $user->delegacion;
+        $conteo = 0;
+        $montoTotal = 0;
+        $solicitudOriginal = SeerPerGeneral::find($id_solicitud);
+        $sede_a_guardar = $solicitudOriginal->delegacion ?? $user->delegacion;
+       //Deducciones
+        if (isset($data["monto_deduccion"])) {
+            foreach ($data["monto_deduccion"] as $i => $monto) {
+                Deducciones::create([
+                    'id_solicitud' => $id_solicitud,
+                    'monto'        => $monto,
+                    'descripcion'  => $data["descripcion_deduccion"][$i],
+                    'tipo_pago'    => "Audiencia"
+                ]);
+            }
+        }
+        //Prestaciones
+        if(isset($data["tipo_pago"])){
+            $tiposPago = $data["tipo_pago"];
+            $cont = count($data["monto_pago"]);
+            $otrasPrestaciones = $data["otra_prestacion"] ?? [];
+            for($i = 0; $i < $cont; $i++) {
+                $descripcion = $tiposPago[$i];
+                if ($descripcion === "Otras"
+                    && isset($otrasPrestaciones[$i])
+                    && !empty(trim($otrasPrestaciones[$i]))) {
+                    $descripcion = trim($otrasPrestaciones[$i]);
+                }
+                Concepto::firstOrCreate([
+                        'id_solicitud' => $data["id"],
+                        'descripcion'  => $descripcion,
+                        'tipo_pago'    => 'Audiencia',],
+                        ['monto' => $data["monto_pago"][$i],]
+                );
+            }
+        }
+        $existenConceptos = Concepto::where('id_solicitud', $id_solicitud)
+        ->where('tipo_pago', 'Audiencia')
+        ->exists();
+        if(!isset($data["tipo_pago"]) && !$existenConceptos && $solicitudOriginal->estatus != "No conciliacion"){
+            return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
+        }
+        
+        //Pagos/Cumplimientos
+        if(isset($data["dias_pagos"])){
+            $conteo = count($data["dias_pagos"]);
+            for($i = 0; $i < $conteo; $i++) {
+                //Solo para el primer caso voy a seleccionar el tipo de pago
+                if($i == 0){
+                    $data_pagos = [
+                        'id_solicitud'  => $data["id"],
+                        'fecha'         => $data["dias_pagos"][$i],
+                        'hora'          => $data["hora_pagos"][$i], 
+                        'monto'         => $data["monto_pagos"][$i], 
+                        'descripcion'   => $data["descripcion_pagos"][$i],
+                        'estatus'       => "Pendiente",
+                        'delegacion'    => $sede_a_guardar,
+                        'tipo_pago'     => $data["tipo_pagoAgenda"][$i],
+                    ];
+                    $monto = $monto + $data["monto_pagos"][$i];
+                    Pagos::create($data_pagos);
+                }else{
+                    $data_pagos = [
+                        'id_solicitud'  => $data["id"],
+                        'fecha'         => $data["dias_pagos"][$i],
+                        'hora'          => $data["hora_pagos"][$i], 
+                        'monto'         => $data["monto_pagos"][$i], 
+                        'descripcion'   => $data["descripcion_pagos"][$i],
+                        'estatus'       => "Pendiente",
+                        'delegacion'    => $sede_a_guardar,
+                        'tipo_pago'     => "Audiencia",
+                    ];
+                    $monto = $monto + $data["monto_pagos"][$i];
+                    Pagos::create($data_pagos);
+                }
+            }
+        }
+       
+        $existenPagos = Pagos::where('id_solicitud', $id_solicitud)
+        ->whereIn('tipo_pago', ['Audiencia', 'Conciliador'])
+        ->exists();
+        if(!isset($data["dias_pagos"]) && !$existenPagos && $solicitudOriginal->estatus != "No conciliacion"){
+            return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
+        }
+       
+        $pena_convencional =  $data['pena_convencional'] ?? null;
+        $direccion_convenio = $data['direccion_convenio'] ?? null;
+        //$numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+        Audiencias::where('id_solicitud',$data["id"])
+            ->orderBy('id_solicitud','desc')
+            ->update([
+                /*'numero_audiencia'  =>  $numAudiencia+1,
+                'folio_audiencia'   =>  $numero_audiencia[0],*/
+                'pena_convencional'  =>  $data['pena_convencional'] ?? null,
+                'direccion_convenio'    =>  $data['direccion_convenio'] ?? null,
+            ]);
+        SeerPerConciliador::where('id_solicitud', $id_solicitud)
+            //->where('audiencia_id', $audiencia_id)
+            ->update([
+                'resolicion_primera'       => $data["primera"],
+                'resolicion_justificacion' => $data["justificacion"],
+                'resolicion_segunda'       => $data["segunda"],
+                'vacaciones'               => $data["vacaciones"] ?? 0,
+                'aguinaldo'                => $data["aguinaldo"] ?? 0,
+                'otros'                    => $data["otros"] ?? 0,
+                'horario'                  => $data["horario"],
+                'comida'                   => $data["comida"],
+                'monto'                    => $montoTotal,
+            ]);
+        SeerPerGeneral::where('id', $id_solicitud)
+            ->update([
+                'observaciones'       => $data["observaciones"],
+            ]);
+
+        // renombrar pagos automaticamente
+        $pagosActuales = Pagos::where('id_solicitud', $id_solicitud)
+            ->whereIn('tipo_pago', ['Audiencia', 'Conciliador'])
+            ->orderBy('id', 'asc')
+            ->get();
+        $totalPagos = $pagosActuales->count();
+        if ($totalPagos == 1) {
+            $pagosActuales[0]->update([
+                'descripcion' => 'Cumplimiento total de convenio'
+            ]);
+        } elseif ($totalPagos > 1) {
+            foreach ($pagosActuales as $index => $pago) {
+                $pago->update([
+                    'descripcion' => 'Parcialidad ' . ($index + 1)
+                ]);
+            }
+        }
+        return redirect()->route('todas_audiencias')->with('success', 'Cambios guardados correctamente.');
+    }
+    /*public function edicion_solConcluida($id, $audiencia_id){ 
         $solicitudOriginal = SeerPerGeneral::findOrFail($id);
         $audienciaAEditar = Audiencias::findOrFail($audiencia_id);
         
@@ -18654,7 +18844,7 @@ class SeerController extends Controller
             ->update([
                 /*'numero_audiencia'  =>  $numAudiencia+1,
                 'folio_audiencia'   =>  $numero_audiencia[0],*/
-                'pena_convencional'  =>  $data['pena_convencional'] ?? null,
+        /*        'pena_convencional'  =>  $data['pena_convencional'] ?? null,
                 'direccion_convenio'    =>  $data['direccion_convenio'] ?? null,
             ]);
         SeerPerConciliador::where('id_solicitud', $id_solicitud)
@@ -18693,7 +18883,7 @@ class SeerController extends Controller
             }
         }
         return redirect()->route('todas_solicitudes')->with('success', 'Cambios guardados correctamente.');
-    }
+    }*/
 
     public function plantillas_index(){
         return view('plantillas.index');

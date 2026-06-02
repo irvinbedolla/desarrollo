@@ -164,7 +164,7 @@
                                             <h3 class="text-center" style="color:black">Genera tu cita para ratificación</h3>
                                         </div>    
                                         <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                        <form class="needs-validation" novalidate method="POST" action="{{route('turnos.publico')}}" enctype="multipart/form-data" onsubmit="return validacionCamposInput()">
+                                        <form class="needs-validation" novalidate method="POST" action="{{route('guardarRatificacion')}}" enctype="multipart/form-data" onsubmit="return validacionCamposInput()">
                                             @csrf
                                             <br><br>
                                             <div class="row">

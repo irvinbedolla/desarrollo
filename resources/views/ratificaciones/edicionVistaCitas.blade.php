@@ -268,6 +268,119 @@
                                                 </div>
                                             </div>
                                                 
+
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Estado <span style="color:red;">(*)</span></label>
+                                                        <select class="form-control" name="estado_rat" required>
+                                                            <option value="">Seleccione</option>
+                                                            @foreach($estados as $est)
+                                                                <option value="{{ $est['id'] }}" {{ $solicitud['estado_rat'] ==  $est['id'] ? "selected" : '' }} >{{$est['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo estado es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
+                                                        <select id="municipio_rat" class="form-control" name="municipio_rat" placeholder="*Municipio" required>
+                                                            <option value="">Seleccione</option>
+                                                            @foreach($municipios as $mun)
+                                                                <option value="{{$mun['id']}}" {{ $solicitud['municipio_rat'] ==  $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo municipio o alcaldía es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Tipo de Vialidad <span style="color:red;">(*)</span></label>
+                                                        <select name="tipo_vialidad" id="tipo_vialidad" class="form-control" placeholder="*Vialidad" required>
+                                                            <option value="">SELECCIONE</option>
+                                                            <option value="AMPLIACIÓN" {{ $solicitud["tipo_vialidad"] == 'AMPLIACIÓN' ? "selected" : '' }}>Ampliación</option>
+                                                            <option value="ANDADOR" {{ $solicitud["tipo_vialidad"] == 'ANDADOR' ? "selected" : '' }}>Andador</option>
+                                                            <option value="AUTOPISTA" {{ $solicitud["tipo_vialidad"] == 'AUTOPISTA' ? "selected" : '' }}>Autopista</option>
+                                                            <option value="AVENIDA" {{ $solicitud["tipo_vialidad"] == 'AVENIDA' ? "selected" : '' }}>Avenida</option>
+                                                            <option value="BOULEVARD" {{ $solicitud["tipo_vialidad"] == 'BOULEVARD' ? "selected" : '' }}>Boulevard</option>
+                                                            <option value="CALLE" {{ $solicitud["tipo_vialidad"] == 'CALLE' ? "selected" : '' }}>Calle</option>
+                                                            <option value="CALLEJÓN" {{ $solicitud["tipo_vialidad"] == 'CALLEJÓN' ? "selected" : '' }}>Callejón</option>
+                                                            <option value="CALZADA" {{ $solicitud["tipo_vialidad"] == 'CALZADA' ? "selected" : '' }}>Calzada</option>
+                                                            <option value="CARRETERA" {{ $solicitud["tipo_vialidad"] == 'CARRETERA' ? "selected" : '' }}>Carretera</option>
+                                                            <option value="CERRADA" {{ $solicitud["tipo_vialidad"] == 'CERRADA' ? "selected" : '' }}>Cerrada</option>
+                                                            <option value="CIRCUITO" {{ $solicitud["tipo_vialidad"] == 'CIRCUITO' ? "selected" : '' }}>Circuito</option>
+                                                            <option value="CIRCUNVALACIÓN" {{ $solicitud["tipo_vialidad"] == 'CIRCUNVALACIÓN' ? "selected" : '' }}>Circunvalación</option>
+                                                            <option value="CONTINUACIÓN" {{ $solicitud["tipo_vialidad"] == 'CONTINUACIÓN' ? "selected" : '' }}>Continuación</option>
+                                                            <option value="CORREDOR" {{ $solicitud["tipo_vialidad"] == 'CORREDOR' ? "selected" : '' }}>Corredor</option>
+                                                            <option value="DIAGONAL" {{ $solicitud["tipo_vialidad"] == 'DIAGONAL' ? "selected" : '' }}>Diagonal</option>
+                                                            <option value="EJE VIAL" {{ $solicitud["tipo_vialidad"] == 'EJE VIAL' ? "selected" : '' }}>Eje vial</option>
+                                                            <option value="PERIFÉRICO" {{ $solicitud["tipo_vialidad"] == 'PERIFÉRICO' ? "selected" : '' }}>Periférico</option>
+                                                            <option value="PRIVADA" {{ $solicitud["tipo_vialidad"] == 'PRIVADA' ? "selected" : '' }}>Privada</option>
+                                                            <option value="PROLONGACIÓN" {{ $solicitud["tipo_vialidad"] == 'PROLONGACIÓN' ? "selected" : '' }}>Prolongación</option>
+                                                            <option value="RETORNO" {{ $solicitud["tipo_vialidad"] == 'RETORNO' ? "selected" : '' }}>Retorno</option>
+                                                            <option value="VIADUCTO" {{ $solicitud["tipo_vialidad"] == 'VIADUCTO' ? "selected" : '' }}>Viaducto</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo vialidad es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Nombre de la Vialidad <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="vialidad_calle" id="vialidad_calle" class="form-control" placeholder="*Nombre vialidad" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitud["calle"];?>" required> 
+                                                        <div class="invalid-feedback">
+                                                            El campo vialidad o calle es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Colonia <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" placeholder="*Colonia" name="colonia" id="colonia" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitud["colonia"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Núm. Ext. <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" placeholder="*Núm. exterior" name="N_Ext" id="N_Ext" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitud["num_ext"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+            
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Núm. Int.(Opcional)</label>
+                                                        <input type="text" class="form-control" placeholder="Núm. interior" name="N_Int" id="N_Int" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitud["num_int"];?>"> 
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+            
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Código postal <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" placeholder="*Código postal" name="cp" id="cp" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitud["codigo_postal"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
                                             <div class="col-xs-12 col-sm-12 col-md-2"> 
                                                 <div class="form-group">
                                                     <label for="fecha_inicio">Fecha de inicio de la relación laboral <span style="color:red;">(*)</span></label>
