@@ -109,8 +109,9 @@ use App\Http\Controllers\AsistenciaController;
     
     //Rutas de citas
     Route::get('citas',                         [TurnosController::class, 'create_publico'])->name('create_cita');
-    Route::get('AgendaRatificacion',            [TurnosController::class, 'create_publico'])->name('create_cita');
+    Route::get('AgendaRatificacion',            [TurnosController::class, 'create_ratiMultiple'])->name('create_cita');
     Route::post('/citas/store_publico',         [TurnosController::class, 'store_publico'])->name('turnos.publico');
+    Route::post('/citas/storeRatificacion',     [TurnosController::class, 'guardarRatificacion'])->name('guardarRatificacion');
     Route::get('/validar_folio_abogado/{folio}',[TurnosController::class, 'validarFolio'])->name('validar_folio_abogado'); //valida si existe ya un abogado
     Route::get('/Confirmacion/{id}',            [CitaDireccionController::class, 'codigoQR'])->name('revisarCitaQR');
 
