@@ -359,8 +359,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/finalizaAux/{id}',                     [SeerController::class, 'guardar_solicitudAux'])->name('seer.finalizaAux');
         Route::post('/finalizaAuxP/{id}',                   [SeerController::class, 'guardar_solicitudAuxP'])->name('seer.finalizaAuxP');
         Route::get('/VerpdfcumplimientoTotal/{id}',         [SeerController::class, 'VerPDFCumplimientoTotal'])->name('PDFcumplimientoTotal');
-        Route::get('/audiencias/edicion/{id}/{audiencia_id}', [SeerController::class, 'edicion_solConcluida'])->name('edicion_solConcluida'); //Vista de edición cuando la audiencia ya finalizó
-        Route::post('/audiencias/Guardar_edicionS', [SeerController::class, 'Guarda_edicion_solConcluida'])->name('Guarda_edicion_solConcluida');
+        Route::get('/audiencias/edicion/{id}/{audiencia_id}', [SeerController::class, 'edicion_audienciaConcluida'])->name('edicion_audienciaConcluida'); //Vista de edición cuando la audiencia ya finalizó
+        Route::post('/audiencias/Guardar_edicionA', [SeerController::class, 'Guarda_edicion_audienciaConcluida'])->name('Guarda_edicion_audienciaConcluida');
+        //Route::get('/audiencias/edicion/{id}/{audiencia_id}', [SeerController::class, 'edicion_solConcluida'])->name('edicion_solConcluida'); //Vista de edición cuando la audiencia ya finalizó
+        //Route::post('/audiencias/Guardar_edicionS', [SeerController::class, 'Guarda_edicion_solConcluida'])->name('Guarda_edicion_solConcluida');
     //Fin de Solicitudes
     //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',                        [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
