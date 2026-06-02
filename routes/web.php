@@ -109,8 +109,9 @@ use App\Http\Controllers\AsistenciaController;
     
     //Rutas de citas
     Route::get('citas',                         [TurnosController::class, 'create_publico'])->name('create_cita');
-    Route::get('AgendaRatificacion',            [TurnosController::class, 'create_publico'])->name('create_cita');
+    Route::get('AgendaRatificacion',            [TurnosController::class, 'create_ratiMultiple'])->name('create_cita');
     Route::post('/citas/store_publico',         [TurnosController::class, 'store_publico'])->name('turnos.publico');
+    Route::post('/citas/storeRatificacion',     [TurnosController::class, 'guardarRatificacion'])->name('guardarRatificacion');
     Route::get('/validar_folio_abogado/{folio}',[TurnosController::class, 'validarFolio'])->name('validar_folio_abogado'); //valida si existe ya un abogado
     Route::get('/Confirmacion/{id}',            [CitaDireccionController::class, 'codigoQR'])->name('revisarCitaQR');
 
@@ -419,6 +420,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/ratificaciones/terminar_ratificacion',   [TurnosController::class, 'terminar_ratificacion'])->name('terminar_ratificacion');
         Route::get('/cumplimiento/PDFIncumplimientoR/{id}',    [TurnosController::class, 'PDFincumplimientoRatificacion'])->name('PDFincumplimientoRatificacion');
         Route::get('/VerpdfcPTUNLaboraRat/{id}',               [TurnosController::class, 'VerPDFConvenioPTU_rat'])->name('PDFconvenioPTU_NO_R'); //Convenio PTU ya NO labora el trabajador
+        //Route::get('/VerpdfcPTUNLaboraRat/{id}',               [TurnosController::class, ''])->name('PDFconvenioPTU_NO_R'); Respaldo
+        
         Route::get('/ratificaciones/vista_previaCitas/{id_solicitud}',  [TurnosController::class, 'vista_previa_citas'])->name('vista_previa_citas'); //Vista previa de la vista citas(primera parte del llenado de la ratificación)
         Route::post('/ratificaciones/guardarEdicion_citas',             [TurnosController::class, 'guardarEdicion_citas'])->name('guardarEdicion_citas');
         Route::get('/ratificaciones/buscar-abogados-ajax',      [TurnosController::class, 'buscar_abogados_ajax'])->name('buscar_abogados_ajax');
