@@ -75,8 +75,9 @@ class TurnosController extends Controller
             'Lázaro Cárdenas' => 'DRU - OAL',
         ];
 
-        $codigo = $map[$delegacionUsuario] ?? '';
-        return $codigo !== '' ? "* {$codigo} / {$iniciales}" : "* {$iniciales}";
+    $codigo = $map[$delegacionUsuario] ?? '';
+
+    return $codigo !== '' ? "* {$codigo}" : '*';
     }
 
     public function ver_documento_subido($id)

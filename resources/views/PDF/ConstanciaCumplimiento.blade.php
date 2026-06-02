@@ -194,9 +194,10 @@
                             </tr>
                         </table> 
 
-                        @if(!empty($etiquetaIniciales))
+                        @if(!empty($etiquetaIniciales) && !empty($inicialesConcluye))
                             <div class="etiqueta-iniciales-pie">
-                                <small><b>{{ $etiquetaIniciales }}</b></small>
+                                <small><b>{{ $etiquetaIniciales }}</b></small><br>
+                                <small>Elaboró: <b>{{ $inicialesConcluye }}</b></small>
                             </div>
                         @endif
                         <br>

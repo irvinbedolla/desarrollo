@@ -114,9 +114,10 @@
                 <center><p><b>___________________________________<br>{{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br>FUNCIONARIO/A CONCILIADOR/A<br>
                     DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>         
 
-                @if(!empty($etiquetaIniciales))
+                @if(!empty($etiquetaIniciales) && !empty($inicialesConcluye))
                     <div class="etiqueta-iniciales-pie">
-                        <small><b>{{ $etiquetaIniciales }}</b></small>
+                        <small><b>{{ $etiquetaIniciales }}</b></small><br>
+                        <small>Elaboró: <b>{{ $inicialesConcluye }}</b></small>
                     </div>
                 @endif
             </div>
