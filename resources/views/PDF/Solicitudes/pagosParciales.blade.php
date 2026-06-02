@@ -54,6 +54,17 @@
                 height: 100%;
                 z-index: -1;
             } 
+            .etiqueta-iniciales-pie {
+                position: fixed;
+                bottom: 60px;
+                left: 0;
+                right: 0;
+                padding-left: 50px;
+                padding-right: 50px;
+                text-align: left;
+                font-size: 10px;
+                z-index: 10;
+            }
         </style>
     </head>
     @php
@@ -142,6 +153,13 @@
                     </p>  
                 </div>
             </div>
+
+            @if(!empty($etiquetaIniciales) && !empty($inicialesConcluye))
+                <div class="etiqueta-iniciales-pie">
+                    <small><b>{{ $etiquetaIniciales }}</b></small><br>
+                    <small>Elaboró: <b>{{ $inicialesConcluye }}</b></small>
+                </div>
+            @endif
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");

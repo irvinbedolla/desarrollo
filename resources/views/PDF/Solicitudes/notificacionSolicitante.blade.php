@@ -60,6 +60,17 @@
                 line-height: 1.5;
                 text-align: justify;
             }
+
+            /* Pie fijo: código de delegación + elaboró */
+            .etiqueta-iniciales-pie {
+                position: fixed;
+                bottom: 60px;
+                left: 2cm;
+                right: 2cm;
+                text-align: left;
+                font-size: 10px;
+                z-index: 10;
+            }
         </style>
     </head>
    
@@ -154,6 +165,13 @@
                     </div>
                 </div>
             </div>
+
+            @if(!empty($etiquetaIniciales) && !empty($inicialesConcluye))
+                <div class="etiqueta-iniciales-pie">
+                    <small><b>{{ $etiquetaIniciales }}</b></small><br>
+                    <small>Elaboró: <b>{{ $inicialesConcluye }}</b></small>
+                </div>
+            @endif
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");

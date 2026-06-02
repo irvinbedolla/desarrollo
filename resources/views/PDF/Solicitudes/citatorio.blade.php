@@ -66,6 +66,19 @@
             .bloque-firma {
                 page-break-inside: avoid;
             }
+
+            /* Pie fijo: código de delegación + elaboró */
+            .etiqueta-iniciales-pie {
+                position: fixed;
+                bottom: 0px;
+                left: 0;
+                right: 0;
+                padding-left: 0cm;
+                padding-right: 0cm;
+                text-align: left;
+                font-size: 10px;
+                z-index: 10;
+            }
         </style>
     </head>
    
@@ -206,6 +219,13 @@
                 <p style="text-align: center;">___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                 DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</p>
             </div>
+
+            @if(!empty($etiquetaIniciales) && !empty($inicialesConcluye) && (($citado->estatus ?? null) !== 'Notificada en Audiencia'))
+                <div class="etiqueta-iniciales-pie">
+                    <small><b>{{ $etiquetaIniciales }}</b></small><br>
+                    <small>Elaboró: <b>{{ $inicialesConcluye }}</b></small>
+                </div>
+            @endif
         </main>
 
         <script type="text/php">

@@ -9704,6 +9704,10 @@ class SeerController extends Controller
     //PDF Notificación de solicitud
     public function PDFnotificacionSolicitante($id){
         $solicitud = SeerPerGeneral::find($id);
+
+        $inicialesConcluye = $this->inicialesDeSeerGeneral($solicitud);
+        $etiquetaIniciales = $this->etiquetaDelegacionSeer($solicitud->delegacion ?? null);
+
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
@@ -9722,7 +9726,7 @@ class SeerController extends Controller
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
         ->latest('audiencias.created_at')
         ->first();
-        $pdf = \PDF::loadView('PDF/Solicitudes/notificacionSolicitante', compact('id','solicitud','solicitante','citados','conciliador','audiencia'))
+        $pdf = \PDF::loadView('PDF/Solicitudes/notificacionSolicitante', compact('id','solicitud','solicitante','citados','conciliador','audiencia','inicialesConcluye','etiquetaIniciales'))
         ->setPaper('a4', 'portrait')
         ->setOption('isHtml5ParserEnabled', true)
         ->setOption('isPhpEnabled', true);
@@ -10270,6 +10274,10 @@ class SeerController extends Controller
     public function pdfCitatorioAudiencia($id) {
         $citado = SeerCitados::find($id);
         $solicitud = SeerPerGeneral::where('id',$citado["id_solicitud"])->first();   
+
+        $inicialesConcluye = $this->inicialesDeSeerGeneral($solicitud);
+        $etiquetaIniciales = $this->etiquetaDelegacionSeer($solicitud->delegacion ?? null);
+
         $solicitante = SeerSolicitante::where('id_solicitud', $citado["id_solicitud"])->first();
         $motivoIds = SeerMotivo::where('id_solicitud', $citado["id_solicitud"])->pluck('id_motivo');
         $motivos = SolicitudMotivo::whereIn('id', $motivoIds)->get();
@@ -10288,7 +10296,7 @@ class SeerController extends Controller
         $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
         $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
         $fechaEmision = $audiencia ? $audiencia->created_at : now();
-        $html = view('PDF/Solicitudes/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador','municipioNombre','estadoNombre','fechaEmision'))->render();
+        $html = view('PDF/Solicitudes/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador','municipioNombre','estadoNombre','fechaEmision','inicialesConcluye','etiquetaIniciales'))->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
@@ -10734,7 +10742,8 @@ class SeerController extends Controller
     }
 
     public function cumplimiento_pagar_con_pena_audiencia(Request $request)
-    {
+    { 
+        $user_id = auth()->user()->id;
         $data = $request->validate([
             'id' => 'required|integer|exists:pago_solicitud,id',
             'observaciones' => 'nullable|string',
@@ -10745,6 +10754,7 @@ class SeerController extends Controller
             'estatus' => 'Pagado con pena convencional',
             'observaciones' => $data['observaciones'] ?? null,
             'monto_pc' => $data['monto_pc'],
+            'user_id' => $user_id,
         ]);
 
         $pago = Pagos::find($data['id']);
@@ -10761,9 +10771,10 @@ class SeerController extends Controller
     }
 
     public function cumplimiento_rechazar_audiencia($id){
+        $user_id = auth()->user()->id;
         $pagos = Pagos::find($id);
         $id_solicitud = $pagos["id_solicitud"];
-        Pagos::find($id)->update(['estatus'  => "No pagado"]);
+        Pagos::find($id)->update(['estatus'  => "No pagado", 'user_id' => $user_id]);
 
         SeerPerGeneral::find($id_solicitud)->update(['estatus' => "Incumplimiento"]);
 
@@ -10830,6 +10841,9 @@ class SeerController extends Controller
             $pagos      = Pagos::find($id);
             $general    = SeerPerGeneral::find($pagos["id_solicitud"]);
             $citados = SeerCitados::where('id_solicitud',$pagos["id_solicitud"])->where('aparece_convenio', 1)->get();
+            $antefirma = $this->antefirmaDesdePagoSolicitud($pagos->user_id ?? null, $solicitud->delegacion ?? null);
+            $inicialesConcluye = $antefirma['inicialesConcluye'];
+            $etiquetaIniciales = $antefirma['etiquetaIniciales'];
 
             $salario_diario = $this->calcularSalarioDiario($solicitante->pago, $solicitante->periodo_pago);
     
@@ -10838,7 +10852,7 @@ class SeerController extends Controller
             ->latest('audiencias.created_at')
             ->select('users.name','audiencias.fecha','audiencias.hora')
             ->first();
-            $html = view('PDF/IncumplimientoAudiencia', compact('id', 'solicitud','conciliador','salario_diario','pagos','general', 'citados', 'solicitante'))->render();
+            $html = view('PDF/IncumplimientoAudiencia', compact('id', 'solicitud','conciliador','salario_diario','pagos','general', 'citados', 'solicitante', 'inicialesConcluye', 'etiquetaIniciales'))->render();
         }
        
         $pdf = \PDF::loadHTML($html)
@@ -13869,6 +13883,7 @@ class SeerController extends Controller
     }
 
     public function cumplimiento_incomparecencia(Request $request, $id){
+        $user_id = auth()->user()->id;
         $request->validate([
             'fecha_audiencia' => 'required|date',
             'hora_audiencia'  => 'required',
@@ -13881,7 +13896,7 @@ class SeerController extends Controller
         ]);
     
         $id_solicitud = $pago->id_solicitud;
-        Pagos::find($id_solicitud)?->update(['estatus' => "Incomparecencia trabajador"]);
+        Pagos::find($id_solicitud)?->update(['estatus' => "Incomparecencia trabajador", 'user_id' => $user_id]);
         
         return redirect()->route('agenda');  
         /*Así estab antes de los cambios en los cumplimientos*/ 
@@ -13917,6 +13932,9 @@ class SeerController extends Controller
             $pagos = Pagos::find($id);
             $solicitante = SeerSolicitante::where('id_solicitud',$pagos->id_solicitud)->first();
             $solicitud = SeerPerGeneral::where('id', $pagos->id_solicitud)->first();
+            $antefirma = $this->antefirmaDesdePagoSolicitud($pagos->user_id ?? null, $solicitud->delegacion ?? null);
+            $inicialesConcluye = $antefirma['inicialesConcluye'];
+            $etiquetaIniciales = $antefirma['etiquetaIniciales'];
             $delegacion = $solicitud->delegacion;
             $delegado = User::where('delegacion', $delegacion)
             ->whereHas('roles', function ($query) {
@@ -13956,7 +13974,7 @@ class SeerController extends Controller
 
             $complimientos = Pagos::find($id);
 
-            $html = view('PDF/Cumplimientos/incomparecenciaTrabajadorAudiencia', compact('id','solicitud','conciliador','complimientos','pagos','delegado','citados','representantes', 'solicitante'))->render();
+            $html = view('PDF/Cumplimientos/incomparecenciaTrabajadorAudiencia', compact('id','solicitud','conciliador','complimientos','pagos','delegado','citados','representantes', 'solicitante', 'inicialesConcluye', 'etiquetaIniciales'))->render();
         }
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -14807,6 +14825,9 @@ class SeerController extends Controller
             $html = view('PDF/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'pagosDif'))->render();
         }else{
             $solicitud = SeerPerGeneral::find($pagos["id_solicitud"]);
+            $antefirma = $this->antefirmaDesdePagoSolicitud($pagos->user_id ?? null, $solicitud->delegacion ?? null);
+            $inicialesConcluye = $antefirma['inicialesConcluye'];
+            $etiquetaIniciales = $antefirma['etiquetaIniciales'];
             $audiencia = Audiencias::where('id_solicitud', $pagos["id_solicitud"])
                 ->latest()
                 ->first();
@@ -14831,7 +14852,7 @@ class SeerController extends Controller
             $solicitanteNombre = SeerSolicitante::where('id_solicitud', $pagos["id_solicitud"])->value('nombre');
             $citados = SeerCitados::where('id_solicitud', $pagos["id_solicitud"])->where('aparece_convenio', 1)->where('resulte_responsable', 'No')->get();
 
-            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'delegado', 'delegacion', 'solicitanteNombre', 'citados', 'audiencia'))->render();
+            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'delegado', 'delegacion', 'solicitanteNombre', 'citados', 'audiencia', 'inicialesConcluye', 'etiquetaIniciales'))->render();
         }
 
         $pdf = \PDF::loadHTML($html)
@@ -15133,13 +15154,17 @@ class SeerController extends Controller
     //PDF Acuse de solicitud confirmada
     public function PDFacuseConfirmada($id){
         $solicitud = SeerPerGeneral::find($id);
+
+        $inicialesConcluye = $this->inicialesDeSeerGeneral($solicitud);
+        $etiquetaIniciales = $this->etiquetaDelegacionSeer($solicitud->delegacion ?? null);
+
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
 
         $citados = SeerCitados::where('id_solicitud', $id)->get();
        
-        $pdf = \PDF::loadView('PDF/Solicitudes/acuseConfirmacion', compact('id','solicitud','solicitante','citados'))
+        $pdf = \PDF::loadView('PDF/Solicitudes/acuseConfirmacion', compact('id','solicitud','solicitante','citados','inicialesConcluye','etiquetaIniciales'))
         ->setPaper('a4', 'portrait')
         ->setOption('isHtml5ParserEnabled', true)
         ->setOption('isPhpEnabled', true);
@@ -15390,9 +15415,10 @@ class SeerController extends Controller
     }
 
     public function pagoA_audiencia(Request $request){
+        $user_id = auth()->user()->id;
         $data = $request->all();
         Pagos::find($data["id"])
-        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
+        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"], 'user_id' => $user_id]);
 
         $pagos = Pagos::find($data["id"]);
         $id_solicitud = $pagos["id_solicitud"];
@@ -17241,7 +17267,13 @@ class SeerController extends Controller
                 ->select('users.id', 'users.name', 'users.delegacion')
                 ->first();
         }
-        $html = view('PDF/Solicitudes/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos','delegado', 'audienciaFecha'))->render();
+
+        $ultimoPago = Pagos::where('id_solicitud', $id)->where('tipo_pago','Audiencia')->latest()->first();
+        $antefirma = $this->antefirmaDesdePagoSolicitud($ultimoPago->user_id ?? null, $solicitud->delegacion ?? null);
+        $inicialesConcluye = $antefirma['inicialesConcluye'];
+        $etiquetaIniciales = $antefirma['etiquetaIniciales'];
+
+        $html = view('PDF/Solicitudes/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos','delegado', 'audienciaFecha', 'inicialesConcluye', 'etiquetaIniciales'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -18669,5 +18701,87 @@ class SeerController extends Controller
 
     public function plantillas_ratificaciones(){
         return view('plantillas.plantillas_solicitudes');
+    }
+
+    private function inicialesDeSeerGeneral(?SeerPerGeneral $solicitud): string
+    {
+        if (!$solicitud || empty($solicitud->user_id)) {
+            return '';
+        }
+
+        $usuario = User::select('id', 'name')->find($solicitud->user_id);
+        if (!$usuario || trim((string) $usuario->name) === '') {
+            return '';
+        }
+
+        $partes = preg_split('/\s+/u', trim((string) $usuario->name), -1, PREG_SPLIT_NO_EMPTY);
+        if (!$partes) {
+            return '';
+        }
+
+        $iniciales = '';
+        foreach ($partes as $parte) {
+            $iniciales .= mb_substr($parte, 0, 1, 'UTF-8');
+        }
+
+        return mb_strtolower($iniciales, 'UTF-8');
+    }
+
+    private function etiquetaDelegacionSeer(?string $delegacion): string
+    {
+        $delegacion = trim((string) $delegacion);
+        if ($delegacion === '') {
+            return '';
+        }
+
+        $map = [
+            'Morelia' => 'DRM',
+            'Uruapan' => 'DRU',
+            'Zamora' => 'DRZ',
+
+            // Oficinas alternas
+            'Zitácuaro' => 'DRM - OAZ',
+            'Sahuayo' => 'DRZ - OAS',
+            'Lázaro Cárdenas' => 'DRU - OAL',
+        ];
+
+        $codigo = $map[$delegacion] ?? '';
+        return $codigo !== '' ? "* {$codigo}" : '';
+    }
+
+    private function antefirmaDesdePagoSolicitud(?int $userId, ?string $delegacion): array
+    {
+        if (empty($userId)) {
+            return [
+                'inicialesConcluye' => '',
+                'etiquetaIniciales' => '',
+            ];
+        }
+
+        $usuario = User::select('id', 'name')->find($userId);
+        if (!$usuario || trim((string) $usuario->name) === '') {
+            return [
+                'inicialesConcluye' => '',
+                'etiquetaIniciales' => '',
+            ];
+        }
+
+        $partes = preg_split('/\s+/u', trim((string) $usuario->name), -1, PREG_SPLIT_NO_EMPTY);
+        if (!$partes) {
+            return [
+                'inicialesConcluye' => '',
+                'etiquetaIniciales' => '',
+            ];
+        }
+
+        $iniciales = '';
+        foreach ($partes as $parte) {
+            $iniciales .= mb_substr($parte, 0, 1, 'UTF-8');
+        }
+
+        return [
+            'inicialesConcluye' => mb_strtolower($iniciales, 'UTF-8'),
+            'etiquetaIniciales' => $this->etiquetaDelegacionSeer($delegacion),
+        ];
     }
 }
