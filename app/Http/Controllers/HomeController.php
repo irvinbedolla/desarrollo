@@ -96,7 +96,7 @@ class HomeController extends Controller
         ->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
         ->join('seer_solicitante','seer_solicitante.id_solicitud','pago_solicitud.id_solicitud')
         ->where('pago_solicitud.estatus','Pendiente')
-        ->where('pago_solicitud.delegacion','Uruapan')
+        ->where('seer_general.delegacion','Uruapan')
         ->select('seer_general.NUE','seer_solicitante.nombre',DB::raw("'Cumplimiento' as tramite"))
         ->orderBy('pago_solicitud.hora')
         ->limit(7)

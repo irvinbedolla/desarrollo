@@ -43,7 +43,7 @@
                                             <th style="color: #fff;">Concluir</th>
                                             <th style="color: #fff;">Cumplimientos</th>
                                             <th style="color: #fff;">Documentos</th>
-                                            @if($userRole == "Enlace" || $userRole == "Super Usuario")
+                                            @if($userRole == "Enlace" || $userRole == "Super Usuario" || $userRole == "Auxiliar")
                                                 <th style="color: #fff;">Editar</th>
                                             @endif
                                         </thead>
@@ -146,7 +146,7 @@
                                                             </div>
                                                         @endif                                                        
                                                     </td>
-                                                    @if($userRole == "Enlace" || $userRole == "Super Usuario")
+                                                    @if($userRole == "Enlace" || $userRole == "Super Usuario" || $userRole == "Auxiliar")
                                                         <td>
                                                             <a class="btn btn-success" href="{{ route('vista_previa_citas', $solicitud->id) }}">Editar</a>
                                                         </td>
