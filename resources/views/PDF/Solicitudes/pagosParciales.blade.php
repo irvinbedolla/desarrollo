@@ -132,7 +132,7 @@
                 <div class="salto-inteligente"></div>
                 <div class="contenedor-firmas">
                     <p>
-                        <b>Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de Pago Parcial del Convenio de Conciliación, con 
+                        <b>Con fecha {{ \Carbon\Carbon::parse($pagos->updated_at)->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de Pago Parcial del Convenio de Conciliación, con 
                         fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
                     </p>   
                     <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
