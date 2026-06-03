@@ -2820,7 +2820,7 @@ class TurnosController extends Controller
                 'trabajador_sexo'   => 'required',
                 'trabajador_curp'   => 'required',
                 'tipo_identificacion'=> 'required',
-                'documentoidentificacion'=> 'required',
+                //'documentoidentificacion'=> 'required',
                 'fecha_inicio'      => 'required',
                 'fecha_termino'     => 'required',
                 'categoria'         => 'required',
@@ -2882,7 +2882,7 @@ class TurnosController extends Controller
             'trabajador_curp'   => $data["trabajador_curp"],
                 //'documentoCurp'     => $data["documentoCurp"],
             'tipo_identificacion'=> $data["tipo_identificacion"],
-            'documentoidentificacion'=> $data["documentoidentificacion"],
+            'documentoidentificacion'=> "",
             'fecha_inicio'      => $data["fecha_inicio"],
             'fecha_termino'     => $data["fecha_termino"],
             'categoria'         => $data["categoria"],
@@ -2962,6 +2962,7 @@ class TurnosController extends Controller
             $data_insert["num_int"] =  $data["N_Int"];
         }
 
+        /*
         //Documentos si cargaron el folio
         if(isset($data["folio"])){
             if($representante["tipo"] == "Fisica"){
@@ -2976,10 +2977,10 @@ class TurnosController extends Controller
         $path = Storage::putFileAs(
             'documentos_ratificacion', $request->file('documentoidentificacion'), $trabajador_identificacion
         );
-
-        $data_insertar["ine"]                       = $nombre_ine;
+        */
+        $data_insertar["ine"]                       = "";
         $data_insertar["representacion"]            = "";   
-        $data_insertar["documentoidentificacion"]   = $trabajador_identificacion;  
+        $data_insertar["documentoidentificacion"]   = "";  
 
         if(isset($data["N_Int"])){
             $data_insert["num_int"] =  $data["N_Int"];

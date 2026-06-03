@@ -86,7 +86,7 @@
     }
 
     .nue-texto {
-        font-size: 2.2rem;
+        font-size: 2.0rem;
         font-weight: bold;
         color: #000;
         margin: 0;
