@@ -110,10 +110,10 @@
                     Que comparece la(s) persona(s) de nombre <b>C. 
                     @foreach ($representantes as $representante)
                         @if($representante->nombre_representante != NULL)
-                            {{ $representante->nombre_representante }} {{ $representante->primer_apellido_representante }} {{ $representante->segundo_apellido_representante ?? '' }} </b> en su carácter de representante 
+                            {{ $representante->nombre_representante }} {{ $representante->primer_apellido_representante }} {{ $representante->segundo_apellido_representante ?? '' }}</b> en su carácter de representante 
                             legal de la parte patronal <b>{{$solicitud->empresa}}</b>
                         @else
-                            {{ $representante->nombre_representante }} {{ $representante->primer_apellido_representante }} {{ $representante->segundo_apellido_representante ?? '' }} </b>
+                            {{ $representante->nombres_patronal }} {{ $representante->primer_apellido_patronal }} {{ $representante->segundo_apellido_patronal ?? '' }}</b>
                         @endif
                     @endforeach
                     , a dar cumplimiento al Convenio celebrado entre las partes ante este Centro el día 
