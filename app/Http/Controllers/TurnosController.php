@@ -1857,7 +1857,7 @@ class TurnosController extends Controller
             /*'domicilio'                     => $data["domicilio"],*/
             'NUE'                           => $expediente,
             'id_conciliador'                => $data["conciliador_id"],
-            /*'user_id'                       => $id_usuario,*/
+            'user_id'                       => $id_usuario,
             'estatus'                       => $estatus,
             'conclucion_id'                    => $id_usuario
             ]
