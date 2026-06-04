@@ -307,7 +307,7 @@
                                                 <div  class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Subir Identificación Oficial <span style="color:red;">(*)</span></label>
-                                                        <input type="file" id="documentoidentificacion" name="documentoidentificacion" class="form-control" accept=".pdf" required> 
+                                                        <input type="file" id="documentoidentificacion" name="documentoidentificacion" class="form-control" accept=".pdf" > 
                                                         <div class="invalid-feedback">
                                                             El campo es obligatorio.
                                                         </div>
