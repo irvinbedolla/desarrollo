@@ -146,7 +146,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color: #CEA845">Regresar</a>    
                                         </div>
                                     </div>
