@@ -8444,7 +8444,7 @@ class SeerController extends Controller
         return view('solicitudes.solicitudes', compact('solicitudes'));
     }
     
-    public function ObtenerAudiencia($delegacion, $notificion) {
+    /*public function ObtenerAudiencia($delegacion, $notificion) {
         $id = auth()->user()->id;
         $user = User::find($id);
         
@@ -8540,6 +8540,139 @@ class SeerController extends Controller
         }
 
         return response()->json(['error' => 'No hay disponibilidad en el rango legal de 45 días'], 404);
+    }*/
+    public function ObtenerAudiencia($delegacion, $notificion) {
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        
+        $hoy = \Carbon\Carbon::now();
+        $fecha_limite_natural = $hoy->copy()->addDays(45);
+        
+        // Margen de notificación de seguridad reglamentario
+        $fecha_inicio_busqueda = ($notificion == "Trabajador") ? $hoy->copy()->addDays(7) : $hoy->copy()->addDays(15);
+
+        if ($fecha_inicio_busqueda->gt($fecha_limite_natural)) {
+            $fecha_inicio_busqueda = $fecha_limite_natural->copy();
+        }
+
+        $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
+        $mapa_sedes = ["Zitácuaro" => "Morelia", "Lázaro Cárdenas" => "Uruapan", "Sahuayo" => "Zamora"];
+        $oficina = $mapa_sedes[$delegacion] ?? $delegacion;
+        $permisos_requeridos = array_key_exists($delegacion, $mapa_sedes) ? ["Ambos", "Virtual"] : ["Ambos", "Precencial"];
+
+        $revisar_limite = $fecha_inicio_busqueda->copy();
+        
+        while ($revisar_limite->lte($fecha_limite_natural)) {
+            $fecha_str = $revisar_limite->format('Y-m-d');
+
+            // Verificar si es un día inhábil general del Centro/Sede
+            $dia_inhabil_centro = DiasInhabiles::where('centro', $oficina)
+                ->whereNull('user_id')
+                ->whereIn('tipo', ['Todos', 'Audiencias'])
+                ->where('descripcion', 'Inhabil')
+                ->where('fecha_inicio', '<=', $fecha_str)
+                ->where('fecha_final', '>=', $fecha_str)
+                ->exists();
+
+            // Sábados y domingos cuentan normal. Solo si es día Inhábil en la tabla se extiende el plazo.
+            if ($dia_inhabil_centro) {
+                $fecha_limite_natural->addDay(); 
+            }
+
+            $revisar_limite->addDay();
+        }
+
+        // 1. Obtener conciliadores aptos por sede y permiso
+        $conciliadores = User::whereHas('roles', function ($q) { $q->where('name', 'Conciliador'); })
+            ->where('delegacion', $oficina)
+            ->whereIn('id', function ($q) use ($permisos_requeridos) {
+                $q->select('id_conciliador')->from('permisos_conciliador')->whereIn('tipo', $permisos_requeridos);
+            })->get();
+
+        if ($conciliadores->isEmpty()) {
+            return response()->json(['error' => 'Sin conciliadores configurados.'], 404);
+        }
+
+        $fecha_revisar = $fecha_inicio_busqueda;
+
+        // 2. Bucle principal de búsqueda de espacios vacíos
+        while ($fecha_revisar->lte($fecha_limite_natural)) {
+            $fecha_str = $fecha_revisar->format('Y-m-d');
+
+            // El centro inhábil completo se sigue saltando para no agendar citas
+            $dia_inhabil_centro = DiasInhabiles::where('centro', $oficina)
+                ->whereNull('user_id')
+                ->whereIn('tipo', ['Todos', 'Audiencias'])
+                ->where('descripcion', 'Inhabil')
+                ->where('fecha_inicio', '<=', $fecha_str)
+                ->where('fecha_final', '>=', $fecha_str)
+                ->exists();
+
+            if ($fecha_revisar->isWeekend() || $dia_inhabil_centro) {
+                $fecha_revisar->addDay();
+                continue;
+            }
+
+            foreach ($horarios_disponibles as $h) {
+                
+                // 3. VALIDACIÓN: Bloqueo de Sede por Horas ("No inhabil")
+                $sede_bloqueada_en_hora = DiasInhabiles::where('centro', $oficina)
+                    ->whereNull('user_id')
+                    ->whereIn('tipo', ['Todos', 'Audiencias'])
+                    ->where('descripcion', 'No inhabil')
+                    ->where('fecha_inicio', '<=', $fecha_str)
+                    ->where('fecha_final', '>=', $fecha_str)
+                    ->where('horario_inicio', '<=', $h)
+                    ->where('horario_final', '>=', $h)
+                    ->exists();
+
+                if ($sede_bloqueada_en_hora) {
+                    continue; 
+                }
+
+                if (isset($mapa_sedes[$delegacion])) {
+                    if (Audiencias::where('fecha', $fecha_str)->where('hora', $h)->where('delegacion', $delegacion)->exists()) {
+                        continue; 
+                    }
+                }
+
+                $posibles_conciliadores = [];
+                foreach ($conciliadores as $c) {
+                    $bloqueo_conciliador = DiasInhabiles::where('user_id', $c->id)
+                        ->whereIn('tipo', ['Todos', 'Audiencias'])
+                        ->where('fecha_inicio', '<=', $fecha_str)
+                        ->where('fecha_final', '>=', $fecha_str)
+                        ->where(function ($query) use ($h) {
+                            $query->where('descripcion', 'Inhabil')
+                                ->orWhere(function ($qSub) use ($h) {
+                                    $qSub->where('descripcion', 'No inhabil')
+                                        ->where('horario_inicio', '<=', $h)
+                                        ->where('horario_final', '>=', $h);
+                                });
+                        })
+                        ->exists();
+
+                    if (!$bloqueo_conciliador) {
+                        $ocupado = Audiencias::where('fecha', $fecha_str)->where('hora', $h)->where('id_conciliador', $c->id)->exists();
+                        if (!$ocupado) {
+                            $posibles_conciliadores[] = $c->id;
+                        }
+                    }
+                }
+
+                if (!empty($posibles_conciliadores)) {
+                    return [
+                        $fecha_str,
+                        $h,
+                        ucfirst($fecha_revisar->isoFormat('dddd D [de] MMMM')),
+                        $posibles_conciliadores[array_rand($posibles_conciliadores)],
+                        "Fecha encontrada correctamente."
+                    ];
+                }
+            }
+            $fecha_revisar->addDay();
+        }
+        return response()->json(['error' => "No hay disponibilidad en el rango legal extendido por días inhábiles"], 404);
     }
 
     public function concluir_audiencia_conciliador(Request $request){    
