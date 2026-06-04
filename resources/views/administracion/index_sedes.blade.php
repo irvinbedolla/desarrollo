@@ -138,10 +138,10 @@
 
                             <div class="table-responsive mt-3">
                                 <table id="example" class="table table-striped mt-1">
-                                    <thead style="background-color: #4A001F; color: #fff;">
+                                    <thead>
                                         <tr>
-                                            <th>Delegación</th>
-                                            <th class="text-center">Configurar Bloqueos</th>
+                                            <th style="background:#4A001F; color: white;">Delegación</th>
+                                            <th style="background:#4A001F; color: white;" class="text-center">Configurar Bloqueos</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -179,28 +179,28 @@
                     <input type="hidden" name="sede_id" id="modal_sede_id" value="">
 
                     <div class="modal-header" style="background:#4A001F; color: white;">
-                        <h5 class="modal-title"><i class="bi bi-shield-lock"></i> Configurar Restricción de Agenda: <span id="txtSedeTitulo"></span></h5>
+                        <h5 class="modal-title"><i class="bi bi-shield-lock"></i> Restricción de Agenda: <span id="txtSedeTitulo" class="fw-bold text-warning"></span></h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <div class="modal-body">
                         <div class="row mb-3">
                             <div class="col-md-12">
-                                <label class="form-label d-block fw-bold">1. ¿A quién aplica este bloqueo?</label>
+                                <label class="form-label d-block fw-bold text-dark">1. Ámbito de Cobertura:</label>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="cobertura" id="cobSede" value="todos" checked>
-                                    <label class="form-check-label" for="cobSede">A toda la Sede / Oficina Completa</label>
+                                    <label class="form-check-label text-dark fw-semibold" for="cobSede">Bloquear Sede Completa</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="cobertura" id="cobConciliador" value="individual">
-                                    <label class="form-check-label" for="cobConciliador">A un Conciliador específico</label>
+                                    <label class="form-check-label text-dark fw-semibold" for="cobConciliador">Bloquear Conciliador Específico</label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row mb-3" id="div_selector_conciliador" style="display: none;">
                             <div class="col-md-12">
-                                <label for="conciliador_id" class="fw-semibold text-danger">Seleccione al Conciliador Afectado:</label>
+                                <label for="conciliador_id" class="fw-semibold text-danger">Seleccione al Conciliador:</label>
                                 <select name="conciliador_id" id="conciliador_id" class="form-control">
                                     <option value="">-- Seleccione un Conciliador --</option>
                                     @foreach($conciliadores as $con)
@@ -212,57 +212,96 @@
 
                         <hr class="opacity-25">
 
+                        <label class="form-label d-block fw-bold text-dark">2. Periodo de la Restricción:</label>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="fw-semibold">Fecha de inicio:</label>
+                                <label class="fw-semibold text-muted">Fecha de inicio:</label>
                                 <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control" min="{{ date('Y-m-d') }}" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="fw-semibold">Fecha final:</label>
+                                <label class="fw-semibold text-muted">Fecha final:</label>
                                 <input type="date" name="fecha_final" id="fecha_final" class="form-control" min="{{ date('Y-m-d') }}" required>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="fw-semibold">Módulo del Centro a Bloquear:</label>
+                                <label class="fw-semibold text-muted">Módulo del Centro a Afectar:</label>
                                 <select name="tipo" class="form-control" required>
-                                    <option value="Todos">Todos (Bloqueo Total)</option>
+                                    <option value="Todos">Todos (Bloqueo Completo)</option>
                                     <option value="Audiencias">Audiencias</option>
                                     <option value="Ratificaciones">Ratificaciones</option>
                                     <option value="Cumplimientos">Cumplimientos</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="fw-semibold">Régimen Legal del Día:</label>
+                                <label class="fw-semibold text-muted">Régimen Laboral del Día:</label>
                                 <select name="descripcion" class="form-control" required>
-                                    <option value="Inhabil">Inhábil (Oficial / Suspensión de términos)</option>
-                                    <option value="No inhabil" selected>No Inhábil (Suspensión interna / Permisos)</option>
+                                    <option value="Inhabil">Día Inhábil (Suspensión de Términos)</option>
+                                    <option value="No inhabil" selected>No Inhábil (Suspensión Interna / Junta)</option>
                                 </select>
                             </div>
                         </div>
 
                         <hr class="opacity-25">
 
-                        <div class="row mb-2">
-                            <div class="col-md-12">
-                                <div class="form-check form-switch">
+                        <label class="form-label d-block fw-bold text-dark">4. Configuración de Tiempo:</label>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mt-2">
                                     <input class="form-check-input" type="checkbox" id="bloquear_todo_el_dia" name="bloquear_todo_el_dia" value="1" checked style="cursor:pointer;">
-                                    <label class="form-check-label fw-bold text-primary" for="bloquear_todo_el_dia" style="cursor:pointer;">
-                                        <i class="bi bi-clock-history"></i> Bloquear todo el día (Jornada Completa)
+                                    <label class="form-check-label fw-bold text-dark" for="bloquear_todo_el_dia" style="cursor:pointer;">
+                                        <i class="bi bi-clock-fill text-primary"></i> Bloquear todo el día
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" id="es_recurrente" name="es_recurrente" value="1" style="cursor:pointer;">
+                                    <label class="form-check-label fw-bold text-dark" for="es_recurrente" style="cursor:pointer;">
+                                        <i class="bi bi-repeat text-success"></i> ¿Es bloqueo recurrente?
                                     </label>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row mb-2" id="wrapper_horas_especificas" style="display: none;">
+                        <div class="row mb-3" id="wrapper_horas" style="display: none;">
                             <div class="col-md-6">
-                                <label class="fw-semibold text-muted">Hora inicio:</label>
-                                <input type="time" name="hora_inicio" id="hora_inicio" class="form-control">
+                                <label class="form-label fw-semibold text-danger">Hora Inicio:</label>
+                                <input type="time" class="form-control" name="hora_inicio" id="hora_inicio" value="08:00">
                             </div>
                             <div class="col-md-6">
-                                <label class="fw-semibold text-muted">Hora fin:</label>
-                                <input type="time" name="hora_final" id="hora_final" class="form-control">
+                                <label class="form-label fw-semibold text-danger">Hora Final:</label>
+                                <input type="time" class="form-control" name="hora_final" id="hora_final" value="15:00">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3" id="wrapper_dias_recurrentes" style="display: none;">
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold text-primary d-block">Selecciona los días a repetir:</label>
+                                <div class="d-flex flex-wrap gap-3 p-2 border rounded bg-light">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input chk-dia-semana" type="checkbox" name="dias_semana[]" id="chk_lunes" value="1">
+                                        <label class="form-check-label text-dark" for="chk_lunes">Lunes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input chk-dia-semana" type="checkbox" name="dias_semana[]" id="chk_martes" value="2">
+                                        <label class="form-check-label text-dark" for="chk_martes">Martes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input chk-dia-semana" type="checkbox" name="dias_semana[]" id="chk_miercoles" value="3">
+                                        <label class="form-check-label text-dark" for="chk_miercoles">Miércoles</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input chk-dia-semana" type="checkbox" name="dias_semana[]" id="chk_jueves" value="4">
+                                        <label class="form-check-label text-dark" for="chk_jueves">Jueves</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input chk-dia-semana" type="checkbox" name="dias_semana[]" id="chk_viernes" value="5">
+                                        <label class="form-check-label text-dark" for="chk_viernes">Viernes</label>
+                                    </div>
+                                </div>
+                                <small class="text-muted"><i class="bi bi-info-circle"></i> Solo se restringirán los días seleccionados dentro de las fechas configuradas.</small>
                             </div>
                         </div>
                     </div>
@@ -286,12 +325,12 @@
     <script src="../public/assets/js/estadistica/estadistica.js"></script>
     <script>
         $(document).ready(function() {
-            // Mover el modal a la raíz para solucionar capas grises opacas
+            // Prevenir congelamiento de fondo gris moviendo el modal al final del body
             if ($('#modalBloqueoUnificado').length) {
                 $('#modalBloqueoUnificado').appendTo("body");
             }
 
-            // Inicialización de las tablas del historial locales
+            // Inicialización de las tablas secundarias del historial
             $('.datatable-local').each(function() {
                 $(this).DataTable({
                     info: false,
@@ -303,19 +342,18 @@
                 });
             });
 
-            // Cachamos los datos del botón que abre el modal unificado
+            // NUEVO NUEVO: Capturar y pintar los datos de la sede seleccionada en el modal al dar clic
             $(document).on('click', '.btn-abrir-bloqueo', function() {
                 let sede = $(this).data('sede');
                 $('#modal_sede_id').val(sede);
                 $('#txtSedeTitulo').text(sede);
             });
 
-            // CONTROL DE COBERTURA: Mostrar/Ocultar select de conciliadores
+            // Cambio de cobertura (Sede completa vs Conciliador)
             $('input[name="cobertura"]').on('change', function() {
                 if ($(this).val() === 'individual') {
                     $('#div_selector_conciliador').slideDown(200);
                     $('#conciliador_id').attr('required', 'required');
-                    // Cambiar dinámicamente la ruta del formulario si usas rutas diferentes en tu web.php
                     $('#formBloqueoMaster').attr('action', "{{ route('bloqueoConciliador') }}");
                 } else {
                     $('#div_selector_conciliador').slideUp(200);
@@ -324,27 +362,41 @@
                 }
             });
 
-            // CONTROL DE HORARIOS: Ocultar y desmarcar obligatorios si bloquea todo el día
+            // Control de "Bloquear todo el día"
             $('#bloquear_todo_el_dia').on('change', function() {
                 if (this.checked) {
-                    $('#wrapper_horas_especificas').slideUp(200);
-                    $('#hora_inicio').removeAttr('required').val('');
-                    $('#hora_final').removeAttr('required').val('');
+                    $('#wrapper_horas').slideUp(200);
+                    $('#hora_inicio').removeAttr('required');
+                    $('#hora_final').removeAttr('required');
                 } else {
-                    $('#wrapper_horas_especificas').slideDown(200);
+                    $('#wrapper_horas').slideDown(200);
                     $('#hora_inicio').attr('required', 'required');
                     $('#hora_final').attr('required', 'required');
                 }
             });
 
-            // Consistencia simple: la fecha final no puede ser menor a la inicial
+            // Control de "Es Recurrente"
+            $('#es_recurrente').on('change', function() {
+                if (this.checked) {
+                    $('#wrapper_dias_recurrentes').slideDown(200);
+                } else {
+                    $('#wrapper_dias_recurrentes').slideUp(200);
+                    $('.chk-dia-semana').prop('checked', false);
+                }
+            });
+
+            // Sincronización lógica de fechas elementales
             $('#fecha_inicio').on('change', function() {
                 $('#fecha_final').attr('min', $(this).val());
             });
 
-            // Confirmación estética antes de eliminar historial
-            $(document).on('submit', '.form-eliminar', function() {
-                return confirm('¿Seguro que deseas eliminar este bloqueo de la agenda operativa?');
+            // Validación antes de enviar el formulario
+            $('#formBloqueoMaster').on('submit', function(e) {
+                if ($('#es_recurrente').is(':checked') && $('.chk-dia-semana:checked').length === 0) {
+                    e.preventDefault();
+                    alert('Por favor, selecciona al menos un día de la semana para aplicar la recurrencia.');
+                    return false;
+                }
             });
         });
 
