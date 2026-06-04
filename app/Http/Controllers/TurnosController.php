@@ -876,7 +876,7 @@ class TurnosController extends Controller
     public function pagoA_ratificacion(Request $request){
         $data = $request->all();
         Pagos::find($data["id"])
-        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
+        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"], 'fecha_conclucion' => \Carbon\Carbon::now()->format('Y-m-d')]);
 
         $pagos = Pagos::find($data["id"]);
         $id_solicitud = $pagos["id_solicitud"];
@@ -1854,12 +1854,13 @@ class TurnosController extends Controller
             'otros_dias'                    => $data["otros"],
             'horario'                       => $data["horario"],
             'comida'                        => $data["comida"],
-            /*'domicilio'                     => $data["domicilio"],*/
+            /*'domicilio'                   => $data["domicilio"],*/
             'NUE'                           => $expediente,
             'id_conciliador'                => $data["conciliador_id"],
             'user_id'                       => $id_usuario,
             'estatus'                       => $estatus,
-            'conclucion_id'                    => $id_usuario
+            'conclucion_id'                 => $id_usuario,
+            'fecha_conclucion'              => \Carbon\Carbon::now()->format('Y-m-d')
             ]
         );
         

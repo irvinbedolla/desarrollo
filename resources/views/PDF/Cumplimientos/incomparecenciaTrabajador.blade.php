@@ -58,6 +58,17 @@
                 page-break-inside: avoid; 
             }
         </style>
+
+        <style>
+            .etiqueta-iniciales-pie {
+                position: fixed;
+                bottom: 60px;
+                left: 3cm;
+                right: 2cm;
+                text-align: left;
+                font-size: 12px;
+            }
+        </style>
     </head>
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
@@ -139,8 +150,16 @@
                     <p style="font-size: 10px;">
                         LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA CONSTANCIA DE INCOMPARECENCIA DE PAGO DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
                     </p>  
-                </div>       
+                </div>
+                
+                @if((!empty($etiquetaIniciales) && !empty($inicialesConcluye)) && !empty($solicitud->fecha_conclucion) != NULL && $solictud->fecha_conclucion > \Carbon\Carbon::parse('2026-06-03'))
+                    <div class="etiqueta-iniciales-pie">
+                        <small><b>{{ $etiquetaIniciales }}</b></small><br>
+                        <small>Elaboró: <b>{{ $inicialesConcluye }}</b></small>
+                    </div>
+                @endif       
             </div>
+            
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");

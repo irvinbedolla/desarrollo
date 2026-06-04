@@ -118,7 +118,7 @@
                     DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>         
             </div>
 
-            @if(!empty($etiquetaIniciales) && !empty($inicialesConcluye))
+            @if((!empty($etiquetaIniciales) && !empty($inicialesConcluye)) && $solicitud->fecha_terminacion != NULL && $solicitud->fecha_terminacion > \Carbon\Carbon::parse('2026-06-03'))
                 <div class="etiqueta-iniciales-pie">
                     <small><b>{{ $etiquetaIniciales }}</b></small><br>
                     <small>Elaboró: <b>{{ $inicialesConcluye }}</b></small>

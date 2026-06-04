@@ -154,7 +154,7 @@
                 </div>
             </div>
 
-            @if(!empty($etiquetaIniciales) && !empty($inicialesConcluye))
+            @if((!empty($etiquetaIniciales) && !empty($inicialesConcluye)) && !empty($pagos->fecha_conclucion) && $pagos->fecha_conclucion > \Carbon\Carbon::parse('2026-06-03'))
                 <div class="etiqueta-iniciales-pie">
                     <small><b>{{ $etiquetaIniciales }}</b></small><br>
                     <small>Elaboró: <b>{{ $inicialesConcluye }}</b></small>

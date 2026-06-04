@@ -10720,7 +10720,7 @@ class SeerController extends Controller
         $pagos = Pagos::find($id);
         
         $id_solicitud = $pagos["id_solicitud"];
-        Pagos::find($id)->update(['estatus'  => "No pagado"]);
+        Pagos::find($id)->update(['estatus'  => "No pagado", 'fecha_conclucion' => \Carbon\Carbon::now()->format('Y-m-d')]);
         Turnos::find($id_solicitud)->update(['estatus' => "Incumplimiento"]);
 
         return redirect()->route('cumplimiento_actual');
@@ -10774,7 +10774,7 @@ class SeerController extends Controller
         $user_id = auth()->user()->id;
         $pagos = Pagos::find($id);
         $id_solicitud = $pagos["id_solicitud"];
-        Pagos::find($id)->update(['estatus'  => "No pagado", 'user_id' => $user_id]);
+        Pagos::find($id)->update(['estatus'  => "No pagado", 'user_id' => $user_id, 'fecha_conclucion' => \Carbon\Carbon::now()->format('Y-m-d')]);
 
         SeerPerGeneral::find($id_solicitud)->update(['estatus' => "Incumplimiento"]);
 
@@ -13893,6 +13893,7 @@ class SeerController extends Controller
             'estatus'         => "Incomparecencia trabajador",
             'fecha_audiencia' => $request->fecha_audiencia,
             'hora_audiencia'  => $request->hora_audiencia,
+            'fecha_conclucion' => \Carbon\Carbon::now()->format('Y-m-d')
         ]);
     
         $id_solicitud = $pago->id_solicitud;
@@ -15418,7 +15419,7 @@ class SeerController extends Controller
         $user_id = auth()->user()->id;
         $data = $request->all();
         Pagos::find($data["id"])
-        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"], 'user_id' => $user_id]);
+        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"], 'user_id' => $user_id, 'fecha_conclucion' => \Carbon\Carbon::now()->format('Y-m-d')]);
 
         $pagos = Pagos::find($data["id"]);
         $id_solicitud = $pagos["id_solicitud"];
