@@ -69,7 +69,7 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                         <tr>   
                             <td><b>Oficina: </b></td>
-                            <td>{{ strtoupper($solicitud->delegacion, 'UTF-8') }} </td>
+                            <td>{{ $solicitud->delegacion }} </td>
                         </tr>
                         <tr>    
                             <td><b>Número de identificación único: </b></td>
