@@ -470,6 +470,8 @@
             $(document).on('click', '.btn-ver-expediente', function(e) {
                 e.preventDefault();
                 
+                // 1. Recuperamos el ID del abogado del botón clickeado
+                let idAbogado = $(this).data('id') || $(this).attr('data-id'); 
                 let abogado = $(this).data('abogado');
                 let ine = $(this).data('ine');
                 let cedula = $(this).data('cedula');
@@ -479,10 +481,21 @@
 
                 $('#expediente_nombre_abogado').text(abogado);
 
+                // 2. Modificamos la función constructora para inyectar la subcarpeta del ID si no viene completa
                 function buildLink(url, fallbackText = 'S/D') {
                     if (!url || url === '') return '<span class="text-muted fw-semibold">' + fallbackText + '</span>';
                     if (url === 'S/A') return '<span class="text-muted fw-semibold">S/A</span>';
-                    return '<a href="' + url + '" class="btn btn-xs btn-outline-danger py-0 px-2" target="_blank"><i class="bi bi-file-pdf"></i> PDF</a>';
+                    
+                    let finalUrl = url;
+                    // Si la URL no contiene ya la subcarpeta con el ID, la concatenamos dinámicamente
+                    // Esto asume que 'url' es solo el nombre del archivo o una ruta base modificable
+                    if (idAbogado && !url.includes('/' + idAbogado + '/')) {
+                        // Ajusta 'documento_abogados' por el nombre de tu directorio si difiere en la URL pública
+                        finalUrl = `/ver-documento-abogado/${idAbogado}/${url}`;
+                        //finalUrl = `../storage/documento_abogados/${idAbogado}/${url}`; 
+                    }
+
+                    return '<a href="' + finalUrl + '" class="btn btn-xs btn-outline-danger py-0 px-2" target="_blank"><i class="bi bi-file-pdf"></i> PDF</a>';
                 }
 
                 $('#wrapper_ine').html(buildLink(ine));
@@ -491,8 +504,12 @@
                 $('#wrapper_cartapoder').html(buildLink(carta, 'S/D'));
 
                 if (registro && registro !== '') {
+                    let finalRegistro = registro;
+                    if (idAbogado && !registro.includes('/' + idAbogado + '/')) {
+                        finalRegistro = `../storage/documento_abogados/${idAbogado}/${registro}`;
+                    }
                     $('#li_registro').show();
-                    $('#wrapper_registro').html('<a href="' + registro + '" class="btn btn-xs btn-success py-0 px-2" target="_blank"><i class="bi bi-printer"></i> Imprimir</a>');
+                    $('#wrapper_registro').html('<a href="' + finalRegistro + '" class="btn btn-xs btn-success py-0 px-2" target="_blank"><i class="bi bi-printer"></i> Imprimir</a>');
                 } else {
                     $('#li_registro').hide();
                 }

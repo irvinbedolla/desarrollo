@@ -230,7 +230,7 @@
         }
 
         // Ejecutar rotación cada 10 segundos
-        setInterval(rotar, 3000);
+        setInterval(rotar, 10000);
     </script>
 </body>
 </html>
