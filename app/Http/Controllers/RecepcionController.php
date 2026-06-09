@@ -11,6 +11,8 @@ use App\Models\Recepcion;
 use App\Models\SeerPerGeneral;
 use App\Models\Turnos;
 use App\Models\TurnoDisponible;
+use Carbon\Carbon;
+use App\Models\DiasInhabiles;
 
 class RecepcionController extends Controller
 {   
@@ -19,70 +21,77 @@ class RecepcionController extends Controller
     }
 
     public function turnos_guardar(Request $request){
+        // Validamos que los campos esenciales existan en la petición
+        if (!$request->has('delegacion') || empty($request->input('delegacion'))) {
+            return redirect()->back()->with('error', 'Es necesario seleccionar una sede (delegación).');
+        }
+        if (!$request->has('tipo') || empty($request->input('tipo'))) {
+            return redirect()->back()->with('error', 'Es necesario seleccionar el Tipo de Trámite.');
+        }
+
         $data = $request->all();
-        $fecha_actual = date('Y-m-d');
-        $hora_actual  = date("H:i:s");
-        $numero_consecutivo = 0;
-        $consecutivo  = Recepcion::latest('id')->where('fecha', $fecha_actual)->first();
-        $id = auth()->user()->id;
-        $user = User::find($id);
+        $sede = $data["delegacion"];
+        $tipoTramite = $data["tipo"]; 
+        $hora_actual = date("H:i:s");
+        $id_auxiliar = auth()->user()->id;
 
-        if(empty($consecutivo)){
+        // 1. Llamar a la función enviándole la sede y el tipo de trámite seleccionado
+        $fechaAsignada = $this->obtenerProximaFechaTurno($sede, $tipoTramite);
+
+        if (!$fechaAsignada) {
+            return redirect()->back()->with('error', 'No se encontraron fechas disponibles para realizar una ' . $tipoTramite . ' en la sede ' . $sede . '.');
+        }
+
+        $fecha_asignada_str = $fechaAsignada->format('Y-m-d');
+
+        // 2. Calcular el consecutivo dinámico de acuerdo a la FECHA ASIGNADA y SEDE
+        $consecutivo = Recepcion::where('fecha', $fecha_asignada_str)
+            ->where('delegacion', $sede)
+            ->orderBy('consecutivo', 'desc')
+            ->first();
+
+        if (empty($consecutivo)) {
             $numero_consecutivo = 1;
-        }
-        else{
-            $numero_consecutivo = $consecutivo["consecutivo"];
-            $numero_consecutivo++;
+        } else {
+            $numero_consecutivo = $consecutivo["consecutivo"] + 1;
         }
 
-        $data_insertar= array(
-            'consecutivo'   => $numero_consecutivo,
-            'solicitante'   => $data["nombre"],
-            'auxiliar'      => 0,
-            'lugar_auxiliar'=> "Recepción",
-            'tipo'          => $data["tipo"],
-            'fecha'         => $fecha_actual,
-            'hora'          => $hora_actual,
-            'hora_fin'      => $hora_actual,
-            'delegacion'    => $data["delegacion"],
-            'estatus'       => "no atendido",
-            'exepcion'      => "No",
-            'edad'          => $data["edad"],
-            'sexo'          => $data["sexo"],
-            'vulnerables'   => $data["vulnerables"],
-        );    
-        
+        // 3. SOLUCIÓN AL ERROR: Validar si los campos múltiples vienen como array o como string
+        $tipo_caso    = isset($data["tipo_caso"])    ? (is_array($data["tipo_caso"])    ? implode(',', $data["tipo_caso"])    : $data["tipo_caso"])    : null;
+        $prestacionSS = isset($data["prestacionSS"]) ? (is_array($data["prestacionSS"]) ? implode(',', $data["prestacionSS"]) : $data["prestacionSS"]) : null;
+        $vulnerables  = isset($data["vulnerables"])  ? (is_array($data["vulnerables"])  ? implode(',', $data["vulnerables"])  : $data["vulnerables"])  : 'Ninguno';
+
+        // 4. Preparar el guardado mapeado con la estructura e inputs del Blade
+        $data_insertar = array(
+            'consecutivo'     => $numero_consecutivo,
+            'fecha'           => $fecha_asignada_str,
+            'hora'            => $hora_actual,
+            'auxiliar'        => 0,
+            'tipo'            => $tipoTramite, 
+            'lugar_auxiliar'  => $data["lugar_auxiliar"] ?? 'Mesa 1', 
+            'exepcion'        => $data["excepcion"] ?? 'No',
+            'edad'            => $data["edad"] ?? null,
+            'sexo'            => $data["sexo"] ?? null,
+            'tipo_caso'       => $tipo_caso,
+            'prestacionSS'    => $prestacionSS,
+            'vulnerables'     => $vulnerables,
+            'conflicto'       => $data["conflicto"] ?? null,
+            'solicitante'     => $data["nombre"] ?? null,
+            'estatus'         => 'no atendido',
+            'orientacion'     => $data["orientacion"] ?? 'No',
+            'delegacion'      => $sede,
+            'folio'           => $data["folio"] ?? null,
+            'INS'             => $data["INS"] ?? null,
+            'resultado'       => null,
+        );
+
+        // 5. Ejecutar el Insert a través de Eloquent
         Recepcion::create($data_insertar);
-        
-        $auxiliares = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Auxiliar');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
 
-        $auxiliares_morelia = array();
-        foreach($auxiliares as $auxiliar){
-            $estatus = "Disponible";
-            $ocupados = TurnoDisponible::where('fecha', $fecha_actual)
-            ->where('id_auxiliar', $auxiliar["id"])
-            ->select('turno_disponible.estatus')
-            ->orderBy('id', 'DESC')
-            ->get();
+        // Traducir fecha legible (Ej: "Martes 9 de Junio")
+        $fechaFormateada = ucfirst($fechaAsignada->isoFormat('dddd D [de] MMMM'));
 
-            if(!count($ocupados) == 0){
-                $estatus = $ocupados[0]["estatus"];
-            }
-            $data_insertar = [
-                'id'        => $auxiliar["id"],
-                'name'      => $auxiliar["name"],
-                'delegacion'=> $auxiliar["delegacion"],
-                'estatus'   => $estatus,
-            ];
-            array_push($auxiliares_morelia, $data_insertar);
-        }
-        $total = count($auxiliares_morelia);
-
-        return view('turnos.index',compact('auxiliares_morelia','total'));
+        return redirect()->back()->with('success', 'Turno #' . $numero_consecutivo . ' (' . $tipoTramite . ') generado exitosamente para la sede ' . $sede . ' el día ' . $fechaFormateada);
     }
 
     public function index_turnos()
@@ -248,12 +257,12 @@ class RecepcionController extends Controller
         $turnos = DB::table('recepcion')
         ->where('recepcion.fecha', $fecha_actual)
         ->where('recepcion.delegacion', $user["delegacion"])
-        ->where('recepcion.estatus','no atendido')
+        //->where('recepcion.estatus','no atendido')
         ->leftjoin('users', 'users.id', '=', 'recepcion.auxiliar')
         ->select('users.name','recepcion.id','recepcion.solicitante','recepcion.fecha','recepcion.hora','recepcion.estatus','recepcion.tipo','recepcion.exepcion')
         ->get();
 
-        return view('turnos.turnos',compact('turnos'));
+        return view('recepcion.turnos',compact('turnos'));
     }
 
     public function activo($id)
@@ -694,4 +703,57 @@ class RecepcionController extends Controller
         return view('turnos/crear');
     }
     
+    private function obtenerProximaFechaTurno($sede, $tipo){
+        // 1. Determinar el límite diario en base al tipo de trámite y la sede
+        if ($tipo === 'Ratificación') {
+            $limiteSolicitudes = 4; // Límite estricto para ratificaciones en cualquier sede
+        } else {
+            // Si es 'Solicitud' u otro tipo por defecto
+            $limiteSolicitudes = ($sede === 'Morelia') ? 20 : 10;
+        }
+
+        $fecha_evaluar = Carbon::now();
+        $fecha_encontrada = null;
+
+        // Bucle de seguridad para evaluar los próximos 60 días
+        for ($i = 0; $i < 60; $i++) {
+            $fecha_str = $fecha_evaluar->format('Y-m-d');
+
+            // Regla A: Omitir fines de semana
+            if ($fecha_evaluar->isWeekend()) {
+                $fecha_evaluar->addDay();
+                continue;
+            }
+
+            // Regla B: Verificar si es día inhábil general del Centro/Sede
+            $esInhabil = DiasInhabiles::where('centro', $sede)
+                ->whereNull('user_id')
+                ->whereIn('tipo', ['Todos', 'Audiencias'])
+                ->where('descripcion', 'Inhabil')
+                ->where('fecha_inicio', '<=', $fecha_str)
+                ->where('fecha_final', '>=', $fecha_str)
+                ->exists();
+
+            if ($esInhabil) {
+                $fecha_evaluar->addDay();
+                continue;
+            }
+
+            // Regla C: Contar cuántos trámites DEL MISMO TIPO ya se agendaron en esa fecha y sede
+            $totalTurnosDelDia = Recepcion::where('fecha', $fecha_str)
+                ->where('delegacion', $sede)
+                ->where('tipo', $tipo) // Filtramos específicamente por el tipo de trámite evaluado
+                ->count();
+
+            // Si hay cupo libre para ese tipo de trámite, se selecciona el día
+            if ($totalTurnosDelDia < $limiteSolicitudes) {
+                $fecha_encontrada = $fecha_evaluar->copy();
+                break;
+            }
+
+            $fecha_evaluar->addDay();
+        }
+
+        return $fecha_encontrada;
+    }
 }

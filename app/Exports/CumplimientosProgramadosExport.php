@@ -40,6 +40,10 @@ class CumplimientosProgramadosExport implements FromView
         $queryRatificaciones = Pagos::whereBetween('pago_solicitud.fecha', [$this->fecha_inicial, $this->fecha_final])
             ->join('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
             ->leftJoin('users', 'users.id', '=', 'turnos.id_conciliador')
+            ->where(function($query) {
+                $query->where('turnos.incidencia', 0)
+                    ->orWhereNull('turnos.incidencia');
+            })
             ->select(
                 DB::raw("DATE(pago_solicitud.fecha) as fecha"),
                 'turnos.hora as hora_programada', // Extraemos la hora
@@ -63,6 +67,10 @@ class CumplimientosProgramadosExport implements FromView
             ->leftJoin('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->leftJoinSub($subqueryCitados, 'primera_cita', function ($join) {
                 $join->on('seer_general.id', '=', 'primera_cita.id_solicitud');
+            })
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
             })
             ->leftJoin('seer_citados', 'seer_citados.id', '=', 'primera_cita.first_id')
             ->leftJoin('users', 'users.id', '=', 'pago_solicitud.id_conciliador')

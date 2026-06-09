@@ -118,8 +118,7 @@
     <div id="pantalla1" class="main-container activa">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-8 titulo-columna">TRAMITE</div>
-                <div class="col-4 titulo-columna">INFORMACIÓN ADICIONAL</div>
+                <div class="col-12 titulo-columna">CUMPLIMIENTOS</div>
             </div>
 
             @foreach($cumplimientos as $cumplimiento)
@@ -149,8 +148,7 @@
     <div id="pantalla2" class="main-container">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-8 titulo-columna">TRAMITE</div>
-                <div class="col-4 titulo-columna">INFORMACIÓN ADICIONAL</div>
+                <div class="col-12 titulo-columna">RATIFICACIONES</div>
             </div>
 
             @foreach($turnos as $turno)
@@ -180,8 +178,7 @@
     <div id="pantalla3" class="main-container">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-8 titulo-columna">TRAMITE</div>
-                <div class="col-4 titulo-columna">INFORMACIÓN ADICIONAL</div>
+                <div class="col-12 titulo-columna">AUDIENCIAS</div>
             </div>
 
             @foreach($audienencias as $audienencia)
@@ -208,6 +205,36 @@
         </div>
     </div>
 
+    <div id="pantalla4" class="main-container">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 titulo-columna">SOLICITUDES</div>
+            </div>
+
+            @foreach($solicitudes as $solicitud)
+                <div class="turno-row">
+                    <div class="info-box">
+                        <h2>TRÁMITE:</h2>
+                        <div class="tramite-badge">
+                            {{ $solicitud->tramite }} 
+                        </div>
+
+                        <div class="datos-tramite">
+                            <span class="nue-texto">{{ $solicitud->NUE }}</span>
+                            <span class="nombre-texto">{{ $solicitud->nombre }}</span>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+            @if($solicitudes->isEmpty())
+                <div style="text-align: center; color: white; margin-top: 100px;">
+                    <h1>Sin Solicitudes pendientes</h1>
+                </div>
+            @endif
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
     <script>
@@ -223,6 +250,9 @@
             } else if (paso === 2) {
                 $("#pantalla3").addClass("activa");
                 paso = 3;
+            } else if (paso === 3) {
+                $("#pantalla4").addClass("activa");
+                paso = 4;
             } else {
                 // Si ya pasó la tercera, recargamos para traer datos nuevos de la BD
                 window.location.reload();

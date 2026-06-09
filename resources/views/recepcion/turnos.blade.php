@@ -12,7 +12,7 @@
                     <div class="card">
                         <div class="card-body">
                             @can('crear-turnos')
-                                <a class="btn btn-info"    href="{{ route('turnos') }}" onclick=crear_turnos();> Auxiliares</a>
+                                <a class="btn btn-info"    href="{{ route('turnos') }}" onclick=crear_turnos();>Turnos</a>
                             @endcan
 
                             @can('ver-turno')
@@ -40,11 +40,7 @@
                                                     <td>{{$turno->tipo}}</td>
                                                     <td>{{$turno->estatus}}</td>
                                                     <td>{{$turno->hora}}</td>
-                                                    @if($turno->exepcion == "No")
                                                         <td><a class="btn btn-info" href="{{ route('cambiar',$turno->id) }}" onclick=disponibles();>Asignar</a>
-                                                    @else
-                                                        <td></td>
-                                                    @endif
                                                     </td>
                                                 </tr>
                                             @endforeach

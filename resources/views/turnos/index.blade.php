@@ -29,35 +29,7 @@
 
                                 <div class="d-flex flex-wrap gap-2 mb-3">
                                     <a class="btn btn-info" href="{{ route('nueva_cita') }}" onclick="crear_turnos();">Nuevo</a>
-                                    <a class="btn btn-info" href="{{ route('turnos.listado') }}" onclick="crear_turnos();">Turnos</a>
-                                </div>
-                            @endcan
-
-                            @can('ver-turno')
-                                <div class="table-responsive">
-                                    <table id="example" class="table-striped" style="width:100%">
-                                        <thead style="background-color: #4A001F;">
-                                            <th style="display: none;">ID</th>
-                                            <th style="color: #fff;">Nombre</th>
-                                            <th style="color: #fff;">Delegacion</th>
-                                            <th style="color: #fff;">Estatus</th>
-                                            <th style="color: #fff;">Acciones</th>
-                                        </thead>
-                                        <tbody>
-                                            @for ($i = 0; $i < $total; $i++)
-                                                <tr>
-                                                    <td style="display: none;">{{$auxiliares_morelia[$i]["id"]}}</td>
-                                                    <td>{{$auxiliares_morelia[$i]["name"]}}</td>
-                                                    <td>{{$auxiliares_morelia[$i]["delegacion"]}}</td>
-                                                    <td>{{$auxiliares_morelia[$i]["estatus"]}}</td>
-                                                    <td> 
-                                                        <a class="btn btn-info"   href="{{ route('turnos.activo',   $auxiliares_morelia[$i]['id']) }}" onclick=disponibles();>Disponible</a>
-                                                        <a class="btn btn-danger" href="{{ route('turnos.noactivo', $auxiliares_morelia[$i]['id']) }}" onclick=no_disponible();>Ocupado</a>
-                                                    </td>
-                                                </tr>
-                                            @endfor
-                                        </tbody>
-                                    </table>
+                                    <a class="btn btn-info" href="{{ route('turnos.listado') }}" onclick="crear_turnos();">Turnos de Hoy</a>
                                 </div>
                             @endcan
                         </div>

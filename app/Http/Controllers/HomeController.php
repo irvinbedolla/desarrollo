@@ -38,18 +38,6 @@ class HomeController extends Controller
     public function pantallaMorelia()
     {
         $fecha_actual = date('y-m-d');
-        //$fecha_actual = "2026-03-21";
-     
-        $turnos = Turnos::
-        join('users', 'users.id', '=', 'turnos.user_id')
-        ->select('users.id', 'users.name', 'turnos.empresa')
-        ->where('turnos.fecha', $fecha_actual)
-        ->where('turnos.delegacion','Morelia')
-        ->where('turnos.estatus','Pendiente')
-        ->select('turnos.NUE','turnos.empresa as nombre',DB::raw("'Ratificación' as tramite"))
-        ->orderBy('turnos.hora')
-        ->limit(7)
-        ->get();
 
         $cumplimientos = Pagos::
         where('pago_solicitud.fecha',$fecha_actual)
@@ -73,25 +61,31 @@ class HomeController extends Controller
         ->limit(7)
         ->get();
 
-        return view('pantalla', compact('cumplimientos','turnos','audienencias'));
+        $turnos = Recepcion::
+        where('recepcion.fecha',$fecha_actual)
+        ->leftjoin('users', 'users.id', '=', 'recepcion.auxiliar')
+        ->where('recepcion.tipo','Ratificación')
+        ->where('recepcion.delegacion','Morelia')
+        ->select('recepcion.solicitante as NUE',DB::raw("'Ratificación' as tramite"))
+        ->limit(7)
+        ->get();
+
+        $solicitudes = Recepcion::
+        where('recepcion.fecha',$fecha_actual)
+        ->leftjoin('users', 'users.id', '=', 'recepcion.auxiliar')
+        ->where('recepcion.tipo','Solicitud')
+        ->where('recepcion.delegacion','Morelia')
+        ->select('recepcion.solicitante as NUE',DB::raw("'Solicitudes' as tramite"))
+        ->limit(7)
+        ->get();
+
+        return view('pantalla', compact('cumplimientos','turnos','audienencias','solicitudes'));
     }
 
     public function pantallaUruapan()
     {
         $fecha_actual = date('y-m-d');
-        //$fecha_actual = "2026-03-27";
-     
-        $turnos = Turnos::
-        join('users', 'users.id', '=', 'turnos.user_id')
-        ->select('users.id', 'users.name', 'turnos.empresa')
-        ->where('turnos.fecha', $fecha_actual)
-        ->where('turnos.delegacion','Uruapan')
-        ->where('turnos.estatus','Pendiente')
-        ->select('turnos.NUE','turnos.empresa as nombre',DB::raw("'Ratificación' as tramite"))
-        ->orderBy('turnos.hora')
-        ->limit(7)
-        ->get();
-
+       
         $cumplimientos = Pagos::where('pago_solicitud.fecha',$fecha_actual)
         ->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
         ->join('seer_solicitante','seer_solicitante.id_solicitud','pago_solicitud.id_solicitud')
@@ -108,28 +102,35 @@ class HomeController extends Controller
         ->join('seer_solicitante','seer_solicitante.id_solicitud','audiencias.id_solicitud')
         ->where('audiencias.estatus','Pendiente')
         ->where('audiencias.delegacion','Uruapan')
-        ->select('users.name as NUE','seer_solicitante.nombre',DB::raw("'Audiencias' as tramite"))
+        ->select('seer_solicitante.nombre as NUE',DB::raw("'Audiencias' as tramite"))
         ->limit(7)
         ->get();
 
-        return view('pantalla', compact('cumplimientos','turnos','audienencias'));
+        $turnos = Recepcion::
+        where('recepcion.fecha',$fecha_actual)
+        ->leftjoin('users', 'users.id', '=', 'recepcion.auxiliar')
+        ->where('recepcion.tipo','Ratificación')
+        ->where('recepcion.delegacion','Uruapan')
+        ->select('recepcion.solicitante as NUE',DB::raw("'Ratificación' as tramite"))
+        ->limit(7)
+        ->get();
+
+        $solicitudes = Recepcion::
+        where('recepcion.fecha',$fecha_actual)
+        ->leftjoin('users', 'users.id', '=', 'recepcion.auxiliar')
+        ->where('recepcion.tipo','Solicitud')
+        ->where('recepcion.delegacion','Uruapan')
+        ->select('recepcion.solicitante as NUE',DB::raw("'Solicitudes' as tramite"))
+        ->limit(7)
+        ->get();
+
+
+        return view('pantalla', compact('cumplimientos','turnos','audienencias','solicitudes'));
     }
 
     public function pantallaZamora()
     {
         $fecha_actual = date('y-m-d');
-        //$fecha_actual = "2026-03-27";
-     
-        $turnos = Turnos::
-        join('users', 'users.id', '=', 'turnos.user_id')
-        ->select('users.id', 'users.name', 'turnos.empresa')
-        ->where('turnos.fecha', $fecha_actual)
-        ->where('turnos.delegacion','Zamora')
-        ->where('turnos.estatus','Pendiente')
-        ->select('turnos.NUE','turnos.empresa as nombre',DB::raw("'Ratificación' as tramite"))
-        ->orderBy('turnos.hora')
-        ->limit(7)
-        ->get();
 
         $cumplimientos = Pagos::where('pago_solicitud.fecha',$fecha_actual)
         ->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
@@ -151,7 +152,26 @@ class HomeController extends Controller
         ->limit(7)
         ->get();
 
-        return view('pantalla', compact('cumplimientos','turnos','audienencias'));
+        $turnos = Recepcion::
+        where('recepcion.fecha',$fecha_actual)
+        ->leftjoin('users', 'users.id', '=', 'recepcion.auxiliar')
+        ->where('recepcion.tipo','Ratificación')
+        ->where('recepcion.delegacion','Zamora')
+        ->select('recepcion.solicitante as NUE',DB::raw("'Ratificación' as tramite"))
+        ->limit(7)
+        ->get();
+
+        $solicitudes = Recepcion::
+        where('recepcion.fecha',$fecha_actual)
+        ->leftjoin('users', 'users.id', '=', 'recepcion.auxiliar')
+        ->where('recepcion.tipo','Solicitud')
+        ->where('recepcion.delegacion','Zamora')
+        ->select('recepcion.solicitante as NUE',DB::raw("'Solicitudes' as tramite"))
+        ->limit(7)
+        ->get();
+
+        return view('pantalla', compact('cumplimientos','turnos','audienencias','solicitudes'));
+
     }
 
     public function citas(){

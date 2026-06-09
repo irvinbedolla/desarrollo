@@ -51,7 +51,6 @@
                                                 <option value="">Seleccione</option>
                                                 <option value="Solicitud">Solicitud</option>
                                                 <option value="Ratificación">Ratificación</option>
-                                                <option value="Cumplimiento">Cumplimiento</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El tipo de solicitud es obligatoria.
