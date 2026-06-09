@@ -8577,7 +8577,7 @@ class SeerController extends Controller
                     if (!$disponible) continue;
 
                     $bloqueo_conciliador = DiasInhabiles::where('user_id', $c->id)
-                        ->whereIn('tipo', ['Todos', 'Audiencias'])
+                        ->whereIn('tipo', ['Todos', 'Audiencias', 'Bloqueo por permiso'])
                         ->where('fecha_inicio', '<=', $fecha_str)
                         ->where('fecha_final', '>=', $fecha_str)
                         ->where(function ($query) use ($h) {
