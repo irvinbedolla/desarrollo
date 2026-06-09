@@ -170,10 +170,10 @@
 
                 <p><b>TERCERA</b>. Declara la parte <b>TRABAJADORA</b>:</p>
                     <p class="sangria">
-                        a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($ratificacion->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus servicios como <b>{{ $ratificacion->categoria }}</b>, puesto en el que se desempeñó hasta el día <b>{{ \Carbon\Carbon::parse($ratificacion->fecha_termino)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
+                        a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($ratificacion->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus servicios como <b>{{ $ratificacion->categoria }}</b>, puesto en el que actualmente se desempeña</b>.
                     </p>
                     <p class="sangria">                
-                        b) Que por el desempeño de sus labores contaba con todas las prestaciones, incluido la <b>Participación de los Trabajadores en las Utilidades</b> de la empresa <b>PTU</b>.
+                        b) Que por el desempeño de sus labores cuenta con todas las prestaciones, incluido la <b>Participación de los Trabajadores en las Utilidades</b> de la empresa <b>PTU</b>.
                     </p>
                     <p class="sangria">
                         c) Que el día <b>{{ \Carbon\Carbon::parse($ratificacion->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> presentó solicitud para iniciar el procedimiento de conciliación prejudicial ante el Centro de Conciliación Laboral del 
@@ -432,4 +432,4 @@
             </script>
         </main>    
     </body>
-</html>    
+</html>

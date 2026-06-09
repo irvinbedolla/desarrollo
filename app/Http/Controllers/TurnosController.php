@@ -574,7 +574,7 @@ class TurnosController extends Controller
                 'tipo_identificacion'=> 'required',
                 'documentoidentificacion'=> 'required',
                 'fecha_inicio'      => 'required',
-                'fecha_termino'     => 'required',
+                /*'fecha_termino'     => 'required',*/
                 'categoria'         => 'required',
                 'monto'             => 'required',
                 'frecuencia'        => 'required',
@@ -656,7 +656,7 @@ class TurnosController extends Controller
                 'tipo_identificacion'=> $data["tipo_identificacion"],
                 'documentoidentificacion'=> $data["documentoidentificacion"],
                 'fecha_inicio'      => $data["fecha_inicio"],
-                'fecha_termino'     => $data["fecha_termino"],
+                'fecha_termino'     => $data["fecha_termino"] ?? NULL,
                 'categoria'         => $data["categoria"],
                 'tipo_pago'         => $data["tipo_pago"],
                 'monto'             => $data["monto"],
@@ -1580,7 +1580,9 @@ class TurnosController extends Controller
         })
         ->whereIn('delegacion', $delegaciones)
         ->get();
-        return view('/ratificaciones/concluir',compact('id','conciliadores'));
+        $turno = Turnos::find($id);
+        $motivo = $turno ? $turno->motivo : null;
+        return view('/ratificaciones/concluir',compact('id','conciliadores', 'turno', 'motivo'));
     }
 
     public function consultar_ratificaciones($id){
@@ -1844,25 +1846,30 @@ class TurnosController extends Controller
         $delegacion = Turnos::find($data["id"]);
         $expediente = $this->GeneraExpediente($delegacion["consecutivo"],$delegacion["delegacion"]);
 
-        $rechazar = Turnos::find($data["id"])
-        ->update(['resolucion_primera'  => $data["primera"],
-            //'resolucion_trabajadores'       => $data["trabajadores"],
-            'resolucion_justificacion'      => $data["justificacion"],
-            'resolucion_segunda'            => $data["segunda"],
-            'vacaciones_dias'               => $data["vacaciones"],
-            'aguinaldo_dias'                => $data["aguinaldo"],
-            'otros_dias'                    => $data["otros"],
-            'horario'                       => $data["horario"],
-            'comida'                        => $data["comida"],
-            /*'domicilio'                   => $data["domicilio"],*/
-            'NUE'                           => $expediente,
-            'id_conciliador'                => $data["conciliador_id"],
-            'user_id'                       => $id_usuario,
-            'estatus'                       => $estatus,
-            'conclucion_id'                 => $id_usuario,
-            'fecha_conclucion'              => \Carbon\Carbon::now()->format('Y-m-d')
-            ]
-        );
+        $updateData = [
+            'resolucion_primera'        => $data["primera"],
+            //'resolucion_trabajadores' => $data["trabajadores"],
+            'resolucion_justificacion'  => $data["justificacion"],
+            'resolucion_segunda'        => $data["segunda"],
+            'vacaciones_dias'           => $data["vacaciones"],
+            'aguinaldo_dias'            => $data["aguinaldo"],
+            'otros_dias'                => $data["otros"],
+            'horario'                   => $data["horario"],
+            'comida'                    => $data["comida"],
+            /*'domicilio'               => $data["domicilio"],*/
+            'NUE'                       => $expediente,
+            'id_conciliador'            => $data["conciliador_id"],
+            'user_id'                   => $id_usuario,
+            'estatus'                   => $estatus,
+            'conclucion_id'             => $id_usuario,
+            'fecha_conclucion'          => \Carbon\Carbon::now()->format('Y-m-d'),
+        ];
+
+        if (!empty($data["year_ptu"])) {
+            $updateData['year_ptu'] = (int) $data["year_ptu"][array_key_first($data["year_ptu"])];
+        }
+
+        $rechazar = Turnos::find($data["id"])->update($updateData);
         
         $id_solicitud =  $data["id"];
         if($data["valor"] == 1){
@@ -2477,8 +2484,7 @@ class TurnosController extends Controller
         }
             
         //Actualizar Audiecia
-        Turnos::find($data["id"])
-        ->update([
+        $updateTerminar = [
             'resolucion_primera'        =>  $data["primera"],
             'resolucion_justificacion'  =>  $data["justificacion"],
             'resolucion_segunda'        =>  $data["segunda"],
@@ -2487,7 +2493,15 @@ class TurnosController extends Controller
             'otros_dias'                =>  $data["otros"],
             'horario'                   =>  $data["horario"],
             'comida'                    =>  $data["comida"],
-        ]);
+        ];
+
+        if (!empty($data["year_ptu"])) {
+            $updateTerminar['year_ptu'] = (int) $data["year_ptu"][array_key_first($data["year_ptu"])];
+        } elseif (!empty($data["year_ptu_actual"])) {
+            $updateTerminar['year_ptu'] = (int) $data["year_ptu_actual"];
+        }
+
+        Turnos::find($data["id"])->update($updateTerminar);
 
         return redirect()->route('todas_ratificaciones');
     }
@@ -2574,6 +2588,8 @@ class TurnosController extends Controller
     //Conveio de PTU cuando el trabajador NO SIGUE laborando
     public function VerPDFConvenioPTU_rat($id){
         $ratificacion = Turnos::find($id);
+        $inicialesConcluye = $this->inicialesDeSolicitud($ratificacion);
+        $etiquetaIniciales = $this->etiquetaIniciales($ratificacion->delegacion ?? null, $inicialesConcluye);
         $delegacion = $ratificacion->delegacion;
         $delegadosEspeciales = [
                 'Zitácuaro'        => 11,
@@ -2601,9 +2617,9 @@ class TurnosController extends Controller
            "turnos.num_identificacion as num_identificacion_turno"
         )
         ->first();
-        $pagos = Pagos::where('id_solicitud', $id)->get();
-        $prestaciones = Concepto::where('id_solicitud', $id)->get();
-        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+        $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago', 'Ratificacion')->get();
+        $prestaciones = Concepto::where('id_solicitud', $id)->where('tipo_pago', 'Ratificacion')->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago', 'Ratificacion')->get();
 
         $conceptosTexto = [];
         $deduccionesTexto = [];
@@ -2641,6 +2657,7 @@ class TurnosController extends Controller
         
         $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
         $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
+        ->where("pago_solicitud.tipo_pago", "=", "Ratificacion")
         ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
         ->first();
         
@@ -2648,8 +2665,18 @@ class TurnosController extends Controller
         $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
         $estado = Estados::find($ratificacion->estado_rat);
         $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
-        $html = view('PDF/convenioPTUNoLaboraRati', compact('id','ratificacion','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS','salario_mensual','mensualTexto',
-        'descripcionIdentificacionP','abogado','conceptosTexto','municipioEmpresa','estadoEmpresa','montoTexto','pagosDif','pagos','delegado'))->render();
+
+        if($ratificacion->year_ptu == NULL){
+            $ratificacion->year_ptu = 2025;
+        }
+
+        if($ratificacion->fecha_termino){
+            $html = view('PDF/convenioPTUNoLaboraRati', compact('id','ratificacion','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS','salario_mensual','mensualTexto',
+            'descripcionIdentificacionP','abogado','conceptosTexto','municipioEmpresa','estadoEmpresa','montoTexto','pagosDif','pagos','delegado', 'inicialesConcluye','etiquetaIniciales'))->render();
+        } else {
+            $html = view('PDF/convenioPTULaboraRati', compact('id','ratificacion','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS','salario_mensual','mensualTexto',
+            'descripcionIdentificacionP','abogado','conceptosTexto','municipioEmpresa','estadoEmpresa','montoTexto','pagosDif','pagos','delegado', 'inicialesConcluye','etiquetaIniciales'))->render();
+        }
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

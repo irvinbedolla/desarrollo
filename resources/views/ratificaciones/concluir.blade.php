@@ -270,11 +270,25 @@
                             html +='<option value="Gratificación D">Gratificación D (Incluye cualquier otra prestación)</option>';
                             html +='<option value="Gratificación E">Gratificación E (Prestaciones en especie)</option>';
                             html +='<option value="Gratificación F">Gratificación F (Reconocimiento de derechos)</option>';
+                            @if($motivo === 'PTU' || $turno->PagoPTU == 1)
+                            html +='<option value="PTU">PTU</option>';
+                            @endif
                             html +='<option value="Otras">Otro concepto de pago</option>';
                         html +='</select>';
                         // Campo para escribir otra prestación (solo si se selecciona "Otras")
                         html += '<div class="otra-prestacion-input" style="display: none; margin-top: 10px;">';
                         html += '<input type="text" class="form-control" name="otra_prestacion[]" placeholder="Especifique la prestación" />';
+                        html += '</div>';
+                        // Select de año PTU (solo visible si se selecciona "PTU")
+                        html += '<div class="ptu-year-container" style="display: none; margin-top: 10px;">';
+                        html += '<label>Año PTU</label>';
+                        html += '<select class="form-control ptu-year-select" name="year_ptu[]">';
+                        html += '<option value="">Seleccione el año</option>';
+                        for (var y = 2025; y >= 2010; y--) {
+                            html += '<option value="' + y + '">' + y + '</option>';
+                        }
+                        html += '</select>';
+                        html += '<div class="invalid-feedback">El año de PTU es obligatorio.</div>';
                         html += '</div>';
                         html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
                         html += '</div> </div>';
@@ -461,16 +475,28 @@
             document.getElementById('modal-id').value = id;
         });
         //Muestra un input cuando en prestaciones se selecciona la opción Otros concepto de pago
+        // o el select de año cuando se selecciona PTU
         $(document).on('change', '.tipo-pago-select', function () {
             var selected = $(this).val();
-            var container = $(this).closest('.form-group').find('.otra-prestacion-input');
+            var formGroup = $(this).closest('.form-group');
+            var otraContainer = formGroup.find('.otra-prestacion-input');
+            var ptuContainer = formGroup.find('.ptu-year-container');
+            var ptuSelect = formGroup.find('.ptu-year-select');
 
             if (selected === 'Otras') {
-                container.show();
-                container.find('input').attr('required', true);
+                otraContainer.show();
+                otraContainer.find('input').attr('required', true);
             } else {
-                container.hide();
-                container.find('input').val('').removeAttr('required');
+                otraContainer.hide();
+                otraContainer.find('input').val('').removeAttr('required');
+            }
+
+            if (selected === 'PTU') {
+                ptuContainer.show();
+                ptuSelect.attr('required', true);
+            } else {
+                ptuContainer.hide();
+                ptuSelect.val('').removeAttr('required');
             }
         });
 

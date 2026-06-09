@@ -155,8 +155,8 @@
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
                         a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus 
-                        servicios como <b>{{ $solicitud->categoria}}</b>, puesto en el que se desempeñó 
-                        hasta el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha_termino)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
+                        servicios como <b>{{ $solicitud->categoria}}</b>, @if($solicitud->fecha_termino) puesto en el que se desempeñó 
+                        hasta el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha_termino)->translatedFormat('d \d\e F \d\e\l Y') }}</b> @else puesto que desempeña hasta la fecha de emisión del presente convenio @endif.
                     </p>
                     <p class="sangria">                
                         b) Que por el desempeño de sus labores contaba con las siguientes prestaciones:<br>

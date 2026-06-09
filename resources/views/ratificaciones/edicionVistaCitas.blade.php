@@ -393,7 +393,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="fecha_termino">Fecha de término de la relación laboral <span style="color:red;">(*)</span></label>
+                                                    <label for="fecha_termino">Fecha de término de la relación laboral</label>
                                                     <input type="date" name="fecha_termino" class="form-control" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitud["fecha_termino"];?>">
                                                 </div>
                                             </div>
@@ -450,6 +450,7 @@
                                                         <option value="">Seleccione</option>
                                                         <option value="Pago de prestaciones" {{ $solicitud['motivo'] == 'Pago de prestaciones' ? "selected" : '' }}>Pago de prestaciones</option>
                                                         <option value="Terminación voluntaria de la relación de trabajo" {{ $solicitud['motivo'] == 'Terminación voluntaria de la relación de trabajo' ? "selected" : '' }}>Terminación voluntaria de la relación de trabajo</option>
+                                                        <option value="PTU" {{ $solicitud['motivo'] == 'PTU' ? "selected" : '' }}>PTU</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo motivo de la conciliación es obligatorio.
