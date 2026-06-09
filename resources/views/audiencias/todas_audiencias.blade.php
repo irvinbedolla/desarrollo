@@ -95,7 +95,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                    @elseif($audiencia->estatus == "Archivada")
+                                                    @elseif($audiencia->estatus_modelo == "Archivada")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -108,7 +108,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                    @elseif($audiencia->estatus == "Incompetencia")
+                                                    @elseif($audiencia->estatus_modelo == "Incompetencia")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -121,7 +121,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                    @elseif($audiencia->estatus == "Comparecencia")
+                                                    @elseif($audiencia->estatus_modelo == "Comparecencia")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -134,7 +134,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                    @elseif($audiencia->estatus == "Reagendada")
+                                                    @elseif($audiencia->estatus_modelo == "Reagendada" || $audiencia->estatus_modelo == "No conciliacion reagendada")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -143,12 +143,11 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"      target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFnotificacion_solicitante', $audiencia->id_solicitud) }}" target="_blank">Notificación al solicitante</a></li>
-                                                                    <li><button type="button" class="btn btn-info open-modal" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div>                                                        
-                                                    @elseif($audiencia->estatus == "No conciliacion")
+                                                    @elseif($audiencia->estatus_modelo == "No conciliacion")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -162,7 +161,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div> 
-                                                    @elseif($audiencia->estatus == "Incumplimiento")
+                                                    @elseif($audiencia->estatus_modelo == "Incumplimiento")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -175,7 +174,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div> 
-                                                    @elseif($audiencia->estatus == "Conciliacion" || $audiencia->estatus == "Concluida" || $audiencia->estatus == "Reinstalacion")
+                                                    @elseif($audiencia->estatus_modelo == "Conciliacion" || $audiencia->estatus_modelo == "Concluida" || $audiencia->estatus_modelo == "Reinstalacion")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -186,7 +185,7 @@
                                                                     <li><a class="dropdown-item" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) . '?audiencia_id=' . $audiencia->id }}"  target="_blank">Acta de Audiencia</a></li>
                                                                     <li>
                                                                         <a class="dropdown-item" 
-                                                                           href="{{ ($audiencia->estatus == 'Reinstalacion' ? route('PDFconvenioreinstalacion', $audiencia->id_solicitud) : route('PDFconveniosolicitud', $audiencia->id_solicitud)) . '?audiencia_id=' . $audiencia->id }}" 
+                                                                           href="{{ ($audiencia->estatus_modelo == 'Reinstalacion' ? route('PDFconvenioreinstalacion', $audiencia->id_solicitud) : route('PDFconveniosolicitud', $audiencia->id_solicitud)) . '?audiencia_id=' . $audiencia->id }}" 
                                                                            target="_blank">
                                                                             Convenio
                                                                         </a>
@@ -198,7 +197,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div> 
-                                                    @elseif($audiencia->estatus == "Confirmado")
+                                                    @elseif($audiencia->estatus_modelo == "Confirmado")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -210,7 +209,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                    @elseif($audiencia->estatus == "Desistimiento") 
+                                                    @elseif($audiencia->estatus_modelo == "Desistimiento") 
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">

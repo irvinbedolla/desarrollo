@@ -1297,5 +1297,23 @@ class PoderController extends Controller
          $mensaje = "El representante ha sido agregado exitosamente y se generó el nuevo registro patronal con el folio: " . $nuevoAbogado->idAbogado;
          return redirect()->back()->with('success', $mensaje);
      }
+
+    public function descargarPdf($id, $archivo)
+    {
+        // Busca directo en tu disco privado sin importar enlaces simbólicos
+        $ruta = "documentos_abogados/{$id}/{$archivo}";
+
+        if (!Storage::disk('local')->exists($ruta)) {
+            // Si no está en local, busca en la ruta donde lo esté guardando tu nuevo comando
+            $ruta = "public/documentos_abogados/{$id}/{$archivo}";
+        }
+
+        if (Storage::exists($ruta)) {
+            $file = Storage::get($ruta);
+            return response($file, 200)->header('Content-Type', 'application/pdf');
+        }
+
+        abort(404, 'Archivo no encontrado físicamente.');
+    }
  
 }

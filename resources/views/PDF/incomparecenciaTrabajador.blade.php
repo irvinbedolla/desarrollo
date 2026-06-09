@@ -69,7 +69,7 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                         <tr>   
                             <td><b>Oficina: </b></td>
-                            <td>{{ strtoupper($solicitud->delegacion, 'UTF-8') }} </td>
+                            <td>{{ $solicitud->delegacion }} </td>
                         </tr>
                         <tr>    
                             <td><b>Número de identificación único: </b></td>
@@ -79,7 +79,7 @@
                 </div><br><br><br>
                 <p><b>
                     Trabajador(a): {{ mb_strtoupper($solicitud->trabajador, 'UTF-8') }} {{ mb_strtoupper($solicitud->primero_trabajador, 'UTF-8') }} {{ mb_strtoupper($solicitud->segundo_trabajador, 'UTF-8') }}<br> 
-                    Empleador(a): {{ mb_strtoupper($solicitud->empresa, 'UTF-8') }}<br>
+                    Empleador(a): {{ mb_strtoupper($solicitud->empresa, 'UTF-8') }} {{ mb_strtoupper($solicitud->primero_empresa, 'UTF-8') }} {{ mb_strtoupper($solicitud->segundo_empresa, 'UTF-8') }}<br>
                 </b></p>
                 <p><center><b>CONSTANCIA DE INCOMPARECENCIA DE LA PARTE TRABAJADORA AL INCUMPLIMIENTO DE CONVENIO</b></center></p><br>  
                 <p>
