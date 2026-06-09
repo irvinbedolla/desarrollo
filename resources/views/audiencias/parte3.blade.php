@@ -1178,7 +1178,7 @@
                     })(),
                     end: (() => {
                         const now = new Date();
-                        return new Date(now.getFullYear(), now.getMonth() + 7, 0).toISOString().split('T')[0];
+                        return new Date(now.getFullYear(), now.getMonth() + 12, 0).toISOString().split('T')[0];
                     })()
                 },
                 events: function(fetchInfo, successCallback, failureCallback) {
