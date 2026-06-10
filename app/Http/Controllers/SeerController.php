@@ -13473,12 +13473,13 @@ class SeerController extends Controller
         // ------------------------------------
 
         $apareceConvenioIds = (isset($data['aparece_convenio']) && is_array($data['aparece_convenio']))
-            ? array_keys($data['aparece_convenio'])
+            ? array_keys(array_filter($data['aparece_convenio']))
             : [];
-
-        SeerCitados::where('id_solicitud', $id_solicitud)->update(['aparece_convenio' => 0]);
-        if (!empty($apareceConvenioIds)) {
-            SeerCitados::whereIn('id', $apareceConvenioIds)->update(['aparece_convenio' => 1]);
+        if (isset($data['aparece_convenio'])) {
+            SeerCitados::where('id_solicitud', $id_solicitud)->update(['aparece_convenio' => 0]);
+            if (!empty($apareceConvenioIds)) {
+                SeerCitados::whereIn('id', $apareceConvenioIds)->update(['aparece_convenio' => 1]);
+            }
         }
         
         $monto = 0;
