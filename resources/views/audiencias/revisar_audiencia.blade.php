@@ -1148,10 +1148,26 @@
                                                     </div>
                                                 </div>
 
+                                                @php
+                                                    $img1 = $citado->imagen_domicilio1 ?? null;
+                                                    $img2 = $citado->imagen_domicilio2 ?? null;
+                                                    $urlImg1 = null;
+                                                    $urlImg2 = null;
+                                                    if ($img1 && $img1 !== 'Sin documento') {
+                                                        $urlImg1 = \Storage::exists("documentosSolicitud/{$id}/{$img1}")
+                                                            ? asset("../storage/app/documentosSolicitud/{$id}/{$img1}")
+                                                            : asset("../storage/app/documentosSolicitud/{$img1}");
+                                                    }
+                                                    if ($img2 && $img2 !== 'Sin documento') {
+                                                        $urlImg2 = \Storage::exists("documentosSolicitud/{$id}/{$img2}")
+                                                            ? asset("../storage/app/documentosSolicitud/{$id}/{$img2}")
+                                                            : asset("../storage/app/documentosSolicitud/{$img2}");
+                                                    }
+                                                @endphp
                                                 <div class="col-xs-12 col-sm-12 col-md-5">
                                                     <label for="password">Referencia Imagen 1<span style="color:red;"> (*)</span></label><br>
-                                                    @if (!empty($citado->imagen_domicilio1) && $citado->imagen_domicilio1 !== 'Sin documento')
-                                                        <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio1}}">VER IMAGEN</a><br>
+                                                    @if ($urlImg1)
+                                                        <a target='_blank' href="{{ $urlImg1 }}">VER IMAGEN</a><br>
                                                     @else
                                                         <span class="text-muted">No se subió imagen</span>
                                                     @endif
@@ -1160,8 +1176,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-5">
                                                     <label for="password">Referencia Imagen 2</label><br>
-                                                    @if (!empty($citado->imagen_domicilio2) && $citado->imagen_domicilio2 !== 'Sin documento')
-                                                        <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio2}}">VER IMAGEN</a><br>
+                                                    @if ($urlImg2)
+                                                        <a target='_blank' href="{{ $urlImg2 }}">VER IMAGEN</a><br>
                                                     @else
                                                         <span class="text-muted">No se subió imagen</span>
                                                     @endif

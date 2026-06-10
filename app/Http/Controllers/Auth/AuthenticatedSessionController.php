@@ -29,6 +29,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Limpiar cualquier proceso de solicitud auxiliar que haya quedado
+        // pendiente de una sesión anterior (previene contaminación de datos).
+        $request->session()->forget([
+            'solicitud_aux_lock',
+            'solicitud_draft_id',
+        ]);
+
         $request->user()->update([
             'last_login_at' => Carbon::now()->toDateTimeString(),
             'last_login_ip' => $request->getClientIp()

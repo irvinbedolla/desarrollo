@@ -206,7 +206,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/poderes/update/{post}', [PoderController::class, 'update'])->name('poderes.update');
         Route::delete('/poderes/destroy/{id}', [PoderController::class, 'destroy'])->name('poderes.destroy');
         Route::post('/poderes/agregar_representante', [PoderController::class, 'agregarRepresentante'])->name('poderes.agregar_representante');
-        Route::get('/poderes/data-ajax', [PoderesController::class, 'buscar_poderes_ajax'])->name('poderes.index.ajax');
+        Route::get('/poderes/data-ajax', [PoderController::class, 'buscar_poderes_ajax'])->name('poderes.index.ajax');
     //Fin Poder
     //Capacitaciones
         Route::get('/capacitaciones/index',                         [CapacitacionController::class, 'index'])->name('capacitaciones.index');
@@ -358,6 +358,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/guardar_citadoAP/{id}',               [SeerController::class, 'guardar_citadoAuxP'])->name('seer.citadosAuxP');
         Route::get('/finalizaAux/{id}',                     [SeerController::class, 'guardar_solicitudAux'])->name('seer.finalizaAux');
         Route::post('/finalizaAuxP/{id}',                   [SeerController::class, 'guardar_solicitudAuxP'])->name('seer.finalizaAuxP');
+        Route::post('/solicitudes/abandonar',               [SeerController::class, 'abandonarSolicitudAux'])->name('solicitud.abandonar');
+        Route::get('/solicitudes/check-lock',               [SeerController::class, 'checkSolicitudAuxLock'])->name('solicitud.checkLock');
         Route::get('/VerpdfcumplimientoTotal/{id}',         [SeerController::class, 'VerPDFCumplimientoTotal'])->name('PDFcumplimientoTotal');
         Route::get('/audiencias/edicion/{id}/{audiencia_id}', [SeerController::class, 'edicion_audienciaConcluida'])->name('edicion_audienciaConcluida'); //Vista de edición cuando la audiencia ya finalizó
         Route::post('/audiencias/Guardar_edicionA', [SeerController::class, 'Guarda_edicion_audienciaConcluida'])->name('Guarda_edicion_audienciaConcluida');

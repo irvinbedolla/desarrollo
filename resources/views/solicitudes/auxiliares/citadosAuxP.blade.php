@@ -83,6 +83,7 @@
                                 <form class="needs-validation" novalidate id="form_concluir" method="POST" action="{{route('seer.citadosAuxP', ['id' => $id])}}" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $id }}">
+                                    <input type="hidden" name="draft_id" value="{{ $draftId }}">
 
                                     <div style="background-color:#D2D3D5; width:100%; height:30px;">
                                         <h4 class="text-center" style="color:black">Datos Personales del Citado</h4>
@@ -543,7 +544,7 @@
                                             </div> -->
                                             <div style="display:flex; flex-direction:column; align-items:flex-end;">
                                                 <!-- @if($citados > 0)
-                                                    <a href="{{ route('seer.finalizaAuxP',$id) }}" id="btn-conclude" class="btn btn-success" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a>
+                                                    <a href="{{ route('seer.finalizaAuxP',$id) }}?draft_id={{ urlencode($draftId) }}" id="btn-conclude" class="btn btn-success" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a>
                                                     <div id="conclude-warning" class="text-danger" style="display:none; margin-top:6px;">Guarde el citado antes de concluir</div>
                                                 @endif -->
                                                 <button type="submit" id="btn-conclude" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</button>
@@ -945,5 +946,6 @@
             });
         });
     </script>
+@include('solicitudes.auxiliares._pollLock')
 @endsection
 @endsection

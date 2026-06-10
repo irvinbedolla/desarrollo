@@ -2441,7 +2441,7 @@
                 if(doc && doc !== '') {
                     const basePath = "{{ url('storage/') }}";
                     $('#comp_doc_existente_container').show();
-                    $('#comp_btn_ver_doc').attr('href', basePath + '/app/documentosSolicitud/' + doc);
+                    $('#comp_btn_ver_doc').attr('href', basePath + '/app/documentosSolicitud/' + solicitud + '/' + doc);
                     $('#comp_doc_input').removeAttr('required');
                 } else {
                     $('#comp_doc_existente_container').hide();

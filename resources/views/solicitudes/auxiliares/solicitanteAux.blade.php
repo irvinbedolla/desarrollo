@@ -70,6 +70,7 @@
                                     <form class="needs-validation" novalidate method="POST" action="{{route('guardaSolicitanteA')}}" enctype='multipart/form-data'>
                                         @csrf
                                         <input type="hidden" name="id" value="{{$id}}">
+                                        <input type="hidden" name="draft_id" value="{{ $draftId }}">
                                         <div class="row">
                                             <input type="hidden" name="tipo" value="Fisica">
                                             <!--<div class="col-xs-12 col-sm-12 col-md-4">
@@ -1154,3 +1155,4 @@
             $('#años_edad').val(anios);
         }
     </script>
+@include('solicitudes.auxiliares._pollLock')

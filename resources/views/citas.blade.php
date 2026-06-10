@@ -461,7 +461,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="fecha_termino">Fecha de término de la relación laboral <span style="color:red;">(*)</span></label>
+                                                        <label for="fecha_termino">Fecha de término de la relación laboral</label>
                                                         <input type="date" name="fecha_termino" class="form-control" > 
                                                         <div class="invalid-feedback">
                                                             El campo edad es obligatorio.
@@ -521,6 +521,7 @@
                                                             <option value="">Seleccione</option>
                                                             <option value="Pago de prestaciones">Pago de prestaciones</option>
                                                             <option value="Terminación voluntaria de la relación de trabajo">Terminación voluntaria de la relación de trabajo</option>
+                                                            <option value="PTU">Pago de PTU</option>
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             El campo motivo de la conciliación es obligatorio.

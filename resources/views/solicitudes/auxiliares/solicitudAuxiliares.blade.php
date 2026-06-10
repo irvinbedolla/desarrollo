@@ -74,28 +74,28 @@
                                 <center><div class="card-group">
                                     <div class="card">   <!-- Inicio Seer -->
                                         <div style="display: block; text-align: center;">
-                                            <a href="{{ route('solicitud.industriaAuxiliar', ['tipo_solicitud' =>1]) }}" class="button-link">
+                                            <a href="{{ route('solicitud.industriaAuxiliar', ['tipo_solicitud' =>1, 'draft_id' => $draftId ?? null]) }}" class="button-link">
                                                 SOY <br>TRABAJADOR(A)
                                             </a> 
                                         </div> 
                                     </div>   <!-- fin Seer -->
                                     <div class="card">   <!-- Inicio Seer -->
                                         <div style="display: block; text-align: center;">
-                                            <a href="{{ route('solicitud.industriaAuxiliarP', ['tipo_solicitud' =>2]) }}" class="button-link">
+                                            <a href="{{ route('solicitud.industriaAuxiliarP', ['tipo_solicitud' =>2, 'draft_id' => $draftId ?? null]) }}" class="button-link">
                                                 SOY <br>PATRONAL INDIVIDUAL   
                                             </a>
                                         </div>  
                                     </div>
                                     <div class="card">  
                                         <div style="display: block; text-align: center;">
-                                            <a href="{{ route('solicitud.industriaAuxiliar', ['tipo_solicitud' =>3]) }}" class="button-link">
+                                            <a href="{{ route('solicitud.industriaAuxiliar', ['tipo_solicitud' =>3, 'draft_id' => $draftId ?? null]) }}" class="button-link">
                                                 SOY <br>PATRONAL COLECTIVA    
                                             </a>
                                         </div>  
                                     </div> 
                                     <div class="card"> 
                                         <div style="display: block; text-align: center;">
-                                            <a href="{{ route('solicitud.industriaAuxiliar', ['tipo_solicitud' =>4]) }}" class="button-link">
+                                            <a href="{{ route('solicitud.industriaAuxiliar', ['tipo_solicitud' =>4, 'draft_id' => $draftId ?? null]) }}" class="button-link">
                                                 SOY<br> SINDICATO
                                             </a>
                                         </div>  

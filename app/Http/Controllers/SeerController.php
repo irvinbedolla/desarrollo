@@ -75,7 +75,200 @@ use App\Exports\AudienciasPORConciliadorExport;
 use App\Exports\CumplimientosProgramadosExport;
 
 class SeerController extends Controller
-{   
+{
+    // =========================================================================
+    //  CONTROL DE PROCESO ACTIVO  (lock de sesión por usuario)
+    // =========================================================================
+
+    /** Clave de sesión que almacena los datos del proceso activo. */
+    private const SOLICITUD_AUX_LOCK_KEY = 'solicitud_aux_lock';
+
+    /**
+     * Tiempo máximo de inactividad antes de que el lock expire automáticamente.
+     * Se renueva en cada paso del wizard. Por defecto: 45 minutos.
+     */
+    private const SOLICITUD_AUX_TTL = 2700;
+
+    /** Devuelve el array del lock actual, o null si no existe. */
+    private function getSolicitudAuxLock(): ?array
+    {
+        return session(self::SOLICITUD_AUX_LOCK_KEY);
+    }
+
+    /**
+     * Indica si hay un proceso activo que aún NO haya expirado por inactividad.
+     */
+    private function isSolicitudAuxLockActive(): bool
+    {
+        $lock = $this->getSolicitudAuxLock();
+        if (!$lock || !isset($lock['last_activity'])) {
+            return false;
+        }
+        return (time() - $lock['last_activity']) < self::SOLICITUD_AUX_TTL;
+    }
+
+    /** Adquiere (o reemplaza) el lock para el draft indicado. */
+    private function acquireSolicitudAuxLock(string $draftId, int $tipoSolicitud, string $proceso): void
+    {
+        session([self::SOLICITUD_AUX_LOCK_KEY => [
+            'draft_id'       => $draftId,
+            'started_at'     => time(),
+            'last_activity'  => time(),
+            'tipo_solicitud' => $tipoSolicitud,
+            'proceso'        => $proceso,   // 'aux' | 'auxP'
+        ]]);
+    }
+
+    /**
+     * Renueva la marca de actividad del lock.
+     * Llámalo en cada paso del wizard para mantener el proceso vivo.
+     */
+    private function renewSolicitudAuxLock(): void
+    {
+        $lock = $this->getSolicitudAuxLock();
+        if ($lock) {
+            $lock['last_activity'] = time();
+            session([self::SOLICITUD_AUX_LOCK_KEY => $lock]);
+        }
+    }
+
+    /** Libera el lock (se llama al finalizar o abandonar el proceso). */
+    private function releaseSolicitudAuxLock(): void
+    {
+        session()->forget(self::SOLICITUD_AUX_LOCK_KEY);
+    }
+
+    /**
+     * Limpia COMPLETAMENTE todos los datos de sesión y archivos tmp del
+     * flujo de solicitudes auxiliares, y libera el lock.
+     */
+    private function limpiarSesionSolicitudAuxCompletamente(?string $draftId = null): void
+    {
+        if ($draftId) {
+            session()->forget([
+                $this->draftSessionKey('solicitud_data',    $draftId),
+                $this->draftSessionKey('solicitud_motivos', $draftId),
+                $this->draftSessionKey('solicitante_data',  $draftId),
+                $this->draftSessionKey('citados_data',      $draftId),
+                $this->draftSessionKey('excepcion_data',    $draftId),
+            ]);
+            // Eliminar archivos temporales del draft
+            Storage::deleteDirectory($this->documentosSolicitudTmpDir($draftId));
+            // Eliminar carpeta padre si quedó vacía
+            $sessionTmpDir = $this->documentosSolicitudTmpSessionDir();
+            if (Storage::exists($sessionTmpDir) && empty(Storage::allFiles($sessionTmpDir))) {
+                Storage::deleteDirectory($sessionTmpDir);
+            }
+        }
+        $this->releaseSolicitudAuxLock();
+        session()->forget('solicitud_draft_id');
+    }
+
+    // =========================================================================
+
+    /**
+     * Carpeta temporal para archivos subidos durante el flujo "session".
+     * Se mueven a documentosSolicitud/{new_id}/ cuando se concluye y se crea seer_general.
+     */
+    private function resolveSolicitudDraftId($draftIdFromRequest = null): string
+    {
+        // Acepta string o Request; si es Request, lee draft_id del input/query.
+        if ($draftIdFromRequest instanceof \Illuminate\Http\Request) {
+            $draftIdFromRequest = $draftIdFromRequest->input('draft_id') ?? $draftIdFromRequest->query('draft_id');
+        }
+
+        // El draftId debe viajar en cada POST/GET del flujo (hidden input) para soportar varias pestañas.
+        // Si no viene, caemos a uno por sesión (mejor que nada), pero NO es concurrente.
+        if (is_string($draftIdFromRequest) && $draftIdFromRequest !== '') {
+            // Sanitizar para evitar rutas corruptas/inyección en Storage.
+            $draftId = preg_replace('/[^A-Za-z0-9\-_.]/', '', $draftIdFromRequest);
+
+            // Si quedó vacío o sospechosamente largo, ignorar y usar fallback por sesión.
+            if (is_string($draftId) && $draftId !== '' && strlen($draftId) <= 64) {
+                return $draftId;
+            }
+        }
+
+        // Fallback no-concurrente: se usa solo si no hay draft_id explícito.
+        $existing = session('solicitud_draft_id');
+        if (!$existing) {
+            $existing = (string) Str::uuid();
+            session(['solicitud_draft_id' => $existing]);
+        }
+        return (string) $existing;
+    }
+
+    /**
+     * Intenta inferir el draftId correcto cuando no viene en request.
+     * Esto no es ideal (lo ideal es que siempre venga), pero ayuda a depurar/evitar fallos.
+     */
+    private function inferDraftIdFromSessionData(): ?string
+    {
+        $tmpSessionDir = $this->documentosSolicitudTmpSessionDir();
+        if (!\Storage::exists($tmpSessionDir)) {
+            return null;
+        }
+
+        // Preferimos inferir por existencia de datos en sesión: "solicitud_data_{draft}"
+        // Como no podemos listar todos los keys del session store fácilmente aquí,
+        // usamos las carpetas tmp como índice de drafts activos.
+        $draftDirs = \Storage::allDirectories($tmpSessionDir);
+        foreach ($draftDirs as $dir) {
+            $draftId = basename($dir);
+            if (session()->has($this->draftSessionKey('solicitud_data', $draftId))
+                && session()->has($this->draftSessionKey('solicitante_data', $draftId))) {
+                return $draftId;
+            }
+        }
+        return null;
+    }
+
+    private function documentosSolicitudTmpDir(?string $draftIdFromRequest = null): string
+    {
+        $draftId = $this->resolveSolicitudDraftId($draftIdFromRequest);
+        return 'documentosSolicitud/tmp/' . session()->getId() . '/' . $draftId;
+    }
+
+    /**
+     * Dir base del tmp por sesión (sin draft) para permitir limpieza de carpetas vacías.
+     */
+    private function documentosSolicitudTmpSessionDir(): string
+    {
+        return 'documentosSolicitud/tmp/' . session()->getId();
+    }
+
+    private function draftSessionKey(string $baseKey, string $draftId): string
+    {
+        return $baseKey . '_' . $draftId;
+    }
+
+    /**
+     * Mueve un archivo desde tmp a documentosSolicitud/{newId}/ y devuelve el nombre final (no incluye carpeta).
+     */
+    private function moverDocumentoSolicitudTmpAFinal(int $newId, ?string $tmpFileName, ?string $draftId = null): ?string
+    {
+        if (!$tmpFileName || $tmpFileName === 'Sin documento') {
+            return $tmpFileName;
+        }
+
+        $tmpPath = $this->documentosSolicitudTmpDir($draftId) . '/' . $tmpFileName;
+        if (!Storage::exists($tmpPath)) {
+            // Si ya no existe, devolvemos el nombre original para no romper el flujo.
+            return $tmpFileName;
+        }
+
+        $finalDir = 'documentosSolicitud/' . $newId;
+        $finalPath = $finalDir . '/' . $tmpFileName;
+
+        // Mover (si ya existe, se reemplaza)
+        if (Storage::exists($finalPath)) {
+            Storage::delete($finalPath);
+        }
+        Storage::makeDirectory($finalDir);
+        Storage::move($tmpPath, $finalPath);
+
+        return $tmpFileName;
+    }
 
     public function ver_identificacion_solicitante($idSolicitud)
     {   
@@ -104,7 +297,15 @@ class SeerController extends Controller
                 : SeerSolicitante::where('id_solicitud', $idSolicitud)->firstOrFail();
 
             $fileName = $solicitante->documentoIdentificacion;
-            $baseDir  = 'documentosSolicitud/';
+            // Ruta nueva: documentosSolicitud/{idSolicitud}/{filename}
+            // Fallback a ruta plana legacy: documentosSolicitud/{filename}
+            $baseDir = null;
+            foreach (["documentosSolicitud/{$idSolicitud}/", 'documentosSolicitud/'] as $candidato) {
+                if (Storage::exists($candidato . $fileName)) {
+                    $baseDir = $candidato;
+                    break;
+                }
+            }
         }
 
         if (!$fileName || $fileName === 'Sin documento') {
@@ -113,7 +314,7 @@ class SeerController extends Controller
 
         $path = $baseDir . $fileName;
 
-        if (!Storage::exists($path)) {
+        if (!$baseDir || !Storage::exists($path)) {
             abort(404, 'Documento no encontrado en almacenamiento.');
         }
 
@@ -164,9 +365,20 @@ class SeerController extends Controller
     {
         $doc = DocumentosSolicitud::findOrFail($id);
 
-        $path = 'documentosSolicitud/' . $doc->nombre_documento;
+        $candidates = [
+            'documentosSolicitud/' . $doc->id_solicitud . '/' . $doc->nombre_documento,
+            'documentosSolicitud/' . $doc->nombre_documento,
+        ];
 
-        if (!Storage::exists($path)) {
+        $path = null;
+        foreach ($candidates as $candidate) {
+            if (Storage::exists($candidate)) {
+                $path = $candidate;
+                break;
+            }
+        }
+
+        if (!$path) {
             abort(404, 'Documento no encontrado en almacenamiento.');
         }
 
@@ -3000,9 +3212,9 @@ class SeerController extends Controller
             'doc2' => $request->hasFile('foto2') ? $data["id"] . "-foto3.jpg" : ($seercitado->documento2 ?? "Sin documento")
         ];
 
-        if ($request->hasFile('foto')) Storage::putFileAs('documentos_notificacion', $request->file('foto'), $documentos['doc']);
-        if ($request->hasFile('foto1')) Storage::putFileAs('documentos_notificacion', $request->file('foto1'), $documentos['doc1']);
-        if ($request->hasFile('foto2')) Storage::putFileAs('documentos_notificacion', $request->file('foto2'), $documentos['doc2']);
+        if ($request->hasFile('foto')) Storage::putFileAs('documentos_notificacion/' . $seercitado->id_solicitud . '/', $request->file('foto'), $documentos['doc']);
+        if ($request->hasFile('foto1')) Storage::putFileAs('documentos_notificacion/' . $seercitado->id_solicitud . '/', $request->file('foto1'), $documentos['doc1']);
+        if ($request->hasFile('foto2')) Storage::putFileAs('documentos_notificacion/' . $seercitado->id_solicitud . '/', $request->file('foto2'), $documentos['doc2']);
 
         // 3. Lógica de Estatus y Exhorto
         $esVistaPrevia = isset($data['vista_previa']) && (string)$data['vista_previa'] === '1';
@@ -3368,7 +3580,8 @@ class SeerController extends Controller
             ->select('catalogo_motivos.motivo','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
             ->get();
         }*/
-        return view('solicitudes.solicitud_trabajador', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos'));
+        $draftId = request('draft_id') ?? (string) Str::uuid();
+        return view('solicitudes.solicitud_trabajador', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos','draftId'));
     }
 
     //Solicitud en línea para los Centros de Conciliación
@@ -3405,6 +3618,10 @@ class SeerController extends Controller
 
     public function solicitud_parte1(Request $request){
         $data = $request->all();
+
+        // Cada pestaña/proceso debe traer su propio draft_id desde el primer POST.
+        // Si no viene, generamos uno y lo usamos para este flujo.
+        $draftId = $data['draft_id'] ?? (string) Str::uuid();
         /*
         if($data["delegacion"] == "Lázaro Cárdenas"){
             $data["delegacion"] = "Uruapan";
@@ -3477,11 +3694,8 @@ class SeerController extends Controller
             'motivo_solicitud' => $data["motivo_solicitud"] ?? []
         );
        
-        session(['solicitud_data' => $solicitud_data]);
-        
-        // Limpiar sesiones anteriores
-        session()->forget('solicitante_data');
-        session()->forget('citados_data');
+    session([$this->draftSessionKey('solicitud_data', $draftId) => $solicitud_data]);
+    // Nota: no limpiamos solicitante/citados globales porque rompería otras pestañas.
 
         $id = 'session';
 
@@ -3491,7 +3705,7 @@ class SeerController extends Controller
         /*if($tipo_generacion != 0){
             return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
         }*/
-        return view('solicitudes.solicitante', compact('estados','municipios','id'));
+    return view('solicitudes.solicitante', compact('estados','municipios','id', 'draftId'));
         //return redirect()->route('parte2.ver', ['id' => $id]);
     }
 
@@ -3877,6 +4091,9 @@ class SeerController extends Controller
         $data = $request->all();
         $id = $data['id'];
 
+        // DraftId por pestaña/proceso (debe venir como hidden input en los forms)
+        $draftId = $data['draft_id'] ?? $this->resolveSolicitudDraftId(null);
+
         //validando información
        /*$request->validate([
             //'tipo'                      => 'required|in:Fisica,Moral',
@@ -4010,17 +4227,25 @@ class SeerController extends Controller
         /*$path = Storage::putFileAs(
             'documentosSolicitud', $request->file('documentoCurp'), $documento
         );*/
-        //Acta de nacimiento
+        // Acta de nacimiento / Identificación
+        // Si el flujo es "session", guardamos temporalmente en documentosSolicitud/tmp/{sessionId}
+        // y lo movemos a documentosSolicitud/{new_id}/ en guardar_solicitud().
+    $destDir = ($id === 'session') ? $this->documentosSolicitudTmpDir($draftId) : 'documentosSolicitud';
+
         if(isset($data["documentoIdentificacion"])){
             $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion
-        );
+            Storage::putFileAs(
+                $destDir,
+                $request->file('documentoIdentificacion'),
+                $documentoidentificacion
+            );
         }
         else{
             $documentoidentificacion = $data["curp"]."_Acta.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoActa'), $documentoidentificacion
+            Storage::putFileAs(
+                $destDir,
+                $request->file('documentoActa'),
+                $documentoidentificacion
             );
         }
 
@@ -4053,12 +4278,13 @@ class SeerController extends Controller
         }*/
 
         // Guardar en sesión
-        session(['solicitante_data' => $data_insert]);
+    // Guardar por draft para permitir varias pestañas
+    session([$this->draftSessionKey('solicitante_data', $draftId) => $data_insert]);
         
-        // Actualizar datos de solicitud en sesión con caso_excepcion
-        $solicitudData = session('solicitud_data', []);
-        $solicitudData['caso_excepcion'] = $data["excepcion"];
-        session(['solicitud_data' => $solicitudData]);
+    // Actualizar datos de solicitud en sesión con caso_excepcion (por draft)
+    $solicitudData = session($this->draftSessionKey('solicitud_data', $draftId), []);
+    $solicitudData['caso_excepcion'] = $data["excepcion"];
+    session([$this->draftSessionKey('solicitud_data', $draftId) => $solicitudData]);
 
         // Guardar datos de excepción si aplica
         if ($data["excepcion"] === "Si") {
@@ -4077,7 +4303,7 @@ class SeerController extends Controller
                 'incidencia_directa' => $data["incidencia_directa"] ?? null,
                 'recibio_atencion' => $data["recibio_atencion"] ?? null,
             ];
-            session(['excepcion_data' => $excepcionData]);
+            session([$this->draftSessionKey('excepcion_data', $draftId) => $excepcionData]);
         }
 
        /* $id_general  = SeerPerGeneral::latest('id')->first();
@@ -4089,6 +4315,10 @@ class SeerController extends Controller
             return redirect()->route('agrega_citadoAux', ['id' => $id] );
         }
         //$estados=Estados::all();*/
+        if ($id === 'session') {
+            $url = route('agregar_citado', ['id' => $id]) . '?draft_id=' . urlencode((string) $draftId);
+            return redirect()->to($url);
+        }
         return redirect()->route('agregar_citado', ['id' => $id] ); 
     }
 
@@ -4377,17 +4607,22 @@ class SeerController extends Controller
         $imagen_domicilio1 = "Sin documento";
         $imagen_domicilio2 = "Sin documento";
 
+        $draftId = $data['draft_id'] ?? $this->resolveSolicitudDraftId(null);
+
         // Usar ID temporal si es sesión
         $tempId = ($data['id'] == 'session') ? uniqid('session_') : $data['id'];
 
+        // Si es flujo "session", guardar en tmp para luego mover a documentosSolicitud/{new_id}/ en guardar_solicitud()
+    $destDir = ($data['id'] == 'session') ? $this->documentosSolicitudTmpDir($draftId) : 'documentosSolicitud';
+
         if ($request->hasFile('foto1')) {
             $imagen_domicilio1 = $tempId . "-domicilio_Citado1.jpg" . Str::random(8) . ".jpg";
-            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+            Storage::putFileAs($destDir, $request->file('foto1'), $imagen_domicilio1);
         }
         
         if ($request->hasFile('foto2')) {
             $imagen_domicilio2 = $tempId . "-domicilio_Citado2.jpg" . Str::random(8) . ".jpg";
-            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+            Storage::putFileAs($destDir, $request->file('foto2'), $imagen_domicilio2);
         }
         $foto1 = $imagen_domicilio1;
         $foto2 = $imagen_domicilio2;
@@ -4419,7 +4654,7 @@ class SeerController extends Controller
             'estado_citado'     => $data["estado_citado"],
         );
         
-        $data_insert["notificacion"] = session('citados_data.0.notificacion', $data['notificacion'] ?? null);
+        $data_insert["notificacion"] = session($this->draftSessionKey('citados_data', $draftId) . '.0.notificacion', $data['notificacion'] ?? null);
 
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
@@ -4476,9 +4711,9 @@ class SeerController extends Controller
         $data_insert['resulte_responsable'] = 'No';
         
         if ($data["id"] == 'session') {
-            $citados = session('citados_data', []);
+            $citados = session($this->draftSessionKey('citados_data', $draftId), []);
             $citados[] = $data_insert;
-            session(['citados_data' => $citados]);
+            session([$this->draftSessionKey('citados_data', $draftId) => $citados]);
         } else {
             SeerCitados::create($data_insert); 
         }
@@ -4510,7 +4745,7 @@ class SeerController extends Controller
             $direccionNombre = $data_insert["nombre"];
             
             if ($data["id"] == 'session') {
-                $citados = session('citados_data', []);
+                $citados = session($this->draftSessionKey('citados_data', $draftId), []);
                 $existe = false;
                 foreach ($citados as $citado) {
                     if ($citado['nombre'] == $direccionNombre && $citado['resulte_responsable'] == 'Si') {
@@ -4520,7 +4755,7 @@ class SeerController extends Controller
                 }
                 if (!$existe) {
                     $citados[] = $data_insert;
-                    session(['citados_data' => $citados]);
+                    session([$this->draftSessionKey('citados_data', $draftId) => $citados]);
                 }
             } else {
                 $existe = SeerCitados::where('id_solicitud', $data['id'])
@@ -4712,10 +4947,15 @@ class SeerController extends Controller
     public function vista_citado($id){
         $estados = Estados::all();
         $municipios = Municipios::all();
-        $session_notificacion = session('citados_data.0.notificacion');
+        $draftId = request('draft_id');
+        $session_notificacion = $draftId
+            ? session($this->draftSessionKey('citados_data', $draftId) . '.0.notificacion')
+            : session('citados_data.0.notificacion');
         
         if ($id == 'session') {
-            $citados_data = session('citados_data', []);
+            $citados_data = $draftId
+                ? session($this->draftSessionKey('citados_data', $draftId), [])
+                : [];
             $citados = count($citados_data);
         } else {
             $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
@@ -4728,7 +4968,7 @@ class SeerController extends Controller
         /*if($tipo_generacion != 0){
             return view('solicitudes.auxiliares.citadosAux',compact('estados','id','citados','municipios'));
         }*/
-        return view('solicitudes.citados',compact('estados','id','citados','municipios', 'session_notificacion'));
+        return view('solicitudes.citados',compact('estados','id','citados','municipios', 'session_notificacion', 'draftId'));
     }
 
     /*public function vista_solicitante($id){
@@ -5028,14 +5268,30 @@ class SeerController extends Controller
 
     public function guardar_solicitud($id){
         if ($id == 'session') {
+            $draftId = request('draft_id') ?? $this->inferDraftIdFromSessionData() ?? $this->resolveSolicitudDraftId(null);
             // Recuperar datos de sesión
-            $solicitud_data = session('solicitud_data');
-            $solicitante_data = session('solicitante_data');
-            $citadosData = session('citados_data', []);
-            $excepcionData = session('excepcion_data');         
+            $solicitud_data = session($this->draftSessionKey('solicitud_data', $draftId));
+            $solicitante_data = session($this->draftSessionKey('solicitante_data', $draftId));
+            $citadosData = session($this->draftSessionKey('citados_data', $draftId), []);
+            $excepcionData = session($this->draftSessionKey('excepcion_data', $draftId));         
 
              
             if (!$solicitud_data || !$solicitante_data) {
+                try {
+                    \Log::warning('guardar_solicitud(session): datos incompletos', [
+                        'session_id' => session()->getId(),
+                        'draft_id_request' => request('draft_id'),
+                        'draft_id_resolved' => $draftId,
+                        'has_solicitud' => session()->has($this->draftSessionKey('solicitud_data', $draftId)),
+                        'has_solicitante' => session()->has($this->draftSessionKey('solicitante_data', $draftId)),
+                        'tmp_session_dir_exists' => \Storage::exists($this->documentosSolicitudTmpSessionDir()),
+                        'tmp_dirs' => \Storage::exists($this->documentosSolicitudTmpSessionDir())
+                            ? \Storage::allDirectories($this->documentosSolicitudTmpSessionDir())
+                            : [],
+                    ]);
+                } catch (\Throwable $logErr) {
+                    // no-op
+                }
                 return redirect()->route('solicitudEnLinea')->with('error', 'Sesión expirada o datos incompletos.');
             }
 
@@ -5055,10 +5311,14 @@ class SeerController extends Controller
                     ->count();
 
                 if ($conteoHoy >= $limiteDiario) {
-                    if ($id == 'session' || session()->has('solicitud_data')) {
-                    // Limpiar sesión
-                    session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
-                    }
+                    // Limpiar solo el draft actual
+                    session()->forget([
+                        $this->draftSessionKey('solicitud_data', $draftId),
+                        $this->draftSessionKey('solicitud_motivos', $draftId),
+                        $this->draftSessionKey('solicitante_data', $draftId),
+                        $this->draftSessionKey('citados_data', $draftId),
+                        $this->draftSessionKey('excepcion_data', $draftId),
+                    ]);
                     return redirect()->route('solicitudEnLinea')
                         ->with('error', "Página en mantenimiento.");
                 }
@@ -5091,6 +5351,45 @@ class SeerController extends Controller
                 SeerPerGeneral::create($general_insert);
                 $general_record = SeerPerGeneral::latest('id')->first();
                 $new_id = $general_record->id;
+
+                // Mover archivos temporales a carpeta final: documentosSolicitud/{new_id}/
+                // y actualizar los campos en arrays ANTES de insertar solicitante/citados.
+                if (is_array($solicitante_data)) {
+                    if (!empty($solicitante_data['documentoIdentificacion'])) {
+                        $solicitante_data['documentoIdentificacion'] = $this->moverDocumentoSolicitudTmpAFinal(
+                            (int)$new_id,
+                            $solicitante_data['documentoIdentificacion'],
+                            $draftId
+                        );
+                    }
+                    if (!empty($solicitante_data['documentoCurp'])) {
+                        $solicitante_data['documentoCurp'] = $this->moverDocumentoSolicitudTmpAFinal(
+                            (int)$new_id,
+                            $solicitante_data['documentoCurp'],
+                            $draftId
+                        );
+                    }
+                }
+
+                if (!empty($citadosData) && is_array($citadosData)) {
+                    foreach ($citadosData as $idx => $citado) {
+                        if (!is_array($citado)) continue;
+                        if (!empty($citado['imagen_domicilio1'])) {
+                            $citadosData[$idx]['imagen_domicilio1'] = $this->moverDocumentoSolicitudTmpAFinal(
+                                (int)$new_id,
+                                $citado['imagen_domicilio1'],
+                                $draftId
+                            );
+                        }
+                        if (!empty($citado['imagen_domicilio2'])) {
+                            $citadosData[$idx]['imagen_domicilio2'] = $this->moverDocumentoSolicitudTmpAFinal(
+                                (int)$new_id,
+                                $citado['imagen_domicilio2'],
+                                $draftId
+                            );
+                        }
+                    }
+                }
                  
                 // 2. Crear SeerMotivo
                 if (!empty($solicitud_data["motivo_solicitud"])) {
@@ -5119,55 +5418,80 @@ class SeerController extends Controller
                 }
                  
                 DB::commit();
-                 
-                if ($id == 'session' || session()->has('solicitud_data')) {
-                    // Limpiar sesión
-                    session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
+
+                // Limpieza de tmp (draft) al finalizar correctamente
+                try {
+                    $tmpDir = $this->documentosSolicitudTmpDir($draftId);
+                    if (\Storage::exists($tmpDir)) {
+                        \Storage::deleteDirectory($tmpDir);
+                    }
+                    $tmpSessionDir = $this->documentosSolicitudTmpSessionDir();
+                    if (\Storage::exists($tmpSessionDir)) {
+                        $remaining = \Storage::allFiles($tmpSessionDir);
+                        $remainingDirs = \Storage::allDirectories($tmpSessionDir);
+                        if (count($remaining) === 0 && count($remainingDirs) === 0) {
+                            \Storage::deleteDirectory($tmpSessionDir);
+                        }
+                    }
+                } catch (\Throwable $cleanupOkErr) {
+                    // no-op
                 }
+                 
+                // Limpiar solo el draft actual (para no romper otras pestañas)
+                session()->forget([
+                    $this->draftSessionKey('solicitud_data', $draftId),
+                    $this->draftSessionKey('solicitud_motivos', $draftId),
+                    $this->draftSessionKey('solicitante_data', $draftId),
+                    $this->draftSessionKey('citados_data', $draftId),
+                    $this->draftSessionKey('excepcion_data', $draftId),
+                ]);
                  
                 $id = $new_id; // Actualizar ID para el resto del flujo
                  
              } catch (\Exception $e) {
                 DB::rollBack();
-                    $solicitanteSess = session('solicitante_data', []);
-                    if (!empty($solicitanteSess) && is_array($solicitanteSess)) {
-                        $solicitanteArr = [];
-                        if (isset($solicitanteSess['solicitante']) && is_array($solicitanteSess['solicitante'])) {
-                            $solicitanteArr = $solicitanteSess['solicitante'];
-                        } else {
-                            $solicitanteArr = $solicitanteSess;
+                    // Limpieza de archivos:
+                    // - En el flujo "session" ahora se suben a documentosSolicitud/tmp/{sessionId}/
+                    // - En este método se mueven a documentosSolicitud/{new_id}/ antes de insertar en BD
+                    // Por eso, en caso de error, limpiamos primero el tmp y, si ya existe $new_id, también su carpeta final.
+
+                    try {
+                        $tmpDir = $this->documentosSolicitudTmpDir($draftId);
+                        if (\Storage::exists($tmpDir)) {
+                            \Storage::deleteDirectory($tmpDir);
                         }
-                        $fileKeys = ['documentoIdentificacion', 'documentoCurp', 'documentoCurpPath', 'documentoIdentificacionPath'];
-                        foreach ($fileKeys as $key) {
-                            if (!empty($solicitanteArr[$key]) && is_string($solicitanteArr[$key])) {
-                                $filename = basename($solicitanteArr[$key]);
-                                $path = 'documentosSolicitud/' . $filename;
-                                    if (\Storage::exists($path)) {
-                                        \Storage::delete($path);
-                                    }
-                                
+
+                        // Si el directorio tmp por sesión queda vacío, lo eliminamos también
+                        $tmpSessionDir = $this->documentosSolicitudTmpSessionDir();
+                        if (\Storage::exists($tmpSessionDir)) {
+                            $remaining = \Storage::allFiles($tmpSessionDir);
+                            $remainingDirs = \Storage::allDirectories($tmpSessionDir);
+                            if (count($remaining) === 0 && count($remainingDirs) === 0) {
+                                \Storage::deleteDirectory($tmpSessionDir);
                             }
                         }
-                    }
 
-                    $citados = session('citados_data', []);
-                    if (!empty($citados) && is_array($citados)) {
-                        foreach ($citados as $citado) {
-                            if (is_array($citado)) {
-                                foreach ($citado as $k => $v) {
-                                    if (is_string($v) && preg_match('/\.(pdf|jpg|jpeg|png)$/i', $v)) {
-                                        $filename = basename($v);
-                                        $path = 'documentosSolicitud/' . $filename;
-                                            if (\Storage::exists($path)) {
-                                                \Storage::delete($path);
-                                            }
-                                    }
-                                }
+                        if (isset($new_id) && $new_id) {
+                            $finalDir = 'documentosSolicitud/' . $new_id;
+                            if (\Storage::exists($finalDir)) {
+                                \Storage::deleteDirectory($finalDir);
                             }
                         }
+                    } catch (\Throwable $cleanupErr) {
+                        // No interrumpir el manejo del error principal.
                     }
 
-                    session()->forget(['solicitud_trabajador_data', 'solicitante_trabajador_data', 'citados_trabajador_data']);
+                    // Limpiar sesión del flujo en línea para evitar reintentos con data inconsistente
+                    session()->forget([
+                        $this->draftSessionKey('solicitud_data', $draftId),
+                        $this->draftSessionKey('solicitud_motivos', $draftId),
+                        $this->draftSessionKey('solicitante_data', $draftId),
+                        $this->draftSessionKey('citados_data', $draftId),
+                        $this->draftSessionKey('excepcion_data', $draftId),
+                        'solicitud_trabajador_data',
+                        'solicitante_trabajador_data',
+                        'citados_trabajador_data',
+                    ]);
 
                 return redirect()->route('solicitudEnLinea')->with('error', 'Ocurrió un error al guardar la solicitud. Se descartaron los datos de captura.');
             }
@@ -5572,13 +5896,13 @@ class SeerController extends Controller
             if ($request->hasFile("foto1.$i")) {
                 $file = $request->file("foto1")[$i];
                 $foto1 = $data["id"] . "-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
-                Storage::putFileAs('documentosSolicitud', $file, $foto1);
+                Storage::putFileAs('documentosSolicitud/' . $data["id"], $file, $foto1);
             }
 
             if ($request->hasFile("foto2.$i")) {
                 $file = $request->file("foto2")[$i];
                 $foto2 = $data["id"] . "-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
-                Storage::putFileAs('documentosSolicitud', $file, $foto2);
+                Storage::putFileAs('documentosSolicitud/' . $data["id"], $file, $foto2);
             }
 
             $data_update = array(
@@ -5642,7 +5966,7 @@ class SeerController extends Controller
 
         if ($request->hasFile('indetificacion')) {
             $documentoidentificacion = $curpBase . '_Identificacion.pdf';
-            Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
+            Storage::putFileAs('documentosSolicitud/' . $data['id'], $request->file('indetificacion'), $documentoidentificacion);
             SeerSolicitante::where('id_solicitud', $data['id'])->update(['documentoIdentificacion' => $documentoidentificacion]);
         }
             DB::commit();
@@ -5967,22 +6291,33 @@ class SeerController extends Controller
             // 7. Almacenamiento eficiente de archivos de identificación
             $curpBase = $request->input('curp_solicitante') ?: ($solActual->curp ?? 'solicitud_' . $id_solicitud);
             $time = time();
+            $docsDir = 'documentosSolicitud/' . $id_solicitud;
 
             if ($request->hasFile('documentoCurp')) {
                 $documento = "{$curpBase}_CURP_{$time}.pdf";
-                Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
+                Storage::putFileAs($docsDir, $request->file('documentoCurp'), $documento);
                 $datosSolicitante['documentoCurp'] = $documento;
                 if ($solActual && $solActual->documentoCurp && $solActual->documentoCurp !== 'Sin documento') {
-                    Storage::delete("documentosSolicitud/{$solActual->documentoCurp}");
+                    $prev = $solActual->documentoCurp;
+                    if (Storage::exists("{$docsDir}/{$prev}")) {
+                        Storage::delete("{$docsDir}/{$prev}");
+                    } elseif (Storage::exists("documentosSolicitud/{$prev}")) {
+                        Storage::delete("documentosSolicitud/{$prev}");
+                    }
                 }
             }
 
             if ($request->hasFile('documentoIdentificacion')) {
                 $documentoidentificacion = "{$curpBase}_Identificacion_{$time}.pdf";
-                Storage::putFileAs('documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion);
+                Storage::putFileAs($docsDir, $request->file('documentoIdentificacion'), $documentoidentificacion);
                 $datosSolicitante['documentoIdentificacion'] = $documentoidentificacion;
                 if ($solActual && $solActual->documentoIdentificacion && $solActual->documentoIdentificacion !== 'Sin documento') {
-                    Storage::delete("documentosSolicitud/{$solActual->documentoIdentificacion}");
+                    $prev = $solActual->documentoIdentificacion;
+                    if (Storage::exists("{$docsDir}/{$prev}")) {
+                        Storage::delete("{$docsDir}/{$prev}");
+                    } elseif (Storage::exists("documentosSolicitud/{$prev}")) {
+                        Storage::delete("documentosSolicitud/{$prev}");
+                    }
                 }
             }
 
@@ -6059,13 +6394,33 @@ class SeerController extends Controller
                 if (isset($fotos1_files[$i])) {
                     $file = $fotos1_files[$i];
                     $foto1 = "{$id_solicitud}-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
-                    Storage::putFileAs('documentosSolicitud', $file, $foto1);
+                    Storage::putFileAs($docsDir, $file, $foto1);
+
+                    // Si se reemplaza una referencia existente, borrar el archivo anterior (compatible con ruta vieja)
+                    $prev = $request->input("imagen_domicilio1.{$i}");
+                    if ($prev && $prev !== 'Sin documento') {
+                        if (Storage::exists("{$docsDir}/{$prev}")) {
+                            Storage::delete("{$docsDir}/{$prev}");
+                        } elseif (Storage::exists("documentosSolicitud/{$prev}")) {
+                            Storage::delete("documentosSolicitud/{$prev}");
+                        }
+                    }
                 }
 
                 if (isset($fotos2_files[$i])) {
                     $file = $fotos2_files[$i];
                     $foto2 = "{$id_solicitud}-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
-                    Storage::putFileAs('documentosSolicitud', $file, $foto2);
+                    Storage::putFileAs($docsDir, $file, $foto2);
+
+                    // Si se reemplaza una referencia existente, borrar el archivo anterior (compatible con ruta vieja)
+                    $prev = $request->input("imagen_domicilio2.{$i}");
+                    if ($prev && $prev !== 'Sin documento') {
+                        if (Storage::exists("{$docsDir}/{$prev}")) {
+                            Storage::delete("{$docsDir}/{$prev}");
+                        } elseif (Storage::exists("documentosSolicitud/{$prev}")) {
+                            Storage::delete("documentosSolicitud/{$prev}");
+                        }
+                    }
                 }
 
                 // Sanitización del booleano del Traductor
@@ -7606,8 +7961,23 @@ class SeerController extends Controller
         if ($request->hasFile('identificacion_comparecencia')) {
             $archivo = $request->file('identificacion_comparecencia');
             $fileName = $citadoId . "_identificacion_comparecencia_" . time() . ".pdf";
-            \Storage::putFileAs('documentosSolicitud', $archivo, $fileName);
+
+            //documentosSolicitud/{id seer_general}/archivo.pdf
+            $destDir = 'documentosSolicitud/' . $idSolicitud;
+            \Storage::putFileAs($destDir, $archivo, $fileName);
             $docPath = $fileName;
+
+            $citadoDb = \App\Models\SeerCitados::find($citadoId);
+            $prev = $citadoDb?->identificacion_comparecencia;
+            if ($prev) {
+                $prevNewPath = $destDir . '/' . $prev;
+                $prevOldPath = 'documentosSolicitud/' . $prev;
+                if (\Storage::exists($prevNewPath)) {
+                    \Storage::delete($prevNewPath);
+                } elseif (\Storage::exists($prevOldPath)) {
+                    \Storage::delete($prevOldPath);
+                }
+            }
         }
 
         $sessionKey = "audiencia_data_{$idSolicitud}";
@@ -10203,11 +10573,32 @@ class SeerController extends Controller
     public function audiencias_cumplimiento(){
         // 1. Obtenemos directamente el objeto del usuario autenticado (evitamos User::find)
         $user = auth()->user();
+        $userRole = $user->roles->pluck('name')->all();
+        $delegaciones = ["Morelia", "Zitácuaro", "Uruapan", "Lázaro Cárdenas", "Zamora", "Sahuayo"];
 
+        if($userRole[0] != "Super Usuario"){
+            if($user->delegacion == "Morelia"){
+                $delegaciones = ["Morelia", "Zitácuaro"];
+            }
+            else if($user->delegacion == "Uruapan"){
+                $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
+            }
+            else if($user->delegacion == "Zamora"){
+                $delegaciones = ["Zamora", "Sahuayo"];
+            }
+            else if($user->delegacion == "Lázaro Cárdenas"){
+                $delegaciones = ["Lázaro Cárdenas"];
+            }
+            else if($user->delegacion == "Zitácuaro"){
+                $delegaciones = ["Zitácuaro"];
+            }
+            else if($user->delegacion == "Sahuayo"){
+                $delegaciones = ["Sahuayo"];
+            }
+        }
 
-        $cumplimientos = Pagos::where('pago_solicitud.delegacion', $user->delegacion)
+        $cumplimientos = Pagos::whereIn('pago_solicitud.delegacion', $delegaciones)
             ->whereIn('pago_solicitud.tipo_pago', ["Ratificacion", "Audiencia", "Conciliador"])
-            
             ->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
             ->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
             ->leftJoin('users', 'users.id', '=', 'pago_solicitud.id_conciliador')
@@ -10677,13 +11068,19 @@ class SeerController extends Controller
                 continue;
             }
         
-            $path = storage_path("app/documentos_notificacion/{$img}");
+            $path = storage_path("app/documentos_notificacion/{$id_solicitud}/{$img}");
         
             if (file_exists($path)) {
                 $mime = mime_content_type($path);
                 $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
-                $imagenes[] = null;
+                $fallbackPath = storage_path("app/documentos_notificacion/{$img}");
+                if (file_exists($fallbackPath)) {
+                    $mime = mime_content_type($fallbackPath);
+                    $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fallbackPath));
+                } else {
+                    $imagenes[] = null;
+                }
             }
         }
         $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','fechaCitatorio'))->render();
@@ -11616,13 +12013,19 @@ class SeerController extends Controller
                 continue;
             }
             
-            $path = storage_path("app/documentos_notificacion/{$img}");
+            $path = storage_path("app/documentos_notificacion/{$id_solicitud}/{$img}");
             
             if (file_exists($path)) {
                 $mime = mime_content_type($path);
                 $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
-                $imagenes[] = null;
+                $fallbackPath = storage_path("app/documentos_notificacion/{$img}");
+                if (file_exists($fallbackPath)) {
+                    $mime = mime_content_type($fallbackPath);
+                    $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fallbackPath));
+                } else {
+                    $imagenes[] = null;
+                }
             }
         }
             
@@ -11712,13 +12115,19 @@ class SeerController extends Controller
                 continue;
             }
         
-            $path = storage_path("app/documentos_notificacion/{$img}");
+            $path = storage_path("app/documentos_notificacion/{$id_solicitud}/{$img}");
         
             if (file_exists($path)) {
                 $mime = mime_content_type($path);
                 $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
-                $imagenes[] = null;
+                $fallbackPath = storage_path("app/documentos_notificacion/{$img}");
+                if (file_exists($fallbackPath)) {
+                    $mime = mime_content_type($fallbackPath);
+                    $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fallbackPath));
+                } else {
+                    $imagenes[] = null;
+                }
             }
         }
             
@@ -11809,13 +12218,19 @@ class SeerController extends Controller
                 continue;
             }
         
-            $path = storage_path("app/documentos_notificacion/{$img}");
+            $path = storage_path("app/documentos_notificacion/{$id_solicitud}/{$img}");
         
             if (file_exists($path)) {
                 $mime = mime_content_type($path);
                 $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
-                $imagenes[] = null;
+                $fallbackPath = storage_path("app/documentos_notificacion/{$img}");
+                if (file_exists($fallbackPath)) {
+                    $mime = mime_content_type($fallbackPath);
+                    $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fallbackPath));
+                } else {
+                    $imagenes[] = null;
+                }
             }
         }
              
@@ -11906,13 +12321,19 @@ class SeerController extends Controller
                 continue;
             }
         
-            $path = storage_path("app/documentos_notificacion/{$img}");
+            $path = storage_path("app/documentos_notificacion/{$id_solicitud}/{$img}");
         
             if (file_exists($path)) {
                 $mime = mime_content_type($path);
                 $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
-                $imagenes[] = null;
+                $fallbackPath = storage_path("app/documentos_notificacion/{$img}");
+                if (file_exists($fallbackPath)) {
+                    $mime = mime_content_type($fallbackPath);
+                    $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fallbackPath));
+                } else {
+                    $imagenes[] = null;
+                }
             }
         }
              
@@ -11954,7 +12375,7 @@ class SeerController extends Controller
                 //Nombre único por documento (id de solicitud y id de documento)
                 $documentoExpediente = $slugBase . '_Expediente_' . $data['audiencia_id'] . '_' . $doc->id . '.' . $ext;
 
-                Storage::putFileAs('documentosSolicitud', $file, $documentoExpediente);
+                Storage::putFileAs('documentosSolicitud/' . $data['audiencia_id'], $file, $documentoExpediente);
 
                 $doc->update(['nombre_documento' => $documentoExpediente]);
             } else {
@@ -14686,7 +15107,7 @@ class SeerController extends Controller
         'seer_citados.segundo_apellido','municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle','seer_citados.tipo_vialidad','estados.nombre as estado_citado',
         'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion','seer_citados.id_solicitud as id_solicitud','users.name as notificador_nombre')
         ->orderBy('seer_citados.created_at', 'desc')
-        ->limit(500)
+        ->limit(4000)
         ->get();
 
         return view('notificaciones.indexHitorial',compact('mis_notificaciones'));
@@ -15579,16 +16000,44 @@ class SeerController extends Controller
         return response()->json($citados);
     }
     public function solicitudesAuxiliares(){
-        return view('solicitudes.auxiliares.solicitudAuxiliares');
+        // ── Si hay un proceso activo (no expirado), mostrar pantalla de bloqueo ──
+        if ($this->isSolicitudAuxLockActive()) {
+            $lock = $this->getSolicitudAuxLock();
+            $segundos_inactivo  = time() - ($lock['last_activity'] ?? time());
+            $segundos_restantes = max(0, self::SOLICITUD_AUX_TTL - $segundos_inactivo);
+            $minutos_restantes  = (int) ceil($segundos_restantes / 60);
+            return view('solicitudes.auxiliares.procesoActivo', compact('lock', 'minutos_restantes'));
+        }
+
+        // ── Si había un lock expirado, limpiar antes de comenzar de nuevo ───────
+        $lockViejo = $this->getSolicitudAuxLock();
+        if ($lockViejo) {
+            $this->limpiarSesionSolicitudAuxCompletamente($lockViejo['draft_id'] ?? null);
+        }
+
+        // ── Generar un nuevo draftId limpio para este proceso ────────────────────
+        $draftId = (string) Str::uuid();
+        session(['solicitud_draft_id' => $draftId]);
+
+        return view('solicitudes.auxiliares.solicitudAuxiliares', compact('draftId'));
     }
 
     public function IndustriasAux($tipo_solicitud){
-        return view('solicitudes.auxiliares.tipoIndustriaAux', compact('tipo_solicitud'));
+        $draftId = $this->resolveSolicitudDraftId(request());
+        // Adquirir el lock al comenzar realmente el proceso
+        $this->acquireSolicitudAuxLock($draftId, (int) $tipo_solicitud, 'aux');
+        return view('solicitudes.auxiliares.tipoIndustriaAux', compact('tipo_solicitud', 'draftId'));
     }
+
     public function IndustriasAuxP($tipo_solicitud){
-        return view('solicitudes.auxiliares.tipoIndustriaAuxP', compact('tipo_solicitud'));
+        $draftId = $this->resolveSolicitudDraftId(request());
+        // Adquirir el lock al comenzar realmente el proceso patronal
+        $this->acquireSolicitudAuxLock($draftId, (int) $tipo_solicitud, 'auxP');
+        return view('solicitudes.auxiliares.tipoIndustriaAuxP', compact('tipo_solicitud', 'draftId'));
     }
-    public function inicioSolicitud_auxiliar($tipo_solicitud){  
+    public function inicioSolicitud_auxiliar($tipo_solicitud){
+        $draftId = $this->resolveSolicitudDraftId(request());
+        $this->renewSolicitudAuxLock(); // mantener proceso vivo
         if ($tipo_solicitud == "1") {
             $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1') ->get();
         }
@@ -15605,9 +16054,11 @@ class SeerController extends Controller
        // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
         $municipios=Municipios::where('estado',16)->get();
-        return view('solicitudes.auxiliares.inicioSolicitud', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos'));
+        return view('solicitudes.auxiliares.inicioSolicitud', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos','draftId'));
     }
-    public function inicioSolicitud_auxiliarP($tipo_solicitud){  
+    public function inicioSolicitud_auxiliarP($tipo_solicitud){
+        $draftId = $this->resolveSolicitudDraftId(request());
+        $this->renewSolicitudAuxLock(); // mantener proceso vivo
         if ($tipo_solicitud == "1") {
             $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1') ->get();
         }
@@ -15624,27 +16075,57 @@ class SeerController extends Controller
        // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
         $municipios=Municipios::where('estado',16)->get();
-        return view('solicitudes.auxiliares.inicioSolicitudP', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos'));
+        return view('solicitudes.auxiliares.inicioSolicitudP', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos','draftId'));
+    }
+
+    /**
+     * Endpoint AJAX (polling) para que las vistas del wizard comprueben
+     * si su proceso (draft) sigue activo.
+     * Devuelve JSON: { "active": true|false }
+     */
+    public function checkSolicitudAuxLock(Request $request)
+    {
+        $draftId = $request->query('draft_id', '');
+        $lock    = $this->getSolicitudAuxLock();
+
+        $isActive = $this->isSolicitudAuxLockActive()
+            && !empty($lock)
+            && ($lock['draft_id'] ?? null) === $draftId;
+
+        return response()->json(['active' => $isActive]);
+    }
+
+    /**
+     * Abandona el proceso activo: limpia sesión, archivos tmp y libera el lock.
+     * El usuario puede entonces iniciar un proceso nuevo desde cero.
+     */
+    public function abandonarSolicitudAux(Request $request)
+    {
+        $lock    = $this->getSolicitudAuxLock();
+        $draftId = $lock['draft_id'] ?? $this->resolveSolicitudDraftId($request);
+        $this->limpiarSesionSolicitudAuxCompletamente($draftId);
+        return redirect()->route('solicitud')
+            ->with('info', 'El proceso anterior fue cancelado. Puedes iniciar una nueva solicitud.');
     }
 
     public function guardar_solicitudAux($id){
         $id_usuario = auth()->user()->id;
+        $draftId = $this->resolveSolicitudDraftId(request());
         DB::beginTransaction();
         //try {
             if ($id == 'session') {
                 // Recuperar datos de la sesión
-                $solicitudData = session('solicitud_data');
-                $solicitudMotivos = session('solicitud_motivos', []);
-                $solicitanteData = session('solicitante_data');
-                $citadosData = session('citados_data', []);
-                $excepcionData = session('excepcion_data');
+                $solicitudData = session($this->draftSessionKey('solicitud_data', $draftId));
+                $solicitudMotivos = session($this->draftSessionKey('solicitud_motivos', $draftId), []);
+                $solicitanteData = session($this->draftSessionKey('solicitante_data', $draftId));
+                $citadosData = session($this->draftSessionKey('citados_data', $draftId), []);
+                $excepcionData = session($this->draftSessionKey('excepcion_data', $draftId));
 
                 if (!$solicitudData || !$solicitanteData) {
                     return redirect()->back()->with('error', 'No hay datos de solicitud en la sesión.');
                 }
 
                // 1. Guardar SeerPerGeneral inicial
-                $solicitudData = session('solicitud_data');
                 $general = SeerPerGeneral::create($solicitudData);
                 $id = $general->id;
 
@@ -15676,15 +16157,51 @@ class SeerController extends Controller
                     $citado['id_solicitud'] = $id;
                     SeerCitados::create($citado);
                 }
+
+                // 6. Mover documentos temporales → documentosSolicitud/{id}/ (subcarpeta del registro)
+                // Documentos del solicitante
+                foreach (['documentoIdentificacion', 'documentoCurp'] as $campo) {
+                    $archivo = $solicitanteData[$campo] ?? null;
+                    if ($archivo && $archivo !== 'Sin documento') {
+                        $this->moverDocumentoSolicitudTmpAFinal($id, $archivo, $draftId);
+                    }
+                }
+
+                // Fotos de domicilio de cada citado
+                foreach ($citadosData as $citado) {
+                    foreach (['imagen_domicilio1', 'imagen_domicilio2'] as $campo) {
+                        $archivo = $citado[$campo] ?? null;
+                        if ($archivo && $archivo !== 'Sin documento') {
+                            $this->moverDocumentoSolicitudTmpAFinal($id, $archivo, $draftId);
+                        }
+                    }
+                }
             }
-            
+
             DB::commit();
 
-            if ($id == 'session' || session()->has('solicitud_data')) {
-                // Limpiar sesión
-                session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
+            if ($id == 'session' || session()->has($this->draftSessionKey('solicitud_data', $draftId))) {
+                // Limpiar sesión (solo draft actual)
+                session()->forget([
+                    $this->draftSessionKey('solicitud_data', $draftId),
+                    $this->draftSessionKey('solicitud_motivos', $draftId),
+                    $this->draftSessionKey('solicitante_data', $draftId),
+                    $this->draftSessionKey('citados_data', $draftId),
+                    $this->draftSessionKey('excepcion_data', $draftId),
+                ]);
+
+                // Limpiar tmp del draft actual
+                Storage::deleteDirectory($this->documentosSolicitudTmpDir($draftId));
+                $sessionTmpDir = $this->documentosSolicitudTmpSessionDir();
+                if (Storage::exists($sessionTmpDir) && empty(Storage::allFiles($sessionTmpDir))) {
+                    Storage::deleteDirectory($sessionTmpDir);
+                }
+
+                // Liberar el lock de proceso activo (proceso completado exitosamente)
+                $this->releaseSolicitudAuxLock();
+                session()->forget('solicitud_draft_id');
             }
-        /*} 
+        /*}
         catch (\Exception $e) {
             DB::rollBack();
                 $solicitante = session('solicitante_data', []);
@@ -15800,13 +16317,14 @@ class SeerController extends Controller
 
     public function guardar_solicitudAuxP($id){
         $id_usuario = auth()->user()->id;
+        $draftId = $this->resolveSolicitudDraftId(request());
         if ($id == 'session') {
             // Recuperar datos de la sesión
-            $solicitudData = session('solicitud_data');
-            $solicitudMotivos = session('solicitud_motivos', []);
-            $solicitanteData = session('solicitante_data');
-            $citadosData = session('citados_data'/* , [] */); // Ya solo es un citado
-            $excepcionData = session('excepcion_data');
+            $solicitudData = session($this->draftSessionKey('solicitud_data', $draftId));
+            $solicitudMotivos = session($this->draftSessionKey('solicitud_motivos', $draftId), []);
+            $solicitanteData = session($this->draftSessionKey('solicitante_data', $draftId));
+            $citadosData = session($this->draftSessionKey('citados_data', $draftId)); // En AuxP es 1 citado (array)
+            $excepcionData = session($this->draftSessionKey('excepcion_data', $draftId));
 
             if (!$solicitudData || !$solicitanteData || !$citadosData) {
                 return redirect()->back()->with('error', 'No hay datos de solicitud en la sesión.');
@@ -15852,11 +16370,45 @@ class SeerController extends Controller
                     SeerCitados::create($citadosData);
                 /* } */
 
+                // 6. Mover documentos temporales → documentosSolicitud/{id}/
+                // Documentos del solicitante
+                foreach (['documentoIdentificacion', 'documentoCurp'] as $campo) {
+                    $archivo = $solicitanteData[$campo] ?? null;
+                    if ($archivo && $archivo !== 'Sin documento') {
+                        $this->moverDocumentoSolicitudTmpAFinal($id, $archivo, $draftId);
+                    }
+                }
+
+                // Fotos de domicilio del citado único (citadosData es un array simple, no array de arrays)
+                foreach (['imagen_domicilio1', 'imagen_domicilio2'] as $campo) {
+                    $archivo = $citadosData[$campo] ?? null;
+                    if ($archivo && $archivo !== 'Sin documento') {
+                        $this->moverDocumentoSolicitudTmpAFinal($id, $archivo, $draftId);
+                    }
+                }
+
                 DB::commit();
 
-                if ($id == 'session' || session()->has('solicitud_data')) {
-                    // Limpiar sesión
-                    session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
+                if ($id == 'session' || session()->has($this->draftSessionKey('solicitud_data', $draftId))) {
+                    // Limpiar sesión (solo draft actual)
+                    session()->forget([
+                        $this->draftSessionKey('solicitud_data', $draftId),
+                        $this->draftSessionKey('solicitud_motivos', $draftId),
+                        $this->draftSessionKey('solicitante_data', $draftId),
+                        $this->draftSessionKey('citados_data', $draftId),
+                        $this->draftSessionKey('excepcion_data', $draftId),
+                    ]);
+
+                    // Limpiar tmp del draft actual
+                    Storage::deleteDirectory($this->documentosSolicitudTmpDir($draftId));
+                    $sessionTmpDir = $this->documentosSolicitudTmpSessionDir();
+                    if (Storage::exists($sessionTmpDir) && empty(Storage::allFiles($sessionTmpDir))) {
+                        Storage::deleteDirectory($sessionTmpDir);
+                    }
+
+                    // Liberar el lock de proceso activo (proceso completado exitosamente)
+                    $this->releaseSolicitudAuxLock();
+                    session()->forget('solicitud_draft_id');
                 }
             /*} catch (\Exception $e) {
                 DB::rollBack();
@@ -16133,6 +16685,8 @@ class SeerController extends Controller
 
     public function solicitud_parte1Aux(Request $request){
         $data = $request->all();
+        $draftId = $this->resolveSolicitudDraftId($request);
+        $this->renewSolicitudAuxLock(); // mantener proceso vivo
         /*
         if($data["delegacion"] == "Lázaro Cárdenas"){
             $data["delegacion"] = "Uruapan";
@@ -16145,7 +16699,7 @@ class SeerController extends Controller
         }
         */
         //validando información
-        
+
         /*$request->validate([
             'ramaIndustrial'      => 'required',
             'actividad_economica' => 'required',
@@ -16159,7 +16713,7 @@ class SeerController extends Controller
         ->where('delegacion',$data["delegacion"])
         ->where('año',$año_actual)->
         first();
-        
+
         if(empty($consecutivo)){
             $numero_consecutivo = 1;
         }
@@ -16174,19 +16728,19 @@ class SeerController extends Controller
             'delegacion'      =>  $data["delegacion"],
             'tipo_solicitud'  =>  $data["tipo_solicitud"],
             'tipo_generacion' => auth()->check() ? auth()->id() :0,
-            'consecutivo'    => $numero_consecutivo,    
+            'consecutivo'    => $numero_consecutivo,
             'año'            => $año_actual,
         );
-       
-        // SeerPerGeneral::create($data_insert); 
+
+        // SeerPerGeneral::create($data_insert);
         // $id_general  = SeerPerGeneral::latest('id')->first();
         // $id=$id_general["id"];
         // $tipo_generacion=$id_general->tipo_generacion;
 
-        // Guardar en sesión en lugar de BD
-        session(['solicitud_data' => $data_insert]);
-        session(['solicitud_motivos' => $data["motivo_solicitud"] ?? []]);
-        
+    // Guardar en sesión (por draft) en lugar de BD
+    session([$this->draftSessionKey('solicitud_data', $draftId) => $data_insert]);
+    session([$this->draftSessionKey('solicitud_motivos', $draftId) => ($data["motivo_solicitud"] ?? [])]);
+
         $id = 'session'; // ID temporal para indicar que estamos usando sesión
 
         /*
@@ -16204,7 +16758,7 @@ class SeerController extends Controller
         $municipios = Municipios::all();
 
        /* if($tipo_generacion != 0){*/
-            return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
+            return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id','draftId'));
        /* }
         return view('solicitudes.solicitante', compact('estados','municipios','id'));*/
         //return redirect()->route('parte2.ver', ['id' => $id]);
@@ -16212,6 +16766,8 @@ class SeerController extends Controller
 
     public function solicitud_parte1AuxP(Request $request){
         $data = $request->all();
+        $draftId = $this->resolveSolicitudDraftId($request);
+        $this->renewSolicitudAuxLock(); // mantener proceso vivo
         /*
         if($data["delegacion"] == "Lázaro Cárdenas"){
             $data["delegacion"] = "Uruapan";
@@ -16262,9 +16818,9 @@ class SeerController extends Controller
         // $id=$id_general["id"];
         // $tipo_generacion=$id_general->tipo_generacion;
 
-        // Guardar en sesión en lugar de BD
-        session(['solicitud_data' => $data_insert]);
-        session(['solicitud_motivos' => $data["motivo_solicitud"] ?? []]);
+    // Guardar en sesión (por draft) en lugar de BD
+    session([$this->draftSessionKey('solicitud_data', $draftId) => $data_insert]);
+    session([$this->draftSessionKey('solicitud_motivos', $draftId) => ($data["motivo_solicitud"] ?? [])]);
         
         $id = 'session'; // ID temporal para indicar que estamos usando sesión
 
@@ -16283,7 +16839,7 @@ class SeerController extends Controller
         $municipios = Municipios::all();
 
        /* if($tipo_generacion != 0){*/
-            return view('solicitudes.auxiliares.solicitanteAuxP', compact('estados','municipios','id'));
+        return view('solicitudes.auxiliares.solicitanteAuxP', compact('estados','municipios','id','draftId'));
        /* }
         return view('solicitudes.solicitante', compact('estados','municipios','id'));*/
         //return redirect()->route('parte2.ver', ['id' => $id]);
@@ -16292,6 +16848,10 @@ class SeerController extends Controller
     public function solicitud_parte2Aux(Request $request){
         $data = $request->all();
         $id = $data['id'];
+
+        // DraftId por pestaña/proceso (debe venir como hidden input en los forms)
+        $draftId = $this->resolveSolicitudDraftId($request);
+        $this->renewSolicitudAuxLock(); // mantener proceso vivo
 
         //validando información
        /*$request->validate([
@@ -16427,16 +16987,24 @@ class SeerController extends Controller
             'documentosSolicitud', $request->file('documentoCurp'), $documento
         );*/
         //Acta de nacimiento
+        // Si el flujo es "session", guardamos temporalmente en documentosSolicitud/tmp/{sessionId}/{draftId}
+        // y lo movemos a documentosSolicitud/{new_id}/ en guardar_solicitudAux().
+        $destDir = ($id === 'session') ? $this->documentosSolicitudTmpDir($draftId) : 'documentosSolicitud';
+
         if(isset($data["documentoIdentificacion"])){
             $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion
-        );
+            Storage::putFileAs(
+                $destDir,
+                $request->file('documentoIdentificacion'),
+                $documentoidentificacion
+            );
         }
         else{
             $documentoidentificacion = $data["curp"]."_Acta.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoActa'), $documentoidentificacion
+            Storage::putFileAs(
+                $destDir,
+                $request->file('documentoActa'),
+                $documentoidentificacion
             );
         }
 
@@ -16449,13 +17017,13 @@ class SeerController extends Controller
         //     'caso_excepcion' => $data["excepcion"]
         // ]);
         
-        // Guardar en sesión
-        session(['solicitante_data' => $data_insert]);
+    // Guardar en sesión (por draft)
+    session([$this->draftSessionKey('solicitante_data', $draftId) => $data_insert]);
         
-        // Actualizar datos de solicitud en sesión con caso_excepcion
-        $solicitudData = session('solicitud_data', []);
+    // Actualizar datos de solicitud en sesión con caso_excepcion
+    $solicitudData = session($this->draftSessionKey('solicitud_data', $draftId), []);
         $solicitudData['caso_excepcion'] = $data["excepcion"];
-        session(['solicitud_data' => $solicitudData]);
+    session([$this->draftSessionKey('solicitud_data', $draftId) => $solicitudData]);
 
         // Guardar datos de excepción si aplica
         if ($data["excepcion"] === "Si") {
@@ -16474,7 +17042,7 @@ class SeerController extends Controller
                 'incidencia_directa' => $data["incidencia_directa"] ?? null,
                 'recibio_atencion' => $data["recibio_atencion"] ?? null,
             ];
-            session(['excepcion_data' => $excepcionData]);
+            session([$this->draftSessionKey('excepcion_data', $draftId) => $excepcionData]);
         }
 
         /*$id_general  = SeerPerGeneral::latest('id')->first();
@@ -16483,6 +17051,12 @@ class SeerController extends Controller
         
         //return view('solicitudes.aviso',compact('folio'));
         if($tipo_generacion != 0){*/
+            // Asegurar que el draft_id viaje entre pantallas cuando aún estamos en modo session
+            if ($id === 'session') {
+                $url = route('agrega_citadoAux', ['id' => $id]) . '?draft_id=' . urlencode((string) $draftId);
+                return redirect()->to($url);
+            }
+
             return redirect()->route('agrega_citadoAux', ['id' => $id] );
         //}
         //$estados=Estados::all();
@@ -16491,6 +17065,10 @@ class SeerController extends Controller
     public function solicitud_parte2AuxP(Request $request){
         $data = $request->all();
         $id_solicitud = $data['id'];
+
+        // DraftId por pestaña/proceso (debe venir como hidden input en los forms)
+        $draftId = $this->resolveSolicitudDraftId($request);
+        $this->renewSolicitudAuxLock(); // mantener proceso vivo
 
         //validando información
        /*$request->validate([
@@ -16777,19 +17355,21 @@ class SeerController extends Controller
         /*$path = Storage::putFileAs(
             'documentosSolicitud', $request->file('documentoCurp'), $documento
         );*/
-        //Acta de nacimiento
+        // Acta de nacimiento / Identificación
+        // Si el flujo es "session", guardamos temporalmente en documentosSolicitud/tmp/{sessionId}/{draftId}
+        // y lo movemos a documentosSolicitud/{new_id}/ en guardar_solicitudAuxP().
+        $destDir = ($id_solicitud === 'session') ? $this->documentosSolicitudTmpDir($draftId) : 'documentosSolicitud';
+
         if(isset($data["documentoIdentificacion"])){
             $documentoidentificacion = $data_insert["curp"]."_Identificacion.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion
+            Storage::putFileAs(
+                $destDir,
+                $request->file('documentoIdentificacion'),
+                $documentoidentificacion
             );
             $data_insert["documentoIdentificacion"] = $documentoidentificacion; // Guardar solo el nombre
         }
         else{
-            /* $documentoidentificacion = $data["curp"]."_Acta.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoActa'), $documentoidentificacion
-            ); */
             $data_insert["documentoIdentificacion"] = null;
         }
 
@@ -16802,13 +17382,13 @@ class SeerController extends Controller
         //     'caso_excepcion' => $data["excepcion"]
         // ]);
         
-        // Guardar en sesión
-        session(['solicitante_data' => $data_insert]);
+    // Guardar en sesión (por draft)
+    session([$this->draftSessionKey('solicitante_data', $draftId) => $data_insert]);
         
-        // Actualizar datos de solicitud en sesión con caso_excepcion
-        $solicitudData = session('solicitud_data', []);
+    // Actualizar datos de solicitud en sesión con caso_excepcion
+    $solicitudData = session($this->draftSessionKey('solicitud_data', $draftId), []);
         $solicitudData['caso_excepcion'] = $data["excepcion"];
-        session(['solicitud_data' => $solicitudData]);
+    session([$this->draftSessionKey('solicitud_data', $draftId) => $solicitudData]);
 
         // Guardar datos de excepción si aplica
         if ($data["excepcion"] === "Si") {
@@ -16827,7 +17407,7 @@ class SeerController extends Controller
                 'incidencia_directa' => $data["incidencia_directa"] ?? null,
                 'recibio_atencion' => $data["recibio_atencion"] ?? null,
             ];
-            session(['excepcion_data' => $excepcionData]);
+            session([$this->draftSessionKey('excepcion_data', $draftId) => $excepcionData]);
         }
 
         /*$id_general  = SeerPerGeneral::latest('id')->first();
@@ -16836,18 +17416,26 @@ class SeerController extends Controller
         
         //return view('solicitudes.aviso',compact('folio'));
         if($tipo_generacion != 0){*/
+        // Asegurar que el draft_id viaje entre pantallas cuando aún estamos en modo session
+        if ($id_solicitud === 'session') {
+            $url = route('agrega_citadoAuxP', ['id' => $id_solicitud]) . '?draft_id=' . urlencode((string) $draftId);
+            return redirect()->to($url);
+        }
+
         return redirect()->route('agrega_citadoAuxP', ['id' => $id_solicitud] );
         //}
         //$estados=Estados::all();
         //return redirect()->route('agregar_citado', ['id' => $id] ); 
     }
-    public function vista_citadoAux($id){
+    public function vista_citadoAux(Request $request, $id){
         $estados = Estados::all();
         $municipios = Municipios::all();
-        $session_notificacion = session('citados_data.0.notificacion');
+        $draftId = $this->resolveSolicitudDraftId($request);
+        $this->renewSolicitudAuxLock(); // mantener proceso vivo
+        $session_notificacion = session($this->draftSessionKey('citados_data', $draftId) . '.0.notificacion');
         
         if ($id == 'session') {
-            $citados = count(session('citados_data', []));
+            $citados = count(session($this->draftSessionKey('citados_data', $draftId), []));
         } else {
             $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
         }
@@ -16858,18 +17446,20 @@ class SeerController extends Controller
         
         //return view('solicitudes.aviso',compact('folio'));
         if($tipo_generacion != 0){*/
-        return view('solicitudes.auxiliares.citadosAux',compact('estados','id','citados','municipios', 'session_notificacion'));
+    return view('solicitudes.auxiliares.citadosAux',compact('estados','id','citados','municipios', 'session_notificacion','draftId'));
 
         /*}
         return view('solicitudes.citados',compact('estados','id','citados','municipios'));*/
     }
-    public function vista_citadoAuxP($id){
+    public function vista_citadoAuxP(Request $request, $id){
         $estados = Estados::all();
         $municipios = Municipios::all();
-        $session_notificacion = session('citados_data.0.notificacion');
+        $draftId = $this->resolveSolicitudDraftId($request);
+        $this->renewSolicitudAuxLock(); // mantener proceso vivo
+        $session_notificacion = session($this->draftSessionKey('citados_data', $draftId) . '.0.notificacion');
         
         if ($id == 'session') {
-            $citados = count(session('citados_data', []));
+            $citados = count(session($this->draftSessionKey('citados_data', $draftId), []));
         } else {
             $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
         }
@@ -16880,7 +17470,7 @@ class SeerController extends Controller
         
         //return view('solicitudes.aviso',compact('folio'));
         if($tipo_generacion != 0){*/
-        return view('solicitudes.auxiliares.citadosAuxP',compact('estados','id','citados','municipios', 'session_notificacion'));
+    return view('solicitudes.auxiliares.citadosAuxP',compact('estados','id','citados','municipios', 'session_notificacion','draftId'));
 
         /*}
         return view('solicitudes.citados',compact('estados','id','citados','municipios'));*/
@@ -16888,6 +17478,8 @@ class SeerController extends Controller
 
     public function guardar_citadoAux(Request $request){
         $data = $request->all();
+        $draftId = $this->resolveSolicitudDraftId($request);
+        $this->renewSolicitudAuxLock(); // mantener proceso vivo
         $imagen_domicilio1 = "Sin documento";
         $imagen_domicilio2 = "Sin documento";
 
@@ -16895,12 +17487,20 @@ class SeerController extends Controller
 
         if ($request->hasFile('foto1')) {
             $imagen_domicilio1 = $tempId . "-domicilio_Citado1.jpg" . Str::random(8) . ".jpg";
-            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+            if ($data["id"] == 'session') {
+                Storage::putFileAs($this->documentosSolicitudTmpDir($draftId), $request->file('foto1'), $imagen_domicilio1);
+            } else {
+                Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+            }
         }
         
         if ($request->hasFile('foto2')) {
             $imagen_domicilio2 = $tempId . "-domicilio_Citado2.jpg" . Str::random(8) . ".jpg";
-            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+            if ($data["id"] == 'session') {
+                Storage::putFileAs($this->documentosSolicitudTmpDir($draftId), $request->file('foto2'), $imagen_domicilio2);
+            } else {
+                Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+            }
         }
         $foto1 = $imagen_domicilio1;
         $foto2 = $imagen_domicilio2;
@@ -16919,7 +17519,13 @@ class SeerController extends Controller
             'estado_citado'     => $data["estado_citado"],
         );
         
-        $data_insert["notificacion"] = session('citados_data.0.notificacion', $data['notificacion'] ?? null);
+        // Para el 1er citado, 'notificacion' viene del POST (el campo se muestra en el form).
+        // Para el 2do citado en adelante el campo no se muestra: se hereda del primer citado guardado en sesión.
+        // IMPORTANTE: usar la clave draft-aware para que coincida con el sistema de sesión por draft.
+        $data_insert["notificacion"] = session(
+            $this->draftSessionKey('citados_data', $draftId) . '.0.notificacion',
+            $data['notificacion'] ?? null
+        );
         
 
         if(isset($data["rfc"])){
@@ -16978,9 +17584,9 @@ class SeerController extends Controller
         $data_insert['resulte_responsable'] = 'No';
         
         if ($data["id"] == 'session') {
-            $citados = session('citados_data', []);
+            $citados = session($this->draftSessionKey('citados_data', $draftId), []);
             $citados[] = $data_insert;
-            session(['citados_data' => $citados]);
+            session([$this->draftSessionKey('citados_data', $draftId) => $citados]);
         } else {
             SeerCitados::create($data_insert); 
         }
@@ -17010,7 +17616,7 @@ class SeerController extends Controller
             $direccionNombre = $data_insert["nombre"];
             
             if ($data["id"] == 'session') {
-                $citados = session('citados_data', []);
+                $citados = session($this->draftSessionKey('citados_data', $draftId), []);
                 $existe = false;
                 foreach ($citados as $citado) {
                     if ($citado['nombre'] == $direccionNombre && $citado['resulte_responsable'] == 'Si') {
@@ -17020,7 +17626,7 @@ class SeerController extends Controller
                 }
                 if (!$existe) {
                     $citados[] = $data_insert;
-                    session(['citados_data' => $citados]);
+                    session([$this->draftSessionKey('citados_data', $draftId) => $citados]);
                 }
             } else {
                 $existe = SeerCitados::where('id_solicitud', $data['id'])
@@ -17038,6 +17644,8 @@ class SeerController extends Controller
 
     public function guardar_citadoAuxP(Request $request, $id){
         $data = $request->all();
+        $draftId = $this->resolveSolicitudDraftId($request);
+        $this->renewSolicitudAuxLock(); // mantener proceso vivo
         $imagen_domicilio1 = "Sin documento";
         $imagen_domicilio2 = "Sin documento";
 
@@ -17045,14 +17653,20 @@ class SeerController extends Controller
 
         $tempId = $data["id"] == 'session' ? uniqid('session_') : $data["id"];
 
+        // Igual que en guardar_citadoAux: cuando estamos en modo session las fotos
+        // se guardan en tmp para moverlas definitivamente al finalizar.
+        $destDirCitadoP = ($data["id"] == 'session')
+            ? $this->documentosSolicitudTmpDir($draftId)
+            : 'documentosSolicitud';
+
         if ($request->hasFile('foto1')) {
             $imagen_domicilio1 = $tempId . "-domicilio_Citado1.jpg" . Str::random(8) . ".jpg";
-            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+            Storage::putFileAs($destDirCitadoP, $request->file('foto1'), $imagen_domicilio1);
         }
-        
+
         if ($request->hasFile('foto2')) {
             $imagen_domicilio2 = $tempId . "-domicilio_Citado2.jpg" . Str::random(8) . ".jpg";
-            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+            Storage::putFileAs($destDirCitadoP, $request->file('foto2'), $imagen_domicilio2);
         }
         $foto1 = $imagen_domicilio1;
         $foto2 = $imagen_domicilio2;
@@ -17184,7 +17798,7 @@ class SeerController extends Controller
 
         // Actualizar en sesión los datos del solicitante con los Datos Laborales
         // capturados en esta vista (AuxP), para que se usen al crear SeerSolicitante.
-        $solicitanteSession = session('solicitante_data', []);
+        $solicitanteSession = session($this->draftSessionKey('solicitante_data', $draftId), []);
         if (!empty($solicitanteSession) && is_array($solicitanteSession)) {
             $solicitanteSession['nss']                 = $data['seguro'] ?? ($solicitanteSession['nss'] ?? null);
             $solicitanteSession['puesto']              = $data['puesto'] ?? ($solicitanteSession['puesto'] ?? null);
@@ -17205,11 +17819,11 @@ class SeerController extends Controller
                 }
             }
 
-            session(['solicitante_data' => $solicitanteSession]);
+            session([$this->draftSessionKey('solicitante_data', $draftId) => $solicitanteSession]);
         }
 
-        // Guardar en sesión el citado
-        session(['citados_data' => $data_insert]);
+        // Guardar en sesión el citado (draft-aware)
+        session([$this->draftSessionKey('citados_data', $draftId) => $data_insert]);
 
         return $this->guardar_solicitudAuxP($id);
     }
@@ -17267,13 +17881,19 @@ class SeerController extends Controller
                 continue;
             }
         
-            $path = storage_path("app/documentos_notificacion/{$img}");
+            $path = storage_path("app/documentos_notificacion/{$id_solicitud}/{$img}");
         
             if (file_exists($path)) {
                 $mime = mime_content_type($path);
                 $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
-                $imagenes[] = null;
+                $fallbackPath = storage_path("app/documentos_notificacion/{$img}");
+                if (file_exists($fallbackPath)) {
+                    $mime = mime_content_type($fallbackPath);
+                    $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fallbackPath));
+                } else {
+                    $imagenes[] = null;
+                }
             }
         }
         $html = view('PDF/Solicitudes/multaNotificaciones', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','audiencia'))->render();
@@ -18157,13 +18777,19 @@ class SeerController extends Controller
                 continue;
             }
         
-            $path = storage_path("app/documentos_notificacion/{$img}");
+            $path = storage_path("app/documentos_notificacion/{$id_solicitud}/{$img}");
         
             if (file_exists($path)) {
                 $mime = mime_content_type($path);
                 $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
-                $imagenes[] = null;
+                $fallbackPath = storage_path("app/documentos_notificacion/{$img}");
+                if (file_exists($fallbackPath)) {
+                    $mime = mime_content_type($fallbackPath);
+                    $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fallbackPath));
+                } else {
+                    $imagenes[] = null;
+                }
             }
         }
         $html = view('PDF/Solicitudes/multaNotificacionInstructivo', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','audiencia'))->render();
@@ -18219,13 +18845,19 @@ class SeerController extends Controller
                 continue;
             }
         
-            $path = storage_path("app/documentos_notificacion/{$img}");
+            $path = storage_path("app/documentos_notificacion/{$id_solicitud}/{$img}");
         
             if (file_exists($path)) {
                 $mime = mime_content_type($path);
                 $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
-                $imagenes[] = null;
+                $fallbackPath = storage_path("app/documentos_notificacion/{$img}");
+                if (file_exists($fallbackPath)) {
+                    $mime = mime_content_type($fallbackPath);
+                    $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fallbackPath));
+                } else {
+                    $imagenes[] = null;
+                }
             }
         }
         $html = view('PDF/Solicitudes/multaNotificacionNExitosaSeConstituye', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','audiencia'))->render();
