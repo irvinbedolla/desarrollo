@@ -2,6 +2,17 @@
     @php
         $fechaActual = date('Y-m-d');
         $contador = 0;
+        $newDocDir = 'documentos_ratificacion/' . $idSolicitud . '/';
+        $oldDocDir = 'documentos_ratificacion/';
+        $curpUrl   = ($solicitud->documentoCurp && \Illuminate\Support\Facades\Storage::exists($newDocDir . $solicitud->documentoCurp))
+            ? '../../storage/app/' . $newDocDir . $solicitud->documentoCurp
+            : '../../storage/app/' . $oldDocDir . $solicitud->documentoCurp;
+        $identUrl  = ($solicitud->documentoidentificacion && \Illuminate\Support\Facades\Storage::exists($newDocDir . $solicitud->documentoidentificacion))
+            ? '../../storage/app/' . $newDocDir . $solicitud->documentoidentificacion
+            : '../../storage/app/' . $oldDocDir . $solicitud->documentoidentificacion;
+        $cuantiUrl = ($solicitud->documentoCuanti && \Illuminate\Support\Facades\Storage::exists($newDocDir . $solicitud->documentoCuanti))
+            ? '../../storage/app/' . $newDocDir . $solicitud->documentoCuanti
+            : '../../storage/app/' . $oldDocDir . $solicitud->documentoCuanti;
     @endphp
     <style>
         .loader {
@@ -207,7 +218,7 @@
                                                 <div class="form-group">
                                                     <label for="name">Documento de la CURP (Opcional)</span></label>
                                                     <input type="file" id="documentoCurp" name="documentoCurp" class="form-control" accept=".pdf"> 
-                                                    <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$solicitud->documentoCurp}}">Existente</a>
+                                                    <a target="_blank" class="btn btn-primary" href="{{ $curpUrl }}">Existente</a>
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
@@ -255,7 +266,7 @@
                                                 <div class="form-group">
                                                     <label for="name">Subir Identificación Oficial <span style="color:red;">(*)</span></label>
                                                     <input type="file" id="documentoidentificacion" name="documentoidentificacion" class="form-control" accept=".pdf"> 
-                                                    <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$solicitud->documentoidentificacion}}">Existente</a>
+                                                    <a target="_blank" class="btn btn-primary" href="{{ $identUrl }}">Existente</a>
                                                     <div class="invalid-feedback">
                                                         El campo identificación es obligatorio.
                                                     </div>
@@ -547,7 +558,7 @@
                                                 <div class="form-group">
                                                     <label for="name">Sube tu cuantificación (Opcional)</label>
                                                     <input type="file" id="cuantificacion" name="cuantificacion" class="form-control" accept=".pdf"> 
-                                                    <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$solicitud->documentoCuanti}}">Existente</a>
+                                                    <a target="_blank" class="btn btn-primary" href="{{ $cuantiUrl }}">Existente</a>
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
