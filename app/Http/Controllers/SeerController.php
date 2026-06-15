@@ -9456,7 +9456,7 @@ class SeerController extends Controller
             // Tomar monto de la sesión si existe, si no usar el cálculo de prestaciones menos deducciones
             $datosAudiencia->monto = isset($sessionData) && is_array($sessionData) && isset($sessionData['monto']) ? $sessionData['monto'] : $pagoTotal;
         }
-        
+
         
         $pagosCount = $pagos instanceof \Illuminate\Support\Collection ? $pagos->count() : (is_countable($pagos) ? count($pagos) : 0);
         $pagosDif = (object) [
@@ -10117,10 +10117,19 @@ class SeerController extends Controller
         $numberToWords = new NumberToWords();
         $numberTransformer = $numberToWords->getNumberTransformer('es'); 
 
-        $parteEntera = floor($valor);
-        $letras = strtoupper($numberTransformer->toWords($parteEntera)); 
+        //$parteEntera = floor($valor);
+        $partes = explode('.', $valor);
 
-        $parteDecimal = round(($valor - $parteEntera) * 100);
+        $parteEntera = $partes[0];
+
+         if(count($partes) > 1){
+            $parteDecimal = $partes[1];
+        } else {
+            $parteDecimal = 0;
+        }
+
+        $letras = strtoupper($numberTransformer->toWords($parteEntera)); 
+        $parteDecimal = round($parteDecimal);
         $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT); 
         return "{$letras} PESOS {$centavos}/100";
     }
