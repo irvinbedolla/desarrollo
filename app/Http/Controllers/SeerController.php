@@ -47,6 +47,7 @@ use Illuminate\Support\Str; //Se utiliza en la imágenes que se suben en los cit
 use App\Models\Sedes;
 use App\Models\Usuarios;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Barryvdh\DomPDF\PDF;
 use Carbon\Carbon;
 use App\Exports\ProductsFromViewExport;
@@ -6733,23 +6734,23 @@ class SeerController extends Controller
     }
 
     public function notificaciones(){
-        $user = auth()->user(); // Obtenemos el usuario directamente sin buscarlo por ID
+        $user = auth()->user();
         $userRole = $user->roles->pluck('name')->all();
 
-        // 1. Mapeo de Sedes y Oficinas de Apoyo (Consistente con tus otros módulos)
         $mapaSedes = [
-            'Morelia' => ['Morelia', 'Zitácuaro'],
-            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
-            'Zamora'  => ['Zamora', 'Sahuayo'],
+            'Morelia'   => ['Morelia', 'Zitácuaro'],
+            'Uruapan'   => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'    => ['Zamora', 'Sahuayo'],
+            'Zitácuaro' => ['Zitácuaro'],
         ];
 
-        // Determinamos las sedes a consultar según la delegación del usuario
         $sedesAconsultar = $mapaSedes[$user->delegacion] ?? [$user->delegacion];
 
-        // 2. Construcción de la consulta optimizada
+        $busqueda = request('busqueda');
+
         $mis_notificaciones = SeerPerGeneral::join('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general.id')
-            ->leftjoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
-            ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
+            ->leftJoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+            ->leftJoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
             ->select(
                 'seer_general.id as id_solicitud',
                 'seer_citados.id as id_citado',
@@ -6770,41 +6771,42 @@ class SeerController extends Controller
                 'estados.nombre as estado_nombre',
                 'seer_citados.id_notificador'
             )
-            // Usamos whereIn con las sedes mapeadas para incluir oficinas de apoyo automáticamente
             ->whereIn('seer_general.delegacion', $sedesAconsultar)
             ->where('seer_citados.id_notificador', 0)
             ->where('seer_citados.notificacion', '!=', 'Trabajador')
             ->whereNotIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
-            ->get();
-       
-        if($user["delegacion"] == "Morelia"){
-            $personas = User::whereHas('roles', function ($query) {
-                return $query->where('name', '=', 'Notificador');
+            ->when($busqueda, function ($q) use ($busqueda) {
+                $termino = "%{$busqueda}%";
+                $q->where(function ($q2) use ($termino) {
+                    $q2->where('seer_general.NUE', 'like', $termino)
+                       ->orWhere('seer_citados.nombre', 'like', $termino)
+                       ->orWhere('seer_citados.primer_apellido', 'like', $termino)
+                       ->orWhere('seer_citados.segundo_apellido', 'like', $termino)
+                       ->orWhere('seer_citados.colonia', 'like', $termino)
+                       ->orWhere('seer_citados.calle', 'like', $termino)
+                       ->orWhere('municipios.nombre', 'like', $termino)
+                       ->orWhere('estados.nombre', 'like', $termino)
+                       ->orWhere('seer_citados.tipo_notificacion', 'like', $termino);
+                });
             })
-            ->whereIn('delegacion', ["Morelia", "Zitácuaro" , "Zitácuaro"])
-            ->get();
-        }else if ($user["delegacion"] == "Uruapan"){
-            $personas = User::whereHas('roles', function ($query) {
-                return $query->where('name', '=', 'Notificador');
-            })
-            ->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])
-            ->get();
-        }else if ($user["delegacion"] == "Zamora"){
-            $personas = User::whereHas('roles', function ($query) {
-                return $query->where('name', '=', 'Notificador');
-            })
-            ->whereIn('delegacion', ["Zamora", "Sahuayo"])
-            ->get();
-        }
-        else if ($user["delegacion"] == "Zitácuaro"){
-            $personas = User::whereHas('roles', function ($query) {
-                return $query->where('name', '=', 'Notificador');
-            })
-            ->where('delegacion', ["Zitácuaro"])
-            ->get();
-        }
+            ->paginate(50)
+            ->withQueryString();
 
-        return view('notificaciones.index',compact('personas','mis_notificaciones','userRole'));
+        // Los notificadores cambian poco: se cachean 5 minutos para evitar la subconsulta en cada visita
+        $cacheKey = 'notificadores_' . implode('_', $sedesAconsultar);
+        $personas = Cache::remember($cacheKey, 300, function () use ($sedesAconsultar) {
+            return User::select('users.id', 'users.name')
+                ->join('model_has_roles', function ($join) {
+                    $join->on('model_has_roles.model_id', '=', 'users.id')
+                         ->where('model_has_roles.model_type', '=', 'App\\Models\\User');
+                })
+                ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                ->where('roles.name', 'Notificador')
+                ->whereIn('users.delegacion', $sedesAconsultar)
+                ->get();
+        });
+
+        return view('notificaciones.index', compact('personas', 'mis_notificaciones', 'userRole'));
     }
 
 
@@ -15354,7 +15356,12 @@ class SeerController extends Controller
             }
             
             $solicitanteNombre = SeerSolicitante::where('id_solicitud', $pagos["id_solicitud"])->value('nombre');
-            $citados = SeerCitados::where('id_solicitud', $pagos["id_solicitud"])->where('aparece_convenio', 1)->where('resulte_responsable', 'No')->get();
+
+            $lastAudiencia = Audiencias::where('id_solicitud', $pagos["id_solicitud"])->latest()->first();
+
+            //$citados = SeerCitados::where('id_solicitud', $pagos["id_solicitud"])->where('aparece_convenio', 1)->where('resulte_responsable', 'No')->get();
+
+            $citados = SeerCitados::where('id_solicitud', $pagos["id_solicitud"])->where('audiencia_id', $lastAudiencia->id)->where('aparece_convenio', 1)->get();
 
             $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'delegado', 'delegacion', 'solicitanteNombre', 'citados', 'audiencia', 'inicialesConcluye', 'etiquetaIniciales'))->render();
         }
@@ -17939,13 +17946,18 @@ class SeerController extends Controller
         else {
             $solicitud->citados = SeerCitados::where('id_solicitud', $id)->get();
         }*/
-        if ($allCentro == 0){
+
+        $lastAudiencia = Audiencias::where('id_solicitud', $id)->latest()->first();
+        
+        /*if ($allCentro == 0){
             $solicitud->citados = SeerCitados::where('id_solicitud', $id)->where('aparece_convenio', 1)->where('resulte_responsable', 'No')->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->get();
         }
         else {
             $solicitud->citados = SeerCitados::where('id_solicitud', $id)->where('aparece_convenio', 1)->where('resulte_responsable', 'No')->get();
             //$solicitud->citados = SeerCitados::where('id_solicitud', $id)->get();
-        }
+        }*/
+
+        $solicitud->citados = SeerCitados::where('id_solicitud', $id)->where('audiencia_id', $lastAudiencia->id)->where('aparece_convenio', 1)->where('tipo_notificacion', '!=', 'Multa')->get();
         
         $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Audiencia')->get();
         $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id");
