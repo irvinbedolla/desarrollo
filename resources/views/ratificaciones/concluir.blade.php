@@ -281,7 +281,7 @@
                         html += '</div>';
                         // Select de año PTU (solo visible si se selecciona "PTU")
                         html += '<div class="ptu-year-container" style="display: none; margin-top: 10px;">';
-                        html += '<label>Año PTU</label>';
+                        html += '<label>Ejercicio Fiscal Correspondiente del Pago de Utilidades</label>';
                         html += '<select class="form-control ptu-year-select" name="year_ptu[]">';
                         html += '<option value="">Seleccione el año</option>';
                         for (var y = 2025; y >= 2010; y--) {
