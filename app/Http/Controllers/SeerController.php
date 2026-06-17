@@ -36,6 +36,7 @@ use App\Models\SeerCitados_old;
 use App\Models\SeerPerConciliador_old;
 use App\Models\Asistencia;
 use App\Models\SeerCasosExcepcion;
+use App\Models\Firmas;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -16127,20 +16128,21 @@ class SeerController extends Controller
 
     public function guardar_solicitudAux($id){
         $id_usuario = auth()->user()->id;
-        $draftId = $this->resolveSolicitudDraftId(request());
-        DB::beginTransaction();
+        $draftId = $this->resolveSolicitudDraftId(request()); //draftId contiene los siguientes
+        DB::beginTransaction(); 
         //try {
             if ($id == 'session') {
                 // Recuperar datos de la sesión
                 $solicitudData = session($this->draftSessionKey('solicitud_data', $draftId));
                 $solicitudMotivos = session($this->draftSessionKey('solicitud_motivos', $draftId), []);
-                $solicitanteData = session($this->draftSessionKey('solicitante_data', $draftId));
+                $solicitanteData = session($this->draftSessionKey('solicitante_data', $draftId)); //contiene datos del solicitante
                 $citadosData = session($this->draftSessionKey('citados_data', $draftId), []);
                 $excepcionData = session($this->draftSessionKey('excepcion_data', $draftId));
 
                 if (!$solicitudData || !$solicitanteData) {
                     return redirect()->back()->with('error', 'No hay datos de solicitud en la sesión.');
                 }
+                //para obtener los valores de solicittanteData se debe usar $solicitanteData['campo']
 
                // 1. Guardar SeerPerGeneral inicial
                 $general = SeerPerGeneral::create($solicitudData);
@@ -16162,6 +16164,26 @@ class SeerController extends Controller
                 // 3. Guardar Solicitante
                 $solicitanteData['id_solicitud'] = $id;
                 SeerSolicitante::create($solicitanteData);
+
+                //Almacenar firma del solicitante
+                $rawImage = $solicitanteData['firma'];
+
+                $cleanBase64 = str_replace('data:image/png;base64,', '', $rawImage);
+                $cleanBase64 = str_replace(' ', '+', $cleanBase64);
+                $binaryData = base64_decode($cleanBase64);
+                $fileName = 'firma-'. $id . '-' . Str::random(10) . '.png';
+                $directoryPath = 'firmas/'. $id;
+                $fullStoragePath = $directoryPath . '/' . $fileName;
+                //dd($fullStoragePath);
+                // Guardar ruta de la firma en la base de datos
+                Firmas::create([
+                    'id_solicitud' => $id,
+                    'ruta_firma' => $fullStoragePath,
+                    'tipo' => 'solicitud'
+                ]);
+
+                Storage::put($fullStoragePath, $binaryData);
+
 
                 // 4. Guardar Caso Excepción (si existe)
                 if ($excepcionData) {
@@ -16864,6 +16886,7 @@ class SeerController extends Controller
 
     public function solicitud_parte2Aux(Request $request){
         $data = $request->all();
+        //dd($data);
         $id = $data['id'];
 
         // DraftId por pestaña/proceso (debe venir como hidden input en los forms)
@@ -16950,6 +16973,7 @@ class SeerController extends Controller
             'identificacion'       => $data["identificacion"],
             'num_identificacion'   => $data["num_identificacion"],
             'descripcionSolicitud' => $data["descripcionSolicitud"],
+            'firma'                => $data["firma"]
         ); 
 
         if(isset($data["rfc"])){
@@ -17024,6 +17048,8 @@ class SeerController extends Controller
                 $documentoidentificacion
             );
         }
+        
+         
 
         //$data_insert["documentoCurp"] = $documento;
         $data_insert["documentoIdentificacion"] = $documentoidentificacion;
@@ -17505,7 +17531,7 @@ class SeerController extends Controller
         if ($request->hasFile('foto1')) {
             $imagen_domicilio1 = $tempId . "-domicilio_Citado1.jpg" . Str::random(8) . ".jpg";
             if ($data["id"] == 'session') {
-                Storage::putFileAs($this->documentosSolicitudTmpDir($draftId), $request->file('foto1'), $imagen_domicilio1);
+                Storage::putFileAs($this->documentosSolicitudTmpDir($draftId), $request->file('foto1'), $imagen_domicilio1); 
             } else {
                 Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
             }
@@ -17543,7 +17569,7 @@ class SeerController extends Controller
             $this->draftSessionKey('citados_data', $draftId) . '.0.notificacion',
             $data['notificacion'] ?? null
         );
-        
+       
 
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
