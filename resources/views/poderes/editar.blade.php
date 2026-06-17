@@ -187,6 +187,13 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-12">
+                                                    <div class="alert alert-light alert-dismissible fade show" role="alert">
+                                                        <strong>⚠️ ¡Atención!</strong> Modifique los datos del representante solo si se trata de una equivocación.
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Nombre(s) del Representante Legal<span style="color:red;">(*)</span></label>
@@ -349,7 +356,7 @@
                                                     <div class="form-group">
                                                         <label>*Acta Constitutiva</label><br>
                                                         <input type="file" name="documentoIne_Moral" id="documentoIne_Moral" class="form-control" accept=".pdf" >
-                                                        <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->ineDocumento}}">Existente</a>
+                                                        <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->ineDocumento}}">Existente</a>
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
                                                         </div>
@@ -360,7 +367,7 @@
                                                         <label>*Identificación del Representante Legal</label><br>
                                                         <input type="file" name="documentoRepresentacion_Moral" id="documentoRepresentacion_Moral" class="form-control" accept=".pdf" >
                                                         @if($poder->representacionDocumento != NULL)
-                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->representacionDocumento}}">Existente</a>
+                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->representacionDocumento}}">Existente</a>
                                                         @endif
                                                         <div class="invalid-feedback">
                                                             El documento de representación es obligatorio.
@@ -372,7 +379,7 @@
                                                         <label>*Documento que acredite la personería</label><br>
                                                         <input type="file" name="documentoPoder" id="documentoPoder" class="form-control" accept=".pdf">
                                                         @if($poder->cedulaDocumento != NULL)
-                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->cedulaDocumento}}">Existente</a>
+                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->cedulaDocumento}}">Existente</a>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -381,7 +388,7 @@
                                                         <label>Anexo (Documentos Complementarios)</label><br>
                                                         <input type="file" name="documentoAnexo" class="form-control" accept=".pdf">
                                                         @if($poder->anexo_documeto != "Sin anexo")
-                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->anexo_documeto}}">Existente</a>
+                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->anexo_documeto}}">Existente</a>
                                                         @endif
                                                         
                                                     </div>
@@ -783,7 +790,7 @@
                                                     <div class="form-group">
                                                         <label>*Identificación del Empleador</label><br>
                                                         <input type="file" name="documentoIne_pF"  class="form-control" accept=".pdf" >
-                                                        <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->ineDocumento}}">Existente</a>
+                                                        <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->ineDocumento}}">Existente</a>
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
                                                         </div>
@@ -794,7 +801,7 @@
                                                         <label>*Identificación del Representante Legal</label><br>
                                                         <input type="file" name="documentoRepresentacion_pF"  class="form-control" accept=".pdf" >
                                                         @if($poder->representacionDocumento != NULL)
-                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->representacionDocumento}}">Existente</a>
+                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->representacionDocumento}}">Existente</a>
                                                         @endif
                                                         <div class="invalid-feedback">
                                                             El documento de representación es obligatorio.
@@ -806,7 +813,7 @@
                                                         <label>*Documento que acredite la personería</label><br>
                                                         <input type="file" name="documentoPoder_pF"class="form-control" accept=".pdf">
                                                         @if($poder->cedulaDocumento != NULL)
-                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->cedulaDocumento}}">Existente</a>
+                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->cedulaDocumento}}">Existente</a>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -815,7 +822,7 @@
                                                         <label>Anexo (Documentos Complementarios)</label><br>
                                                         <input type="file" name="documentoAnexo_pF" class="form-control" accept=".pdf">
                                                         @if($poder->anexo_documeto != "Sin anexo")
-                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->anexo_documeto}}">Existente</a>
+                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->anexo_documeto}}">Existente</a>
                                                         @endif
                                                         
                                                     </div>
@@ -874,7 +881,7 @@
                                                         <div class="form-group">
                                                             <label>*Identificación Oficial</label><br>
                                                             <input type="file" name="documentoIne_pFSR" id="documentoIne_pFSR" class="form-control" accept=".pdf" >
-                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->ineDocumento}}">Existente</a>
+                                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->ineDocumento}}">Existente</a>
 
                                                             <div class="invalid-feedback">
                                                                 La Identificación es obligatoria.
@@ -886,7 +893,7 @@
                                                             <label>Anexo (Documentos Complementarios)</label><br>
                                                             <input type="file" name="documentoAnexo_pFSR" class="form-control" accept=".pdf">
                                                             @if($poder->anexo_documeto != "Sin anexo")
-                                                                <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->anexo_documeto}}">Existente</a>
+                                                                <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->anexo_documeto}}">Existente</a>
                                                             @endif
                                                         </div>
                                                     </div>
