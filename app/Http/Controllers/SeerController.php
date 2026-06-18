@@ -8822,8 +8822,11 @@ class SeerController extends Controller
         
         // El punto de partida real para los 45 días siempre es HOY
         $hoy = \Carbon\Carbon::now();
+        //$horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
-        $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
+        //$hoy = \Carbon\Carbon::createFromFormat('d-m-Y', '03-08-2026');
+        $horarios_disponibles = ["09:00:00", "10:15:00", "12:00:00", "14:15:00", "15:30:00"];
+
         $mapa_sedes = ["Zitácuaro" => "Morelia", "Lázaro Cárdenas" => "Uruapan", "Sahuayo" => "Zamora"];
         $oficina = $mapa_sedes[$delegacion] ?? $delegacion;
         $permisos_requeridos = array_key_exists($delegacion, $mapa_sedes) ? ["Ambos", "Virtual"] : ["Ambos", "Precencial"];
