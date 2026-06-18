@@ -761,7 +761,7 @@ class RecepcionController extends Controller
     {
         $fecha_actual = date('Y-m-d');
         $recepciones = Recepcion::where('exepcion', 'Si')->where('fecha',$fecha_actual)->where('estatus','no atendido')->get();
-        $recepciones = Recepcion::where('exepcion', 'Si')->where('estatus','no atendido')->get();
+        //$recepciones = Recepcion::where('exepcion', 'Si')->where('estatus','no atendido')->get();
 
         return view('excepciones.index',compact('recepciones'));
     }
