@@ -561,6 +561,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('reportes/excepcion',        [RecepcionController::class, 'reportePDF'])->name('turnos_excepcion');
         Route::get('/turnos/nuevo',              [RecepcionController::class, 'nueva_cita'])->name('nueva_cita');
         Route::post('/tuenos/guardar',           [RecepcionController::class, 'turnos_guardar'])->name('turnos_guardar_nuevo'); 
+        Route::get('/excepciones/index',         [RecepcionController::class, 'index_excepciones'])->name('excepcion');
+        Route::get('/excepciones/atender/{id}',  [RecepcionController::class, 'atender_excepcion'])->name('atender_excepcion');
+        Route::post('/excepciones/guardar',       [RecepcionController::class, 'guardar_excepcion'])->name('guardar_excepcion');
+
+
     //Fin recepcion
     //Documentos
         Route::get('/INE_Solicitante/{id}',             [SeerController::class, 'Ver_INE_Solicitante'])->name('PDF_INE_solicitante');
@@ -631,7 +636,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Reportes conciliciador, auxiliares y notificaciones
         Route::get('/indexConciliadores/Reportes',          [SeerController::class, 'indexCAN'])->name('reportes_conciliador');
         Route::post('indexConciliadores/generar',           [SeerController::class, 'generaReporteUsuario'])->name('generaReporteUsuario');
-        
+    
+    
+
     //Fin de reportes
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
