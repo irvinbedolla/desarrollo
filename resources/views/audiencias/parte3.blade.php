@@ -1537,7 +1537,7 @@
                     },
                     events: function(fetchInfo, success, failure) {
                         $.ajax({
-                            url: '{{ url('/api/obtenerAudienciasParte3') }}',
+                            url: '{{ url('/api/obtenerAudienciasParte2') }}',
                             data: { sede: sede, start: fetchInfo.startStr, end: fetchInfo.endStr, conciliador: conciliadorId },
                             success: function(data){
                                 success(data);

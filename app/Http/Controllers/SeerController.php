@@ -14070,6 +14070,194 @@ class SeerController extends Controller
         return $fecha;
     }
 
+    public function obtenerAudienciasParte2(Request $request)
+    {
+        $request->validate([
+            'sede' => 'required|string',
+            'conciliador' => 'required|integer',
+        ]);
+
+        $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
+        $fecha_fin_str = $request->input('end', now()->addDays(370)->format('Y-m-d'));
+        
+        $fecha_inicio = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
+        $fecha_fin = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);
+
+    $sede = $request->input('sede');
+    $id_conciliador = (int) $request->input('conciliador');
+        $tipoConciliador = PermisosConciliador::where('id_conciliador', $id_conciliador)->value('tipo');
+
+        $soloSedePrincipal = $request->boolean('solo_sede_principal', false);
+
+        // Calcular fecha mínima para reagendar: permitir desde el siguiente día natural
+        $fechaMinima = (new \DateTime())->setTime(0,0,0)->modify('+1 day');
+        $minDateStr = $fechaMinima->format('Y-m-d');
+
+        if ($soloSedePrincipal) {
+            // Solo inhábiles generales de la sede principal (sin subsedes y sin user_id del conciliador)
+            $inhabiles = DiasInhabiles::where('centro', $sede)
+                ->whereNull('user_id')
+                ->whereIn('descripcion', ['Inhabil', 'No inhabil'])
+                ->whereIn('tipo', ['Audiencias', 'Todos'])
+                ->where(function ($query) use ($fecha_inicio, $fecha_fin) {
+                    $query->where('fecha_inicio', '<=', $fecha_fin)
+                        ->where('fecha_final', '>=', $fecha_inicio);
+                })
+                ->get();
+        } else {
+            $centrosNull = [$sede];
+            if ($sede === 'Zitácuaro' || $sede === 'Zitácuaro') {
+                // Para generales acepto ambas variantes si existe mezcla en BD.
+                $centrosNull = ['Zitácuaro', 'Zitácuaro'];
+            }
+
+            $centrosConciliador = [$sede];
+            if ($tipoConciliador === 'Ambos') {
+                if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitácuaro'], true)) {
+                    $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitácuaro'];
+                } elseif (in_array($sede, ['Uruapan', 'Lázaro Cárdenas'], true)) {
+                    $centrosConciliador = ['Uruapan', 'Lázaro Cárdenas'];
+                } elseif (in_array($sede, ['Zamora', 'Sahuayo'], true)) {
+                    $centrosConciliador = ['Zamora', 'Sahuayo'];
+                }
+            }
+
+            $inhabiles = DiasInhabiles::where(function ($q) use ($centrosNull, $centrosConciliador, $id_conciliador) {
+                    $q->where(function ($q2) use ($centrosNull) {
+                        $q2->whereIn('centro', $centrosNull)
+                            ->whereNull('user_id');
+                    });
+
+                    $q->orWhere(function ($q3) use ($centrosConciliador, $id_conciliador) {
+                        $q3->whereIn('centro', $centrosConciliador)
+                            ->where('user_id', $id_conciliador);
+                    });
+                })
+                ->whereIn('descripcion', ['Inhabil', 'No inhabil'])
+                ->whereIn('tipo', ['Audiencias', 'Todos'])
+                ->where(function ($query) use ($fecha_inicio, $fecha_fin) {
+                    $query->where('fecha_inicio', '<=', $fecha_fin)
+                        ->where('fecha_final', '>=', $fecha_inicio);
+                })
+                ->get();
+        }
+
+        // Duración propia de los slots cortos
+        $duracionSlotMinutos = 30;
+
+        /* Duración asumida de las citas YA EXISTENTES al buscar traslapes. Se mantiene en 75 min
+        (igual que en obtenerAudienciasParte3) porque así se ha agendado históricamente toda
+        audiencia en este sistema, sea formato viejo o el grid actual de parte3.*/
+        $duracionCitaExistenteMinutos = 75;
+
+        /* Traemos cada audiencia existente (no agrupada por coincidencia exacta) para poder
+        detectar traslapes de horario, incluyendo citas agendadas con el formato de horarios anterior
+        (p.ej. 11:30, 12:45, 14:00) que ya no coinciden con los puntos de inicio de $horarios.*/
+        $audienciasExistentes = Audiencias::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->where('id_conciliador', $id_conciliador)
+            ->selectRaw('DATE(fecha) as fecha_dia, TIME(hora) as hora_inicio')
+            ->get();
+
+        $audienciasPorFecha = [];
+        foreach ($audienciasExistentes as $audienciaExistente) {
+            $audienciasPorFecha[$audienciaExistente->fecha_dia][] = $audienciaExistente->hora_inicio;
+        }
+
+        $ahora = new \DateTime();
+
+        $todosLosEventos = [];
+        $fecha = (new \DateTime($fecha_inicio_str))->setTime(0,0,0);
+        $fin_loop = (new \DateTime($fecha_fin_str))->setTime(0,0,0);
+
+        while ($fecha <= $fin_loop) {
+            if ($fecha->format('N') < 6) { // Saltar fines de semana
+
+                $horarios = [
+                    (clone $fecha)->setTime(11, 30, 0),
+                    (clone $fecha)->setTime(13, 45, 0),
+                ];
+
+                $fechaDia = $fecha->format('Y-m-d');
+
+                foreach ($horarios as $horario) {
+                    $slot = $horario;
+                    $slotStart = $slot->format('Y-m-d\TH:i:s');
+                    $slotFin = (clone $slot)->modify("+{$duracionSlotMinutos} minutes");
+                    $slotEnd = $slotFin->format('Y-m-d\TH:i:s');
+
+                    $audienciasEnSlot = 0;
+                    foreach ($audienciasPorFecha[$fechaDia] ?? [] as $horaExistente) {
+                        $existenteInicio = new \DateTime($fechaDia . ' ' . $horaExistente);
+                        $existenteFin = (clone $existenteInicio)->modify("+{$duracionCitaExistenteMinutos} minutes");
+                        // Traslape de intervalos semiabiertos [inicio, fin)
+                        if ($existenteInicio < $slotFin && $slot < $existenteFin) {
+                            $audienciasEnSlot++;
+                        }
+                    }
+                    $ocupado = $audienciasEnSlot >= 2;
+
+                    $esInhabil = false;
+                    $esNoInhabil = false;
+                    foreach($inhabiles as $dia){
+                        $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
+                        $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
+                        if($slotStart >= $fechaInhabilInicio && $slotStart <= $fechaInhabilFinal){
+                            if ($dia->descripcion === 'No inhabil') {
+                                $esNoInhabil = true;
+                            } else {
+                                $esInhabil = true;
+                            }
+                            break;
+                        }
+                    }
+
+                    // Bloquear slots anteriores a la fecha mínima (aunque estén en el futuro)
+                    if ($slot->format('Y-m-d') < $minDateStr) {
+                        $estado = 'expirado';
+                    } elseif ($ocupado) {
+                        $estado = 'ocupado';
+                    } elseif ($esInhabil) {
+                        $estado = 'inhabil';
+                    } elseif ($esNoInhabil) {
+                        $estado = 'expirado';
+                    } elseif ($ahora > $slot) {
+                        $estado = 'expirado';
+                    } else {
+                        $estado = 'disponible';
+                    }
+
+                    $colores = [
+                        'ocupado' => '#DA0909', 'inhabil' => '#3B78DB',
+                        'expirado' => '#F59727', 'disponible' => '#00CE1C'
+                    ];
+                    $titulos = [
+                        'ocupado' => 'Ocupado', 'inhabil' => 'Inhábil',
+                        'expirado' => 'No disponible', 'disponible' => 'Disponible'
+                    ];
+
+                    $titulo = $titulos[$estado];
+                    if ($estado === 'disponible' && $audienciasEnSlot === 1) {
+                        $titulo = 'Audiencia (1)';
+                    }
+
+                    $todosLosEventos[] = [
+                        'title' => $titulo,
+                        'start' => $slotStart,
+                        'end' => $slotEnd,
+                        'color' => $colores[$estado],
+                        'extendedProps' => [
+                            'estado' => $estado,
+                            'audiencias_en_slot' => $audienciasEnSlot,
+                        ]
+                    ];
+                }
+            }
+            $fecha->modify('+1 day');
+        }
+
+        return response()->json($todosLosEventos);
+    }
+
     public function obtenerAudienciasParte3(Request $request)
     {
         $request->validate([
@@ -14142,12 +14330,20 @@ class SeerController extends Controller
                 ->get();
         }
 
-        $audienciasPorSlot = Audiencias::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+        $duracionSlotMinutos = 75;
+
+        /* Traemos cada audiencia existente (no agrupada por coincidencia exacta) para poder
+        detectar traslapes de horario, incluyendo citas agendadas con el formato de horarios anterior
+        (p.ej. 11:30, 12:45, 14:00) que ya no coinciden con los puntos de inicio de $horarios.*/
+        $audienciasExistentes = Audiencias::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
             ->where('id_conciliador', $id_conciliador)
-            ->selectRaw("CONCAT(DATE(fecha), 'T', TIME(hora)) as slot_key, COUNT(*) as total")
-            ->groupBy('slot_key')
-            ->pluck('total', 'slot_key')
-            ->toArray();
+            ->selectRaw('DATE(fecha) as fecha_dia, TIME(hora) as hora_inicio')
+            ->get();
+
+        $audienciasPorFecha = [];
+        foreach ($audienciasExistentes as $audienciaExistente) {
+            $audienciasPorFecha[$audienciaExistente->fecha_dia][] = $audienciaExistente->hora_inicio;
+        }
 
         $ahora = new \DateTime();
 
@@ -14157,18 +14353,34 @@ class SeerController extends Controller
 
         while ($fecha <= $fin_loop) {
             if ($fecha->format('N') < 6) { // Saltar fines de semana
-                
-                $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
-                $finJornada    = (clone $fecha)->setTime(15, 15, 0);
-                
 
-                $slot = clone $inicioJornada;
-                while ($slot < $finJornada) {
+                $horarios = [
+                    (clone $fecha)->setTime(9, 0, 0),
+                    (clone $fecha)->setTime(10, 15, 0),
+                    (clone $fecha)->setTime(12, 0, 0),
+                    (clone $fecha)->setTime(14, 15, 0),
+                    (clone $fecha)->setTime(15, 30, 0),
+                ];
+
+                $fechaDia = $fecha->format('Y-m-d');
+
+                foreach ($horarios as $horario) {
+                    $slot = $horario;
                     $slotStart = $slot->format('Y-m-d\TH:i:s');
+                    $slotFin = (clone $slot)->modify("+{$duracionSlotMinutos} minutes");
+                    $slotEnd = $slotFin->format('Y-m-d\TH:i:s');
 
-                    $audienciasEnSlot = (int)($audienciasPorSlot[$slotStart] ?? 0);
+                    $audienciasEnSlot = 0;
+                    foreach ($audienciasPorFecha[$fechaDia] ?? [] as $horaExistente) {
+                        $existenteInicio = new \DateTime($fechaDia . ' ' . $horaExistente);
+                        $existenteFin = (clone $existenteInicio)->modify("+{$duracionSlotMinutos} minutes");
+                        // Traslape de intervalos semiabiertos [inicio, fin)
+                        if ($existenteInicio < $slotFin && $slot < $existenteFin) {
+                            $audienciasEnSlot++;
+                        }
+                    }
                     $ocupado = $audienciasEnSlot >= 2;
-                    
+
                     $esInhabil = false;
                     $esNoInhabil = false;
                     foreach($inhabiles as $dia){
@@ -14216,14 +14428,13 @@ class SeerController extends Controller
                     $todosLosEventos[] = [
                         'title' => $titulo,
                         'start' => $slotStart,
+                        'end' => $slotEnd,
                         'color' => $colores[$estado],
                         'extendedProps' => [
                             'estado' => $estado,
                             'audiencias_en_slot' => $audienciasEnSlot,
                         ]
                     ];
-
-                    $slot->modify('+75 minutes');
                 }
             }
             $fecha->modify('+1 day');

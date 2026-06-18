@@ -41,6 +41,7 @@ Route::get('/obtenerCumplimientos', [SeerController::class, 'obtenerCumplimiento
 Route::get('/obtenerCumplimientosFiltrado', [SeerController::class, 'obtenerCumplimientosFiltrado']);
 Route::get('/obtenerAudiencias',    [SeerController::class, 'obtenerAudiencias']);
 Route::get('/audiencias-por-solicitud/{id_solicitud}', [SeerController::class, 'audienciasPorSolicitud']);
+Route::get('/obtenerAudienciasParte2', [SeerController::class, 'obtenerAudienciasParte2']);
 Route::get('/obtenerAudienciasParte3', [SeerController::class, 'obtenerAudienciasParte3']);
 Route::get('/dias-inhabiles-centro',[SeerController::class, 'diasInhabilesCentro']);
 
