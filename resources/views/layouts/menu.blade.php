@@ -304,6 +304,9 @@
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
+            <a class="nav-link" href="{{ route('excepcion') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Casos de Excepción</span>
+            </a>
         @endrole
     @endauth
     @auth

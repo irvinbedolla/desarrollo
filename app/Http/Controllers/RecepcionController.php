@@ -13,6 +13,7 @@ use App\Models\Turnos;
 use App\Models\TurnoDisponible;
 use Carbon\Carbon;
 use App\Models\DiasInhabiles;
+use App\Models\SeerCasosExcepcion;
 
 class RecepcionController extends Controller
 {   
@@ -755,5 +756,42 @@ class RecepcionController extends Controller
         }
 
         return $fecha_encontrada;
+    }
+    public function index_excepciones()
+    {
+        $fecha_actual = date('Y-m-d');
+        $recepciones = Recepcion::where('exepcion', 'Si')->where('fecha',$fecha_actual)->where('estatus','no atendido')->get();
+        //$recepciones = Recepcion::where('exepcion', 'Si')->where('estatus','no atendido')->get();
+
+        return view('excepciones.index',compact('recepciones'));
+    }
+
+    public function atender_excepcion($id){
+        
+        return view('excepciones.atender', compact('id'));
+    }
+
+    public function guardar_excepcion(Request $request){
+        $data = $request->all();
+        $id_user = auth()->user()->id;
+        $fecha_actual = date('Y-m-d');
+        $hora_actual= date('H:i');
+        $data_insertar = array(
+            'id_turno'          => $data['id'],
+            'id_user'           => $id_user,
+            'observaciones'     => $data['observaciones'],
+            'dependencia'       => $data['dependencia'],
+            'expediente'        => $data['expediente'], 
+            'fecha'             => $fecha_actual, 
+            'hora'              => $hora_actual,
+        );
+        SeerCasosExcepcion::create($data_insertar);
+        
+        $data_update = DB::table('recepcion')
+        ->where('id', $data["id"])
+        ->update(['estatus' => 'atendido']);
+
+        return redirect()->route('excepcion');
+
     }
 }
