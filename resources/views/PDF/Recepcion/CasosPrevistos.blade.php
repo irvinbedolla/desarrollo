@@ -15,10 +15,10 @@
                 margin: 0px 0px;
             }
             body{
-                padding-top: 95px;
+                padding-top: 12%;
             }
             main{
-                margin: 10px 0 40px 0; /*Para colocar el texto*/
+                margin: 60px 0 40px 0; /*Para colocar el texto*/
             }
             header {
                 position: fixed;
@@ -41,11 +41,11 @@
             }
             .content {
                 font-family: sans-serif;
-                font-size: 12px;
+                font-size: 15px;
                 text-align: justify;
-                margin-left: 1.5cm;     
-                margin-right: 1.5cm; 
-                line-height: 1.2;
+                margin-left: 3cm;     
+                margin-right: 3cm; 
+                line-height: 1.3;
             }
             .fondo-membrete {
                 position: fixed;
@@ -82,14 +82,14 @@
             }
             .titulos{
                 font-family: sans-serif;
-                font-size: 15px;
+                font-size: 17px;
                 margin-left: 1cm;     
                 margin-right: 1cm; 
                 line-height: 1.2;
             }
             .datos{
                 font-family: sans-serif;
-                font-size: 13px;
+                font-size: 15px;
                 margin-left: 1cm;     
                 margin-right: 1cm; 
                 line-height: 1.2;
