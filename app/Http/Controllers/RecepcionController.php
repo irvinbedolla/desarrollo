@@ -29,21 +29,21 @@ class RecepcionController extends Controller
         if (!$request->has('tipo') || empty($request->input('tipo'))) {
             return redirect()->back()->with('error', 'Es necesario seleccionar el Tipo de Trámite.');
         }
+        if (!$request->filled('fecha_turno') || !$request->filled('hora_turno')) {
+            return redirect()->back()->with('error', 'Es necesario seleccionar la fecha y el horario del turno en el calendario.');
+        }
 
         $data = $request->all();
         $sede = $data["delegacion"];
-        $tipoTramite = $data["tipo"]; 
-        $hora_actual = date("H:i:s");
+        $tipoTramite = $data["tipo"];
+        $fecha_asignada_str = $data["fecha_turno"];
+        $hora_turno = $data["hora_turno"];
         $id_auxiliar = auth()->user()->id;
 
-        // 1. Llamar a la función enviándole la sede y el tipo de trámite seleccionado
-        $fechaAsignada = $this->obtenerProximaFechaTurno($sede, $tipoTramite);
-
-        if (!$fechaAsignada) {
-            return redirect()->back()->with('error', 'No se encontraron fechas disponibles para realizar una ' . $tipoTramite . ' en la sede ' . $sede . '.');
+        // El horario seleccionado en el calendario ya no debe estar ocupado ni caer en un día/horario inhábil
+        if (!$this->turnoSlotDisponible($sede, $tipoTramite, $fecha_asignada_str, $hora_turno)) {
+            return redirect()->back()->with('error', 'El horario seleccionado ya no está disponible. Por favor selecciona otro.');
         }
-
-        $fecha_asignada_str = $fechaAsignada->format('Y-m-d');
 
         // 2. Calcular el consecutivo dinámico de acuerdo a la FECHA ASIGNADA y SEDE
         $consecutivo = Recepcion::where('fecha', $fecha_asignada_str)
@@ -66,10 +66,10 @@ class RecepcionController extends Controller
         $data_insertar = array(
             'consecutivo'     => $numero_consecutivo,
             'fecha'           => $fecha_asignada_str,
-            'hora'            => $hora_actual,
+            'hora'            => $hora_turno,
             'auxiliar'        => 0,
-            'tipo'            => $tipoTramite, 
-            'lugar_auxiliar'  => $data["lugar_auxiliar"] ?? 'Mesa 1', 
+            'tipo'            => $tipoTramite,
+            'lugar_auxiliar'  => $data["lugar_auxiliar"] ?? 'Mesa 1',
             'exepcion'        => $data["excepcion"] ?? 'No',
             'edad'            => $data["edad"] ?? null,
             'sexo'            => $data["sexo"] ?? null,
@@ -84,15 +84,20 @@ class RecepcionController extends Controller
             'folio'           => $data["folio"] ?? null,
             'INS'             => $data["INS"] ?? null,
             'resultado'       => null,
+            'area_adscripcion' => $data["area"],
+            'puesto'          => $data["puesto"],
+            'telefono'        => $data["telefono"],
+            'correo'          => $data["correo"],
+            'nombre_empresa'  => $data["empresa"]
         );
 
         // 5. Ejecutar el Insert a través de Eloquent
         Recepcion::create($data_insertar);
 
         // Traducir fecha legible (Ej: "Martes 9 de Junio")
-        $fechaFormateada = ucfirst($fechaAsignada->isoFormat('dddd D [de] MMMM'));
+        $fechaFormateada = ucfirst(Carbon::parse($fecha_asignada_str)->isoFormat('dddd D [de] MMMM'));
 
-        return redirect()->back()->with('success', 'Turno #' . $numero_consecutivo . ' (' . $tipoTramite . ') generado exitosamente para la sede ' . $sede . ' el día ' . $fechaFormateada);
+        return redirect()->back()->with('success', 'Turno #' . $numero_consecutivo . ' (' . $tipoTramite . ') generado exitosamente para la sede ' . $sede . ' el día ' . $fechaFormateada . ' a las ' . substr($hora_turno, 0, 5) . ' horas.');
     }
 
     public function index_turnos()
@@ -703,60 +708,145 @@ class RecepcionController extends Controller
     public function nueva_cita(){
         return view('turnos/crear');
     }
-    
-    private function obtenerProximaFechaTurno($sede, $tipo){
-        // 1. Determinar el límite diario en base al tipo de trámite y la sede
+
+    // Duración del slot (minutos) y hora de cierre de jornada según el tipo de trámite y si es caso de excepción.
+    private function configuracionHorarioTurno($tipo, $excepcion){
+        if ($excepcion === 'Si') {
+            return ['intervalo' => 75, 'fin' => ['hour' => 15, 'minute' => 15]];
+        }
+
         if ($tipo === 'Ratificación') {
-            $limiteSolicitudes = 4; // Límite estricto para ratificaciones en cualquier sede
-        } else {
-            // Si es 'Solicitud' u otro tipo por defecto
-            $limiteSolicitudes = ($sede === 'Morelia') ? 20 : 10;
+            return ['intervalo' => 60, 'fin' => ['hour' => 15, 'minute' => 0]];
         }
 
-        $fecha_evaluar = Carbon::now();
-        $fecha_encontrada = null;
-
-        // Bucle de seguridad para evaluar los próximos 60 días
-        for ($i = 0; $i < 60; $i++) {
-            $fecha_str = $fecha_evaluar->format('Y-m-d');
-
-            // Regla A: Omitir fines de semana
-            if ($fecha_evaluar->isWeekend()) {
-                $fecha_evaluar->addDay();
-                continue;
-            }
-
-            // Regla B: Verificar si es día inhábil general del Centro/Sede
-            $esInhabil = DiasInhabiles::where('centro', $sede)
-                ->whereNull('user_id')
-                ->whereIn('tipo', ['Todos', 'Audiencias'])
-                ->where('descripcion', 'Inhabil')
-                ->where('fecha_inicio', '<=', $fecha_str)
-                ->where('fecha_final', '>=', $fecha_str)
-                ->exists();
-
-            if ($esInhabil) {
-                $fecha_evaluar->addDay();
-                continue;
-            }
-
-            // Regla C: Contar cuántos trámites DEL MISMO TIPO ya se agendaron en esa fecha y sede
-            $totalTurnosDelDia = Recepcion::where('fecha', $fecha_str)
-                ->where('delegacion', $sede)
-                ->where('tipo', $tipo) // Filtramos específicamente por el tipo de trámite evaluado
-                ->count();
-
-            // Si hay cupo libre para ese tipo de trámite, se selecciona el día
-            if ($totalTurnosDelDia < $limiteSolicitudes) {
-                $fecha_encontrada = $fecha_evaluar->copy();
-                break;
-            }
-
-            $fecha_evaluar->addDay();
-        }
-
-        return $fecha_encontrada;
+        return ['intervalo' => 40, 'fin' => ['hour' => 15, 'minute' => 0]];
     }
+
+    public function obtenerTurnosDisponibles(Request $request){
+        $request->validate([
+            'sede' => 'required|string',
+            'tipo' => 'required|string',
+        ]);
+
+        $sede = $request->input('sede');
+        $tipo = $request->input('tipo');
+        $excepcion = $request->input('excepcion');
+
+        $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
+        $fecha_fin_str = $request->input('end', now()->addDays(60)->format('Y-m-d'));
+
+        $config = $this->configuracionHorarioTurno($tipo, $excepcion);
+
+        $inhabiles = DiasInhabiles::where('centro', $sede)
+            ->whereNull('user_id')
+            ->where(function ($query) use ($fecha_inicio_str, $fecha_fin_str) {
+                $query->where('fecha_inicio', '<=', $fecha_fin_str)
+                    ->where('fecha_final', '>=', $fecha_inicio_str);
+            })
+            ->get();
+
+        // Los turnos no se pueden empalmar: cada slot de "tipo" y "delegacion" admite una sola cita.
+        $ocupados = Recepcion::where('delegacion', $sede)
+            ->where('tipo', $tipo)
+            ->whereBetween('fecha', [$fecha_inicio_str, $fecha_fin_str])
+            ->get(['fecha', 'hora']);
+
+        $ocupadosSet = [];
+        foreach ($ocupados as $turno) {
+            $ocupadosSet[$turno->fecha->format('Y-m-d') . 'T' . $turno->hora->format('H:i:s')] = true;
+        }
+
+        $ahora = new \DateTime();
+        $eventos = [];
+        $fecha = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
+        $fin = (new \DateTime($fecha_fin_str))->setTime(0, 0, 0);
+
+        $colores = [
+            'ocupado' => '#DA0909', 'inhabil' => '#3B78DB',
+            'expirado' => '#F59727', 'disponible' => '#00CE1C',
+        ];
+        $titulos = [
+            'ocupado' => 'Ocupado', 'inhabil' => 'Inhábil',
+            'expirado' => 'No disponible', 'disponible' => 'Disponible',
+        ];
+
+        while ($fecha <= $fin) {
+            if ((int) $fecha->format('N') < 6) { // Saltar fines de semana
+                $slot = (clone $fecha)->setTime(9, 0, 0);
+                $finJornada = (clone $fecha)->setTime($config['fin']['hour'], $config['fin']['minute'], 0);
+
+                while ($slot < $finJornada) {
+                    $slotStart = $slot->format('Y-m-d\TH:i:s');
+
+                    $esInhabil = false;
+                    $esNoInhabil = false;
+                    foreach ($inhabiles as $dia) {
+                        $inicioInhabil = $dia->fecha_inicio . 'T' . ($dia->horario_inicio ?? '00:00:00');
+                        $finInhabil = $dia->fecha_final . 'T' . ($dia->horario_final ?? '23:59:59');
+                        if ($slotStart >= $inicioInhabil && $slotStart <= $finInhabil) {
+                            if ($dia->descripcion === 'No inhabil') {
+                                $esNoInhabil = true;
+                            } else {
+                                $esInhabil = true;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (isset($ocupadosSet[$slotStart])) {
+                        $estado = 'ocupado';
+                    } elseif ($esInhabil) {
+                        $estado = 'inhabil';
+                    } elseif ($esNoInhabil || $ahora > $slot) {
+                        $estado = 'expirado';
+                    } else {
+                        $estado = 'disponible';
+                    }
+
+                    $eventos[] = [
+                        'title' => $titulos[$estado],
+                        'start' => $slotStart,
+                        'color' => $colores[$estado],
+                        'extendedProps' => ['estado' => $estado],
+                    ];
+
+                    $slot->modify("+{$config['intervalo']} minutes");
+                }
+            }
+            $fecha->modify('+1 day');
+        }
+
+        return response()->json($eventos);
+    }
+
+    // Verifica que el slot elegido siga libre (sin empalme) y no caiga en un rango inhábil de la sede.
+    private function turnoSlotDisponible($sede, $tipo, $fecha, $hora){
+        $ocupado = Recepcion::where('delegacion', $sede)
+            ->where('tipo', $tipo)
+            ->where('fecha', $fecha)
+            ->where('hora', $hora)
+            ->exists();
+
+        if ($ocupado) {
+            return false;
+        }
+
+        $slotStart = $fecha . 'T' . $hora;
+
+        $inhabil = DiasInhabiles::where('centro', $sede)
+            ->whereNull('user_id')
+            ->where('fecha_inicio', '<=', $fecha)
+            ->where('fecha_final', '>=', $fecha)
+            ->get()
+            ->contains(function ($dia) use ($slotStart) {
+                $inicio = $dia->fecha_inicio . 'T' . ($dia->horario_inicio ?? '00:00:00');
+                $fin = $dia->fecha_final . 'T' . ($dia->horario_final ?? '23:59:59');
+                return $slotStart >= $inicio && $slotStart <= $fin;
+            });
+
+        return !$inhabil;
+    }
+
     public function index_excepciones()
     {
         $fecha_actual = date('Y-m-d');

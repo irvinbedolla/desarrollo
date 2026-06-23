@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\SeerController;
 use App\Http\Controllers\TurnosController;
+use App\Http\Controllers\RecepcionController;
 use App\Http\Controllers\Controller;
 
 /*
@@ -44,6 +45,7 @@ Route::get('/audiencias-por-solicitud/{id_solicitud}', [SeerController::class, '
 Route::get('/obtenerAudienciasParte2', [SeerController::class, 'obtenerAudienciasParte2']);
 Route::get('/obtenerAudienciasParte3', [SeerController::class, 'obtenerAudienciasParte3']);
 Route::get('/dias-inhabiles-centro',[SeerController::class, 'diasInhabilesCentro']);
+Route::get('/obtenerTurnosDisponibles', [RecepcionController::class, 'obtenerTurnosDisponibles']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
