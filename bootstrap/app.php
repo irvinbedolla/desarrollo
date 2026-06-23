@@ -6,8 +6,7 @@
 |--------------------------------------------------------------------------
 |
 | The first thing we will do is create a new Laravel application instance
-| which serves as the "glue" for all the components of Laravel, and is
-| the IoC container for the system binding all of the various parts.
+| which serves as the "glue" for all the components of Laravel.
 |
 */
 
@@ -28,7 +27,7 @@ $app = new Illuminate\Foundation\Application(
 
 $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
-    App\Http\Kernel::class
+    App\Http\Kernel::class // CORREGIDO: Debe apuntar al Kernel, NO al Controller
 );
 
 $app->singleton(
@@ -40,6 +39,20 @@ $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
 );
+
+/*
+|--------------------------------------------------------------------------
+| Registro del Middleware RBAC (Spatie) - AÑADE ESTO AQUÍ
+|--------------------------------------------------------------------------
+*/
+$app->booted(function () use ($app) {
+    $router = $app->make(\Illuminate\Routing\Router::class);
+    
+    // Registramos los alias para que tus rutas web reconozcan 'role' y 'permission'
+    $router->aliasMiddleware('role', \Spatie\Permission\Middleware\RoleMiddleware::class);
+    $router->aliasMiddleware('permission', \Spatie\Permission\Middleware\PermissionMiddleware::class);
+    $router->aliasMiddleware('role_or_permission', \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class);
+});
 
 /*
 |--------------------------------------------------------------------------

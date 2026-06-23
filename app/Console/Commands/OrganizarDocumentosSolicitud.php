@@ -24,8 +24,8 @@ class OrganizarDocumentosSolicitud extends Command
         foreach ($rutasPosibles as $ruta) {
             if (
                 //is_dir($ruta . '/documentosSolicitud') || 
-                is_dir($ruta . '/documentos_abogados') //|| 
-                //is_dir($ruta . '/documentos_ratificacion') || 
+                //is_dir($ruta . '/documentos_abogados') //|| 
+                is_dir($ruta . '/documentos_ratificacion') //|| 
                 //is_dir($ruta . '/documentos_notificacion')
                 ) {
                 $raizFisica = $ruta;
@@ -54,7 +54,7 @@ class OrganizarDocumentosSolicitud extends Command
             $solicitantes = DB::table('seer_solicitante')->select('id_solicitud', 'documentoIdentificacion as archivo')->whereNotNull('documentoIdentificacion')->where('documentoIdentificacion', '<>', '')->get();
             foreach ($solicitantes as $s) { $listaArchivos[] = ['id' => $s->id_solicitud, 'file' => $s->archivo, 'tipo_id' => 'solicitud']; }
         }
-
+*/
         // --- TABLA 3: turnos ---
         if (Schema::hasTable('turnos')) {
             $turnos = DB::table('turnos')->select('id as id_solicitud', 'documentoidentificacion as archivo')->whereNotNull('documentoidentificacion')->where('documentoidentificacion', '<>', '')->get();
@@ -73,7 +73,7 @@ class OrganizarDocumentosSolicitud extends Command
                 }
             }
         }
-*/
+/*
         // --- NUEVA TABLA 5: abogados (Poderes con limpieza de comillas de Windows) ---
         if (Schema::hasTable('abogados')) {
             $abogados = DB::table('abogados')->select('idAbogado', 'ineDocumento', 'cedulaDocumento', 'anexo_documeto', 'representacionDocumento')->get();
@@ -86,7 +86,7 @@ class OrganizarDocumentosSolicitud extends Command
                 }
             }
         }
-
+*/
         $totalRegistros = count($listaArchivos);
         $this->info("Se prepararon {$totalRegistros} candidatos de archivos para procesar.");
 

@@ -10657,8 +10657,9 @@ class SeerController extends Controller
             'seer_general.NUE',     // El campo de la tabla seer_general
             'users.name'            // El nombre del conciliador
         )
+        ->where('pago_solicitud.estatus',"=","Pendiente")
         ->orderBy(DB::raw("MAX(pago_solicitud.fecha)"), 'asc')
-        ->take(1500)
+        ->take(3500)
         ->get();
 
         return view('/cumplimientos/index',compact('cumplimientos'));

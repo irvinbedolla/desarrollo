@@ -112,9 +112,16 @@
                 <p>En <b>{{ $solicitud->delegacion }}, Michoacán de Ocampo a {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}.</b></p>
                 <p>
                     <b>VISTO</b> el estado que guarda el expediente identificado con el número <b>{{ $solicitud->NUE }}</b> relativo a la solicitud de conciliación realizada por
-                    <b>{{ $solicitante->nombre }}</b>, por falta de interés se formula resolución en atención a los siguientes:
-                </p>
-                    <center><b>RESULTANDOS</b></center><br>
+                    <b>{{ $solicitante->nombre }}</b>, 
+                    @if($audiencia->estatus == 'Desistimiento')
+                        por Desistimiento 
+                    @else
+                        por falta de interés
+                    @endif
+                     se formula resolución en atención a los siguientes:
+                    </p>
+
+                <center><b>RESULTANDOS</b></center><br>
 
                 <p>
                     <b>Primero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, <b>{{ $solicitante->nombre }}</b> solicitó ante este Centro, 
@@ -157,6 +164,9 @@
                 </p> <br><br><br><br><br>      
                 <p><center><b>RESUELVE</b></center><br>
 
+                @if($audiencia->estatus == 'Desistimiento')
+                    
+                @else 
                     <b>Primero.</b> Se archiva el expediente <b>{{ $solicitud->NUE }}</b> que consta desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, 
                     en este Centro, por falta de interés del Solicitante.<br><br>
 
@@ -169,7 +179,8 @@
                     <b>Cuarto.</b> La interrupción de la prescripción cesa al día siguiente en que se emite esta Resolución, de conformidad con el artículo 521, fracción III de la Ley Federal 
                     del Trabajo.<br><br>
 
-                    <!--b>{{ $solicitud->observaciones }}</b-->
+                    <b>{{ $solicitud->observaciones }}</b>
+                @endif
                 </p>
 
                 <br>
