@@ -713,14 +713,14 @@ class RecepcionController extends Controller
     // Duración del slot (minutos) y hora de cierre de jornada según el tipo de trámite y si es caso de excepción.
     private function configuracionHorarioTurno($tipo, $excepcion){
         if ($excepcion === 'Si') {
-            return ['intervalo' => 75, 'fin' => ['hour' => 15, 'minute' => 15]];
+            return ['intervalo' => 75, 'fin' => ['hour' => 17, 'minute' => 00],'comida' => ['hour' => 14, 'minute' => 0]];
         }
 
         if ($tipo === 'Ratificación') {
-            return ['intervalo' => 60, 'fin' => ['hour' => 15, 'minute' => 0]];
+            return ['intervalo' => 60, 'fin' => ['hour' => 16, 'minute' => 30],'comida' => ['hour' => 13, 'minute' => 0]];
         }
 
-        return ['intervalo' => 40, 'fin' => ['hour' => 15, 'minute' => 0]];
+        return ['intervalo' => 40, 'fin' => ['hour' => 16, 'minute' => 50],'comida' => ['hour' => 12, 'minute' => 20]]; //cambio fin a las 16:50
     }
 
     public function obtenerTurnosDisponibles(Request $request){
@@ -775,7 +775,7 @@ class RecepcionController extends Controller
             if ((int) $fecha->format('N') < 6) { // Saltar fines de semana
                 $slot = (clone $fecha)->setTime(9, 0, 0);
                 $finJornada = (clone $fecha)->setTime($config['fin']['hour'], $config['fin']['minute'], 0);
-
+                $hora_comida = (clone $fecha)->setTime($config['comida']['hour'], $config['comida']['minute'], 0);
                 while ($slot < $finJornada) {
                     $slotStart = $slot->format('Y-m-d\TH:i:s');
 
@@ -800,7 +800,11 @@ class RecepcionController extends Controller
                         $estado = 'inhabil';
                     } elseif ($esNoInhabil || $ahora > $slot) {
                         $estado = 'expirado';
-                    } else {
+                    }
+                    elseif($slot == $hora_comida){
+                        $estado = 'expirado';
+                    }
+                     else {
                         $estado = 'disponible';
                     }
 
@@ -810,8 +814,12 @@ class RecepcionController extends Controller
                         'color' => $colores[$estado],
                         'extendedProps' => ['estado' => $estado],
                     ];
-
-                    $slot->modify("+{$config['intervalo']} minutes");
+                    if($slot == $hora_comida){
+                        $slot->modify("+30 minutes");
+                    }
+                    else{
+                        $slot->modify("+{$config['intervalo']} minutes");
+                    }
                 }
             }
             $fecha->modify('+1 day');
