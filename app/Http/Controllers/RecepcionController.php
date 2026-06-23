@@ -40,7 +40,20 @@ class RecepcionController extends Controller
         $fecha_asignada_str = $data["fecha_turno"];
         $hora_turno = $data["hora_turno"];
         $id_auxiliar = auth()->user()->id;
+        $hora_fin =$hora_turno;
+        
 
+        if($data["excepcion"]== 'Si'){
+             $hora_fin = date("H:i:s", strtotime($hora_turno . " +75 minutes"));
+        }
+        else{
+            if($data["tipo"]=='Solicitud'){
+                 $hora_fin = date("H:i:s", strtotime($hora_turno . " +40 minutes"));
+            }
+            else{
+                 $hora_fin = date("H:i:s", strtotime($hora_turno . " +60 minutes"));
+            }
+        }
         // El horario seleccionado en el calendario ya no debe estar ocupado ni caer en un día/horario inhábil
         if (!$this->turnoSlotDisponible($sede, $tipoTramite, $fecha_asignada_str, $hora_turno)) {
             return redirect()->back()->with('error', 'El horario seleccionado ya no está disponible. Por favor selecciona otro.');
@@ -68,6 +81,7 @@ class RecepcionController extends Controller
             'consecutivo'     => $numero_consecutivo,
             'fecha'           => $fecha_asignada_str,
             'hora'            => $hora_turno,
+            'hora_fin'        => $hora_fin,
             'auxiliar'        => 0,
             'tipo'            => $tipoTramite,
             'lugar_auxiliar'  => $data["lugar_auxiliar"] ?? 'Mesa 1',

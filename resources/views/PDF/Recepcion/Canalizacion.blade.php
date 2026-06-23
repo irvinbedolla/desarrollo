@@ -18,7 +18,7 @@
                 padding-top: 95px;
             }
             main{
-                margin: 10px 0 40px 0; /*Para colocar el texto*/
+                margin: 50px 0 40px 0; /*Para colocar el texto*/
             }
             header {
                 position: fixed;
@@ -43,8 +43,8 @@
                 font-family: sans-serif;
                 font-size: 15px;
                 text-align: justify;
-                margin-left: 2cm;     
-                margin-right: 2cm; 
+                margin-left: 3cm;     
+                margin-right: 3cm; 
                 line-height: 1.2;
             }
             .fondo-membrete {
