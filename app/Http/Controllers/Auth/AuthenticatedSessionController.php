@@ -30,13 +30,6 @@ class AuthenticatedSessionController extends Controller
         // 2. Regenerar la sesión
         $request->session()->regenerate();
 
-          
-        dd([
-            '¿El usuario se autenticó?' => Auth::check() ? 'SÍ, LOGUEADO' : 'NO',
-            'Datos del usuario en Auth'  => Auth::user(),
-            'ID de sesión actual'        => $request->session()->getId(),
-        ]);
-
         // 3. Limpiar cualquier proceso de solicitud auxiliar
         $request->session()->forget([
             'solicitud_aux_lock',
