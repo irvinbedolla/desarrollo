@@ -14,6 +14,7 @@ use App\Models\TurnoDisponible;
 use Carbon\Carbon;
 use App\Models\DiasInhabiles;
 use App\Models\SeerCasosExcepcion;
+use App\Models\SeerChatR;
 
 class RecepcionController extends Controller
 {   
@@ -851,30 +852,55 @@ class RecepcionController extends Controller
     {
         $fecha_actual = date('Y-m-d');
         $recepciones = Recepcion::where('exepcion', 'Si')->where('fecha',$fecha_actual)->where('estatus','no atendido')->get();
-        //$recepciones = Recepcion::where('exepcion', 'Si')->where('estatus','no atendido')->get();
+        $recepciones = Recepcion::where('exepcion', 'Si')->get();
 
         return view('excepciones.index',compact('recepciones'));
     }
 
     public function atender_excepcion($id){
         
-        return view('excepciones.atender', compact('id'));
+        $recepcion = Recepcion::find($id);
+        return view('excepciones.atender', compact('recepcion'));
     }
 
     public function guardar_excepcion(Request $request){
+
         $data = $request->all();
         $id_user = auth()->user()->id;
         $fecha_actual = date('Y-m-d');
         $hora_actual= date('H:i');
+        
         $data_insertar = array(
             'id_turno'          => $data['id'],
             'id_user'           => $id_user,
             'observaciones'     => $data['observaciones'],
             'dependencia'       => $data['dependencia'],
             'expediente'        => $data['expediente'], 
+            'situacion_laboral' => $data['situacion_laboral'],
+            'frecuencia'        => $data['frecuencia'],
+            'descripcion_conductas' => $data['descripcion_conductas'],
+            'tipo_caso'         => $data['tipo_caso'],
+            'vulnerables'       => $data['vulnerables'],
+            'jefe_inmediato'    => $data['jefe_inmediato'],
+            'ubicacion'         =>$data['ubicacion'],
             'fecha'             => $fecha_actual, 
-            'hora'              => $hora_actual,
+            'hora'              => $hora_actual ,
         );
+
+        if(!isset($data['descripcion_persona'])){
+            $data_insertar['descripcion_persona'] =null;
+        }
+        else{
+            $data_insertar['descripcion_persona'] =  $data['descripcion_persona'];
+        }
+        if(isset($data['motivo'])){
+            $data_insertar['motivos'] =  $data['motivo'];
+        }
+        else{
+            $data_insertar['motivos'] = null;
+        }
+        
+        
         SeerCasosExcepcion::create($data_insertar);
         
         $data_update = DB::table('recepcion')
@@ -883,5 +909,34 @@ class RecepcionController extends Controller
 
         return redirect()->route('excepcion');
 
+    }
+    public function Verpdfcasosprevistos($id){
+        $recepcion = Recepcion::find($id);
+        $caso = SeerCasosExcepcion::where('id_turno', $id)->first();
+        $auxiliar = User::where('id', $recepcion->auxiliar)->first();
+
+        $html = view('PDF.Recepcion.CasosPrevistos', compact('recepcion','caso', 'auxiliar'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'prueba'.'pdf';
+        return $pdf->stream($nombreArchivo);       
+    }
+    public function Verpdfcanalizacion($id){
+        $recepcion = Recepcion::find($id);
+        $caso = SeerCasosExcepcion::where('id_turno', $id)->first();
+        $auxiliar = User::where('id', $recepcion->auxiliar)->first();
+        $html = view('PDF.Recepcion.Canalizacion', compact('recepcion','caso','auxiliar'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'prueba'.'pdf';
+        return $pdf->stream($nombreArchivo);       
     }
 }
