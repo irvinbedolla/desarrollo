@@ -82,7 +82,7 @@ class RecepcionController extends Controller
             'fecha'           => $fecha_asignada_str,
             'hora'            => $hora_turno,
             'hora_fin'        => $hora_fin,
-            'auxiliar'        => 0,
+            'auxiliar'        => $id_auxiliar,
             'tipo'            => $tipoTramite,
             'lugar_auxiliar'  => $data["lugar_auxiliar"] ?? 'Mesa 1',
             'exepcion'        => $data["excepcion"] ?? 'No',
@@ -891,7 +891,6 @@ class RecepcionController extends Controller
         $id_user = auth()->user()->id;
         $fecha_actual = date('Y-m-d');
         $hora_actual= date('H:i');
-        
         $data_insertar = array(
             'id_turno'          => $data['id'],
             'id_user'           => $id_user,

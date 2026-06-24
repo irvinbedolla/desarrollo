@@ -67,8 +67,7 @@
                                                 <option value="Discapacidad" {{ $recepcion->vulnerables == 'Discapacidad' ? 'selected' : '' }}>Personas con discapacidad</option>
                                                 <option value="Indigena" {{ $recepcion->vulnerables == 'Indigena' ? 'selected' : '' }}>Población indígena</option>
                                                 <option value="Personas Migrantes" {{ $recepcion->vulnerables == 'Personas Migrantes' ? 'selected' : '' }}>Personas Migrantes</option>
-                                                <option value="LGBTTTIQ" {{ $recepcion->vulnerables == 'LGBTTTIQ' ? 'selected' : '' }}>LGBTTTIQ+</option>
-                                                <option value="Indigena" {{ $recepcion->vulnerables == 'Indigena' ? 'selected' : '' }}>Población indígena</option>
+                                                <option value='LGBTTTTIQ' {{ $recepcion->vulnerables == 'LGBTTTTIQ' ? 'selected' : '' }}>LGBTTTIQ+</option>
                                                 <option value="Ninguno" {{ $recepcion->vulnerables == 'Ninguno' ? 'selected' : '' }}>No aplica</option>
                                             </select>
                                             <div class="invalid-feedback">
@@ -93,7 +92,7 @@
                                     
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <label for="name">Cambios que se dieron en su situación laboral despues de los hechos<span style="color:red;">(*)</span></label>
-                                        <select id='cambios' class="form-control" >
+                                        <select id='cambios' class="form-control" required>
                                             <option value="">Selecciona</option>
                                             <option value="Sigue igual">Sigue igual</option>
                                             <option value="Tension estres incomodidad">Tension, estrés e incomodidad en el área de trabajo</option>
@@ -116,7 +115,7 @@
                                     
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <label for="name">Dependencia a la que se canalizo<span style="color:red;">(*)</span></label>
-                                        <select id="canalizar" class="form-control" >
+                                        <select id="canalizar" class="form-control" required>
                                             <option value="">Selecciona</option>
                                             <option value="Primera dependencia">Primera dependencia</option>
                                             <option value="Segunda dependencia">Segunda dependencia</option>
@@ -140,7 +139,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <label for="name">¿Se conoce el nombre del Jefe inmediato?<span style="color:red;">(*)</span></label>
-                                        <select id="se_conoce" class="form-control" >
+                                        <select id="se_conoce" class="form-control" required >
                                             <option value="">Selecciona</option>
                                             <option value="si">Sí</option>
                                             <option value="No se conoce">No</option>
