@@ -8820,7 +8820,7 @@ class SeerController extends Controller
     public function ObtenerAudiencia($delegacion, $notificion) {
         $id = auth()->user()->id;
         $user = User::find($id);
-        
+
         $mapa_sedes = ["Zitácuaro" => "Morelia", "Lázaro Cárdenas" => "Uruapan", "Sahuayo" => "Zamora"];
         $oficina = $mapa_sedes[$delegacion] ?? $delegacion;
 
@@ -13517,6 +13517,7 @@ class SeerController extends Controller
         
         $monto = 0;
         $fecha_actual = date('y-m-d');
+        $hora_actual = date('H:i');
         $id = auth()->user()->id;
         $user = User::find($id);
         $solicitudOriginal = SeerPerGeneral::find($data["id"]);
@@ -13598,6 +13599,8 @@ class SeerController extends Controller
                 'horario'               =>  $data["horario"] ?? ($conciliadorRecord->horario ?? ''),
                 'comida'                =>  $data["comida"] ?? ($conciliadorRecord->comida ?? ''),
                 'tipo_audiencia'        =>  $data["tipo_audiencia"],
+                'fecha'                 => $fecha_actual,
+                'hora'                  => $hora_actual,
             ];
             
             if($conciliadorRecord && (!empty($audiencia_id) ? ((int)$conciliadorRecord->audiencia_id === (int)$audiencia_id) : true)){
@@ -16980,6 +16983,7 @@ class SeerController extends Controller
         ]);*/
 
         $año_actual = date('Y');
+        $fecha_actual = date('y-m-d');
         $numero_consecutivo = 0;
         $consecutivo  = SeerPerGeneral::latest('consecutivo')
         ->where('delegacion',$data["delegacion"])
@@ -17002,6 +17006,7 @@ class SeerController extends Controller
             'tipo_generacion' => auth()->check() ? auth()->id() :0,
             'consecutivo'    => $numero_consecutivo,
             'año'            => $año_actual,
+            'fecha'             => $fecha_actual,
         );
 
         // SeerPerGeneral::create($data_insert);

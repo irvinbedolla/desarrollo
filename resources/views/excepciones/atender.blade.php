@@ -210,7 +210,7 @@
                                         <button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>
                                     
-                                </div>s
+                                </div>
                             </form>       
                         </div>
                     </div>

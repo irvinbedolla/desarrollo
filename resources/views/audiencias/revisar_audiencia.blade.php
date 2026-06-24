@@ -361,7 +361,7 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Teléfono<span style="color:red;"> (*)</span></label>
-                                                        <input type="tel" id="telefono1_solicitante" class="form-control" name="telefono1_solicitante" value="<?=$solicitante["telefono1"];?>" required inputmode="numeric" maxlength="14">
+                                                        <input type="number" id="telefono1_solicitante" class="form-control" name="telefono1_solicitante" value="<?=$solicitante["telefono1"];?>" required inputmode="numeric" maxlength="10">
                                                         <div class="invalid-feedback">
                                                             El teléfono es obligatorio y debe contener 10 dígitos.
                                                         </div>   
@@ -370,7 +370,7 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                             <label for="password">Teléfono (Opcional)</label>
-                                                            <input type="tel" id="telefono2_solicitante" class="form-control" name="telefono2_solicitante" value="<?=$solicitante["telefono2"];?>" inputmode="numeric" maxlength="14">   
+                                                            <input type="number" id="telefono2_solicitante" class="form-control" name="telefono2_solicitante" value="<?=$solicitante["telefono2"];?>" inputmode="numeric" maxlength="10">   
                                                         </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">

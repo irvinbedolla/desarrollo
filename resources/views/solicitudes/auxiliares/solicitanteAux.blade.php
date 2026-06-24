@@ -206,7 +206,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Celular <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="telefono1" minlength="10" maxlength="10" class="form-control numeroTelefonico" required>
+                                                    <input type="number" name="telefono1" minlength="10" maxlength="10" class="form-control numeroTelefonico" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required>
                                                     <div class="invalid-feedback">
                                                         El campo teléfono es obligatorio. Debe tener 10 dígitos
                                                     </div>
@@ -215,7 +215,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Fijo (Campo opcional)</label>
-                                                    <input type="number" name="telefono2" minlength="10" maxlength="10" class="form-control numeroTelefonico"> 
+                                                    <input type="number" name="telefono2" minlength="10" maxlength="10" class="form-control numeroTelefonico" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"> 
                                                 </div>
                                                  <div class="invalid-feedback">
                                                         El teléfono fijo debe tener 10 dígitos
@@ -337,7 +337,8 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Código Postal <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="cp" id="cp" class="form-control soloNumeros" maxlength="5" required>
+                                                    <!--input type="number" name="cp" id="cp" class="form-control soloNumeros" maxlength="5" required-->
+                                                    <input type="number" min="0" max="99999" maxlength="5" class="form-control" name="cp" id="cp" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required>
                                                     <!--<input type="number" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required>--> 
                                                     <div class="invalid-feedback">
                                                         El campo código postal es obligatorio. Debe tener 5 dígitos
@@ -378,7 +379,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Número de Seguro Social (Opcional)</label>
-                                                    <input type="number" name="seguro" minlength="11" maxlength="12" class="form-control soloNumeros"> 
+                                                    <input type="number" name="seguro" minlength="11" maxlength="12" class="form-control soloNumeros" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"> 
                                                     <div class="invalid-feedback">
                                                         Debe tener 12 dígitos su número de seguridad social
                                                     </div>
@@ -420,7 +421,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Total de horas trabajadas por semana <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="horas" min="0" class="form-control" required> 
+                                                    <input type="number" name="horas" min="0" max= "168" maxlength="3" class="form-control" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required> 
                                                     <div class="invalid-feedback">
                                                         El campo cantidad de horas trabajadas es obligatorio.
                                                     </div>
@@ -506,7 +507,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
-                                                    <input type="text" name="num_identificacion" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="num_identificacion" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase(); if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength); " required> 
                                                     <div class="invalid-feedback">
                                                         El campo núm. de identificación es obligatorio.
                                                     </div>
