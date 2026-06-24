@@ -442,6 +442,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cumplimiento/PDFIncumplimiento/{id}',          [SeerController::class, 'PDFincumplimientoAudiencia'])->name('PDFincumplimientoAudiencia');
         Route::get('/cumplimiento/incomparecencia/{id}',            [SeerController::class, 'PDFIncomparecenciaCumplimiento'])->name('PDFIncomparecenciaCumplimiento');
         Route::post('/cumplimiento/pagar/pena/audiencia',           [SeerController::class, 'cumplimiento_pagar_con_pena_audiencia'])->name('cumplimiento_pagar_pena_audiencia');
+        Route::get('/notificaciones/consultar/{id}',                [SeerController::class, 'mostrar_citados'])->name('editar_citado');
 
         Route::get('/documentos/solicitante/identificacion/{id}',       [SeerController::class, 'ver_identificacion_solicitante'])->name('documento_identificacion_solicitante_ver');
         Route::get('/ObtenerCitatorios/{id}',                           [SeerController::class, 'mostrar_citatorios']);
