@@ -27,7 +27,7 @@ $app = new Illuminate\Foundation\Application(
 
 $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
-    App\Http\Kernel::class // CORREGIDO: Debe apuntar al Kernel, NO al Controller
+    App\Http\Kernel::class 
 );
 
 $app->singleton(
@@ -40,18 +40,19 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
-/*
-|--------------------------------------------------------------------------
-| Registro del Middleware RBAC (Spatie) - AÑADE ESTO AQUÍ
-|--------------------------------------------------------------------------
-*/
 $app->booted(function () use ($app) {
     $router = $app->make(\Illuminate\Routing\Router::class);
     
-    // Registramos los alias para que tus rutas web reconozcan 'role' y 'permission'
+    // 1. Registramos los alias para que tus rutas web reconozcan 'role' y 'permission'
     $router->aliasMiddleware('role', \Spatie\Permission\Middleware\RoleMiddleware::class);
     $router->aliasMiddleware('permission', \Spatie\Permission\Middleware\PermissionMiddleware::class);
     $router->aliasMiddleware('role_or_permission', \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class);
+
+    // 2. Registrar el alias para tu nueva Content Security Policy (CSP)
+    $router->aliasMiddleware('csp', \App\Http\Middleware\ContentSecurityPolicy::class);
+    
+    // 3. Forzar la inyección global del Middleware CSP al grupo de rutas 'web'
+    $router->pushMiddlewareToGroup('web', \App\Http\Middleware\ContentSecurityPolicy::class);
 });
 
 /*

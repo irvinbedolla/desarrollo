@@ -87,12 +87,10 @@ function mis_citas() {
             const pubIdx = pathname.indexOf('/public');
             if (pubIdx !== -1) {
                 const base = pathname.substring(0, pubIdx + '/public'.length);
-                return `${origin}${base}/poll/pendiente-firma`;
             }
             const parts = pathname.split('/').filter(Boolean);
             const seg1 = (parts[0] || '').trim();
             const base = seg1 ? `/${seg1}` : '';
-            return `${origin}${base}/poll/pendiente-firma`;
         }
         const POLL_URL = computePollUrl();
 

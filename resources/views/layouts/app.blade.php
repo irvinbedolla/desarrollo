@@ -5,7 +5,6 @@
         <meta name="csrf-token" content="{{ csrf_token() }}"/>
         <title>Sí Concilio</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
-    <meta name="poll-pendiente-url" content="{{ url('/poll/pendiente-firma') }}"/>
 
     <!-- Bootstrap 5.3.3 -->
         <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>

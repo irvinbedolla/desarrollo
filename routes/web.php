@@ -229,7 +229,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/indidencias/atender/{id}',         [IncidenciasController::class, 'incidencia_atender'])->name('incidencia_atender');
         Route::post('/indidencias/update',              [IncidenciasController::class, 'incidencias_update'])->name('incidencias_update');
 
-        
+        //Conciliadores
+        Route::get('/conciliador/index',                [ConciliadoresController::class, 'index'])->name('index_conciliadores');
+        Route::post('/conciliador/update_perimsos/',    [ConciliadoresController::class, 'update'])->name('conciliadores_permisos');
+        Route::get('/conciliador/firmaCitatorios',      [SeerController::class, 'firmaCitatorios_index'])->name('firma_citatorio'); //Citatorios a firmar por los conciliadores
+        Route::get('/conciliador/prueba',               [TurnosController::class, 'actualizar_folio']);
+        Route::get('/ObtenerCitatorios/{id}',           [SeerController::class, 'mostrar_citatorios']);
+         Route::get('/ObtenerConstancias/{id}',         [SeerController::class, 'mostrar_noConciliacion']); //Constancias de no conciliación para visualizar en un modal
     });
 
     /*
@@ -355,7 +361,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/notificador/historial',                [SeerController::class, 'todas_notificaciones'])->name('todas_notificaciones');
 
         //Enlace
-        Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name('editar_citado');
+        Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name(' ');
         Route::post('/notificaciones/editar',               [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');   
         Route::get('/notificaciones/consultar_citado/{id}', [SeerController::class, 'mostrar_citadoC'])->name('consultar_citado');
         Route::get('/notificaciones/historial',             [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar');

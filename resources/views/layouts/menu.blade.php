@@ -50,10 +50,9 @@
             <a class="nav-link" href="{{ route('plantillas_index') }}">
                 <i class="bi bi-file-text-fill"></i><span class="text-dark" onclick="estadistica()">Plantillas</span>
             </a>
-            <a id="menu-pendiente-firma" class="nav-link" href="{{ route('firma_citatorio') }}">
+            <a  class="nav-link" href="{{ route('firma_citatorio') }}">
                 <i class="bi bi-bank"></i>
                 <span class="text-dark" onclick="mis_citas()">Pendiente de Firma
-                    <!--<span id="badge-pendiente-firma" class="menu-badge" style="display:none;">0</span>-->
                 </span>
             </a>
             <a class="nav-link" href="{{ route('notificaciones') }}">
