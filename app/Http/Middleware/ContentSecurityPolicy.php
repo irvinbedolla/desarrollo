@@ -16,23 +16,26 @@ class ContentSecurityPolicy
 
         // Definición de directivas permitiendo CDNs esenciales de SiConcilio
         $csp = "default-src 'self'; " .
-               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com; " .
+               // script-src: Añadimos https://cdn.datatables.net para que funcionen los listados de audiencias
+               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://cdn.datatables.net; " .
+               // style-src: Añadimos soporte para estilos locales y CDNs declarados
                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com http://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; " .
                "img-src 'self' data: https: http:; " .
                "font-src 'self' data: https://fonts.gstatic.com http://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
-               "connect-src 'self'; " .
+               // connect-src: CORRECCIÓN para permitir que jsdelivr y cndjs descarguen los mapas de origen (.map) sin errores
+               "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
                "frame-ancestors 'none'; " .
                "object-src 'none';";
 
         // Inyectar la cabecera en la respuesta HTTP
         $response->headers->set('Content-Security-Policy', $csp);
         
-        $permissionsPolicy = "camera=(), " .
-                             "microphone=(), " .
+       $permissionsPolicy = "camera=( ), " .
+                             "microphone=( ), " .
                              "geolocation=('self'), " .
                              "fullscreen=('self'), " .
-                             "payment=(), " .
-                             "usb=(), " .
+                             "payment=( ), " .
+                             "usb=( ), " .
                              "screen-wake-lock=('self')";
 
         $response->headers->set('Permissions-Policy', $permissionsPolicy);
