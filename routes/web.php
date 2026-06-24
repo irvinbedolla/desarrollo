@@ -532,11 +532,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/ratificaciones/deduccion_eliminar_pago/{id_solicitud}',     [TurnosController::class, 'concepto_eliminar_deduccion_ratificacion'])->name('concepto_eliminar_deduccion_ratificacion');
         Route::delete('/ratificaciones/pago_eliminar_pago/{id_solicitud}',          [TurnosController::class, 'pago_eliminar_pago_ratificacion'])->name('pago_eliminar_pago_ratificacion');
         Route::post('/ratificaciones/terminar_ratificacion',            [TurnosController::class, 'terminar_ratificacion'])->name('terminar_ratificacion');
+
+        //PDF Ratificaciones
         Route::get('/cumplimiento/PDFIncumplimientoR/{id}',             [TurnosController::class, 'PDFincumplimientoRatificacion'])->name('PDFincumplimientoRatificacion');
         Route::get('/VerpdfcPTUNLaboraRat/{id}',                        [TurnosController::class, 'VerPDFConvenioPTU_rat'])->name('PDFconvenioPTU_NO_R');
         Route::get('/Verpdf/{id}',                                      [TurnosController::class, 'VerPDF'])->name('PDFratifi');
         Route::get('/Verpdfaudiencia/{id}',                             [TurnosController::class, 'VerPDFAudiencia'])->name('PDFaudiencia');
         Route::get('/Verpdfc/{id}',                                     [TurnosController::class, 'VerPDFConvenio'])->name('PDFconvenioratificacion');
+        Route::get('/VerpdfIncump/{id}',                                [TurnosController::class, 'VerPDFIncumplimiento'])->name('PDFincumplimiento');
+        Route::get('/Verpdfinteres/{id}',                               [TurnosController::class, 'VerPDFInteres'])->name('PDFinteres');
+        Route::get('/pdfincomTrabajador/{id}',                          [TurnosController::class, 'VerPDFIncomTrabajador'])->name('PDFincomparecenciaT');
+        Route::post('/turnos/guardar',                                  [TurnosController::class, 'guardar_rechazo'])->name('rechazar_turnos');
+        Route::get('/Verpdfcump/{id}',                                  [TurnosController::class, 'VerPDFCumplimiento'])->name('PDFcumplimientoR');
         
         Route::get('/ratificaciones/vista_previaCitas/{id_solicitud}',  [TurnosController::class, 'vista_previa_citas'])->name('vista_previa_citas'); //Vista previa de la vista citas(primera parte del llenado de la ratificación)
         Route::post('/ratificaciones/guardarEdicion_citas',             [TurnosController::class, 'guardarEdicion_citas'])->name('guardarEdicion_citas');
