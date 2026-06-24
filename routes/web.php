@@ -311,17 +311,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['role:Super Usuario|Auxiliar|Recepcion'])->group(function () {
         Route::get('/turnos/index',                     [RecepcionController::class, 'index_turnos'])->name('turnos');
         Route::get('/turnos/misturnos',                 [RecepcionController::class, 'misturnos'])->name('misturnos');
-        Route::get('/turnos/create',                    [RecepcionController::class, 'create'])->name('turnos.create');
-        Route::post('/turnos/store',                    [RecepcionController::class, 'store_turnos'])->name('turnos.store');
-        Route::get('/turnos/activo/{id}',               [RecepcionController::class, 'activo'])->name('turnos.activo');
-        Route::get('/turnos/noactivo/{id}',             [RecepcionController::class, 'noactivo'])->name('turnos.noactivo');
-        Route::get('/turnos/nuevo',                     [RecepcionController::class, 'nueva_cita'])->name('nueva_cita');
-        Route::post('/tuenos/guardar',                  [RecepcionController::class, 'turnos_guardar'])->name('turnos_guardar_nuevo');
         
         Route::get('/solicitudes/pedientes',            [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
         Route::get('/solicitudes_revisar/{id}',         [SeerController::class, 'solicitudes_pendientes_revisar'])->name('solicitud_revisar');
         Route::post('/confirmar_solicitudes',           [SeerController::class, 'solicitud_confirmar'])->name('confirmar_solicitud');
         Route::post('/solicitudes/guardar',             [SeerController::class, 'guardar_rechazo'])->name('rechazar_solicitud');
+
+        //Recepcion
+        Route::get('/turnos/create',             [RecepcionController::class, 'create'])->name('turnos.create');
+        Route::post('/turnos/store',             [RecepcionController::class, 'store_turnos'])->name('turnos.store');
+        Route::get('/turnos/turnos',             [RecepcionController::class, 'turnos'])->name('turnos.listado');
+        Route::get('/turnos/activo/{id}',        [RecepcionController::class, 'activo'])->name('turnos.activo');
+        Route::get('/turnos/noactivo/{id}',      [RecepcionController::class, 'noactivo'])->name('turnos.noactivo');
+        Route::get('/turnos/cambiar/{id}',       [RecepcionController::class, 'cambiar'])->name('cambiar');
+        Route::get('/turnos/terminadoR/{id}',    [RecepcionController::class, 'terminado_confirmar'])->name('turnos.terminado_revisar');
+        Route::get('/turnos/cambio/{id}',        [RecepcionController::class, 'cambio'])->name('turnos.cambioexcepcion');
+        Route::get('/turnos/terminado/{id}',     [RecepcionController::class, 'terminado'])->name('turnos.terminado');
+        Route::post('/turnos/edit',              [RecepcionController::class, 'edit'])->name('turnos.edit');
+        Route::get('/turnos/tarjeta',            [RecepcionController::class, 'index_tarjeta'])->name('tarjeta_informativa');
+        Route::get('/tarjeta/llenar/{id}',       [RecepcionController::class, 'tarjeta_crear'])->name('llenar_tarjeta');
+        Route::post('/tarjeta/guardar',          [RecepcionController::class, 'guardar'])->name('agregar_tarjeta');
+        Route::get('/tarjetas/index',            [RecepcionController::class, 'reporte_excepcion'])->name('reporte_excepcion');
+        Route::post('reportes/excepcion',        [RecepcionController::class, 'reportePDF'])->name('turnos_excepcion');
+        Route::get('/turnos/nuevo',              [RecepcionController::class, 'nueva_cita'])->name('nueva_cita');
+        Route::post('/tuenos/guardar',           [RecepcionController::class, 'turnos_guardar'])->name('turnos_guardar_nuevo'); 
+        Route::get('/excepciones/index',         [RecepcionController::class, 'index_excepciones'])->name('excepcion');
+        Route::get('/excepciones/atender/{id}',  [RecepcionController::class, 'atender_excepcion'])->name('atender_excepcion');
+        Route::post('/excepciones/guardar',       [RecepcionController::class, 'guardar_excepcion'])->name('guardar_excepcion');
     });
 
     /*
@@ -414,7 +430,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/excepciones/index',         [RecepcionController::class, 'index_excepciones'])->name('excepcion');
         Route::get('/excepciones/atender/{id}',  [RecepcionController::class, 'atender_excepcion'])->name('atender_excepcion');
         Route::post('/excepciones/guardar',       [RecepcionController::class, 'guardar_excepcion'])->name('guardar_excepcion');
-        
+
     Route::get('/documentos/solicitante/identificacion/{id}',       [SeerController::class, 'ver_identificacion_solicitante'])->name('documento_identificacion_solicitante_ver');
     Route::get('/ObtenerCitatorios/{id}',                           [SeerController::class, 'mostrar_citatorios']);
     Route::get('/Verpdfcasosprevistos/{id}', [RecepcionController::class, 'VerPDFCasosPrevistos'])->name('VerPDFCasosPrevistos');
