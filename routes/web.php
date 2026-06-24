@@ -434,9 +434,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfcumplimientoTotal/{id}',                 [SeerController::class, 'VerPDFCumplimientoTotal'])->name('PDFcumplimientoTotal');
         Route::get('/audiencias/edicion/{id}/{audiencia_id}',       [SeerController::class, 'edicion_audienciaConcluida'])->name('edicion_audienciaConcluida'); //Vista de edición cuando la audiencia ya finalizó
         Route::post('/audiencias/Guardar_edicionA',                 [SeerController::class, 'Guarda_edicion_audienciaConcluida'])->name('Guarda_edicion_audienciaConcluida');
-        Route::get('/excepciones/index',         [RecepcionController::class, 'index_excepciones'])->name('excepcion');
-        Route::get('/excepciones/atender/{id}',  [RecepcionController::class, 'atender_excepcion'])->name('atender_excepcion');
-        Route::post('/excepciones/guardar',       [RecepcionController::class, 'guardar_excepcion'])->name('guardar_excepcion');
+        Route::get('/excepciones/index',                            [RecepcionController::class, 'index_excepciones'])->name('excepcion');
+        Route::get('/excepciones/atender/{id}',                     [RecepcionController::class, 'atender_excepcion'])->name('atender_excepcion');
+        Route::post('/excepciones/guardar',                         [RecepcionController::class, 'guardar_excepcion'])->name('guardar_excepcion');
+        Route::get('/cumplimiento/rechazar/rati/{id}',              [SeerController::class, 'cumplimiento_rechazar_rati'])->name('cumplimiento_rechazar');
+        Route::post('/cumplimiento/no_comparece/{id}',              [SeerController::class, 'cumplimiento_incomparecencia'])->name('cumplimiento_incomparecencia');
+        Route::get('/cumplimiento/PDFIncumplimiento/{id}',          [SeerController::class, 'PDFincumplimientoAudiencia'])->name('PDFincumplimientoAudiencia');
+        Route::get('/cumplimiento/incomparecencia/{id}',            [SeerController::class, 'PDFIncomparecenciaCumplimiento'])->name('PDFIncomparecenciaCumplimiento');
+        Route::post('/cumplimiento/pagar/pena/audiencia',           [SeerController::class, 'cumplimiento_pagar_con_pena_audiencia'])->name('cumplimiento_pagar_pena_audiencia');
 
         Route::get('/documentos/solicitante/identificacion/{id}',       [SeerController::class, 'ver_identificacion_solicitante'])->name('documento_identificacion_solicitante_ver');
         Route::get('/ObtenerCitatorios/{id}',                           [SeerController::class, 'mostrar_citatorios']);
