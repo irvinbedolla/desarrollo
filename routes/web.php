@@ -533,7 +533,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/ratificaciones/pago_eliminar_pago/{id_solicitud}',          [TurnosController::class, 'pago_eliminar_pago_ratificacion'])->name('pago_eliminar_pago_ratificacion');
         Route::post('/ratificaciones/terminar_ratificacion',            [TurnosController::class, 'terminar_ratificacion'])->name('terminar_ratificacion');
         Route::get('/cumplimiento/PDFIncumplimientoR/{id}',             [TurnosController::class, 'PDFincumplimientoRatificacion'])->name('PDFincumplimientoRatificacion');
-        Route::get('/VerpdfcPTUNLaboraRat/{id}',                        [TurnosController::class, 'VerPDFConvenioPTU_rat'])->name('PDFconvenioPTU_NO_R'); //Convenio PTU ya NO labora el trabajador
+        Route::get('/VerpdfcPTUNLaboraRat/{id}',                        [TurnosController::class, 'VerPDFConvenioPTU_rat'])->name('PDFconvenioPTU_NO_R');
+        Route::get('/Verpdf/{id}',                                      [TurnosController::class, 'VerPDF'])->name('PDFratifi');
         
         Route::get('/ratificaciones/vista_previaCitas/{id_solicitud}',  [TurnosController::class, 'vista_previa_citas'])->name('vista_previa_citas'); //Vista previa de la vista citas(primera parte del llenado de la ratificación)
         Route::post('/ratificaciones/guardarEdicion_citas',             [TurnosController::class, 'guardarEdicion_citas'])->name('guardarEdicion_citas');
