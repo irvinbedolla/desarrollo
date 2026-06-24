@@ -556,6 +556,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/ratificaciones/buscar-abogados-ajax',              [TurnosController::class, 'buscar_abogados_ajax'])->name('buscar_abogados_ajax');
         Route::get('/cumplimiento/rechazara/{id}',                      [SeerController::class, 'cumplimiento_rechazar_audiencia'])->name('cumplimiento_rechazar_audiencia');
         Route::post('/turnos/mostrar',                                  [TurnosController::class, 'mostrar'])->name('turnos_mostrar');
+        Route::post('/turnos/archivar',          [TurnosController::class, 'archivar_ratificacion'])->name('archivar_ratificacion');
+        
         //Documentos
             Route::get('/INE_Solicitante/{id}',                         [SeerController::class, 'Ver_INE_Solicitante'])->name('PDF_INE_solicitante');
             Route::get('/documentos/solicitante/identificacion/{id}',   [SeerController::class, 'ver_identificacion_solicitante'])->name('documento_identificacion_solicitante_ver');
