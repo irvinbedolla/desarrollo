@@ -367,6 +367,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/notificaciones/historial',             [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar');
         Route::post('notificaciones/actualizar',            [SeerController::class, 'editar_citados'])->name('actualizar_enlace'); 
         Route::post('/seer/store_enlace/{id}',              [SeerController::class, 'store_enlace'])->name('seer.store_enlace');
+         Route::post('/seer/mostrar',                       [SeerController::class, 'mostrar_reporte'])->name('seer.mostar');
     });
 
     /*
@@ -524,18 +525,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/PDF/falta_interes/{id}',               [TurnosController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
         Route::get('/ratificaciones/pendientes',            [TurnosController::class, 'ratificacion_confirmadas'])->name('ratificacion_confirmadas'); 
         Route::get('/ratificaciones/pagoIncom/{id}',        [TurnosController::class, 'incomparecencia_rati'])->name('ratificacion_pagoIncom'); //No comparece el trabajador al pago
-        Route::get('/ratificaciones/vista_previa/{id_solicitud}',  [TurnosController::class, 'vista_previa_ratificacion'])->name('vista_previa_ratificacion');
-        Route::post('/ratificaciones/editarR',               [TurnosController::class, 'editar_ratificacion_revisar'])->name('editar_ratificacion_revisar');
-        Route::post('/seleccionar_abogado_ratificacion',    [TurnosController::class, 'seleccionar_abogado_ratificacion'])->name('seleccionar_abogado_ratificacion');
+        Route::get('/ratificaciones/vista_previa/{id_solicitud}',       [TurnosController::class, 'vista_previa_ratificacion'])->name('vista_previa_ratificacion');
+        Route::post('/ratificaciones/editarR',                          [TurnosController::class, 'editar_ratificacion_revisar'])->name('editar_ratificacion_revisar');
+        Route::post('/seleccionar_abogado_ratificacion',                [TurnosController::class, 'seleccionar_abogado_ratificacion'])->name('seleccionar_abogado_ratificacion');
         Route::delete('/ratificaciones/concepto_eliminar_pago/{id_solicitud}',      [TurnosController::class, 'concepto_eliminar_pago_ratificacion'])->name('concepto_eliminar_pago_ratificacion');
         Route::delete('/ratificaciones/deduccion_eliminar_pago/{id_solicitud}',     [TurnosController::class, 'concepto_eliminar_deduccion_ratificacion'])->name('concepto_eliminar_deduccion_ratificacion');
         Route::delete('/ratificaciones/pago_eliminar_pago/{id_solicitud}',          [TurnosController::class, 'pago_eliminar_pago_ratificacion'])->name('pago_eliminar_pago_ratificacion');
-        Route::post('/ratificaciones/terminar_ratificacion',   [TurnosController::class, 'terminar_ratificacion'])->name('terminar_ratificacion');
-        Route::get('/cumplimiento/PDFIncumplimientoR/{id}',    [TurnosController::class, 'PDFincumplimientoRatificacion'])->name('PDFincumplimientoRatificacion');
-        Route::get('/VerpdfcPTUNLaboraRat/{id}',               [TurnosController::class, 'VerPDFConvenioPTU_rat'])->name('PDFconvenioPTU_NO_R'); //Convenio PTU ya NO labora el trabajador
-        //Route::get('/VerpdfcPTUNLaboraRat/{id}',               [TurnosController::class, ''])->name('PDFconvenioPTU_NO_R'); Respaldo
+        Route::post('/ratificaciones/terminar_ratificacion',            [TurnosController::class, 'terminar_ratificacion'])->name('terminar_ratificacion');
+        Route::get('/cumplimiento/PDFIncumplimientoR/{id}',             [TurnosController::class, 'PDFincumplimientoRatificacion'])->name('PDFincumplimientoRatificacion');
+        Route::get('/VerpdfcPTUNLaboraRat/{id}',                        [TurnosController::class, 'VerPDFConvenioPTU_rat'])->name('PDFconvenioPTU_NO_R'); //Convenio PTU ya NO labora el trabajador
         
         Route::get('/ratificaciones/vista_previaCitas/{id_solicitud}',  [TurnosController::class, 'vista_previa_citas'])->name('vista_previa_citas'); //Vista previa de la vista citas(primera parte del llenado de la ratificación)
         Route::post('/ratificaciones/guardarEdicion_citas',             [TurnosController::class, 'guardarEdicion_citas'])->name('guardarEdicion_citas');
         Route::get('/ratificaciones/buscar-abogados-ajax',              [TurnosController::class, 'buscar_abogados_ajax'])->name('buscar_abogados_ajax');
+        Route::get('/cumplimiento/rechazara/{id}',                      [SeerController::class, 'cumplimiento_rechazar_audiencia'])->name('cumplimiento_rechazar_audiencia');
+        Route::post('/turnos/mostrar',                                  [TurnosController::class, 'mostrar'])->name('turnos_mostrar');
+        //Documentos
+            Route::get('/INE_Solicitante/{id}',                         [SeerController::class, 'Ver_INE_Solicitante'])->name('PDF_INE_solicitante');
+            Route::get('/documentos/solicitante/identificacion/{id}',   [SeerController::class, 'ver_identificacion_solicitante'])->name('documento_identificacion_solicitante_ver');
+            Route::get('/VerDcocumentosRatificacion/{id}',              [TurnosController::class, 'VerDocumentosRatificacion'])->name('VerDocumentosRatificacion');
+            Route::get('/documentos/ratificacion/{id}',                 [TurnosController::class, 'ver_documento_subido'])->name('documento_ratificacion_ver');
+            Route::get('/documentos/solicitud/{id}',                    [SeerController::class, 'ver_documento_subido'])->name('documento_solicitud_ver');
+            Route::get('/VerDcocumentos/{id}',                          [SeerController::class, 'VerDocumentosAudiencia'])->name('VerDocumentosAudiencia');
 });
