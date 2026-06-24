@@ -51,7 +51,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6" id="motivo" style="display:none;">
                                         <div class="form-group">
                                             <label for="name">Señale el motivo:</label>
-                                            <input id="motivo" name="motivo" type="text" class="form-control"">
+                                            <input id="motivo" name="motivo" type="text" oninput="this.value = this.value.toUpperCase()" class="form-control"">
                                         </div>
                                     </div>
                                     
@@ -107,7 +107,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6" id="otro_cambio" style="display:none;">
                                         <div class="form-group">
                                             <label for="name">Especifique el cambio en la situación laboral</label>
-                                            <input id="tipo_cambio" type="text" class="form-control">
+                                            <input id="tipo_cambio" type="text" oninput="this.value = this.value.toUpperCase()" class="form-control">
                                         </div>
                                     </div>
                                     <input type="hidden" name="situacion_laboral" id="situacion_laboral">
@@ -131,7 +131,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6" id="otra_dependencia" style="display:none;">
                                         <div class="form-group">
                                             <label for="name">Especificar dependencia</label>
-                                            <input id="nombre_dependencia" type="text" class="form-control" >
+                                            <input id="nombre_dependencia" type="text" oninput=" this.value = this.value.toUpperCase()" class="form-control" >
                                             <!--textarea class="form-control" name="dependencia" rows="4"style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">{{ old('especificar', $citado->especificar ?? '') }}</textarea-->
                                         </div>
                                     </div>
@@ -152,7 +152,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6" id="si_conoce" style="display:none;">
                                         <div class="form-group">
                                             <label for="name">Especificar el nombre</label>
-                                            <input id="nombre_jefe" type="text" class="form-control" >
+                                            <input id="nombre_jefe" type="text" oninput="this.value = this.value.toUpperCase()" class="form-control" >
                                         </div>
                                     </div>
                                     <input type="hidden" name="jefe_inmediato" id="jefe_inmediato">
@@ -174,13 +174,13 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">¿La persona afectada comunicó los hechos a alguien más de su área de trabajo? <span style="color:rgb(102, 102, 102);">(Decriba a quién o a quiénes)</span></label>
-                                            <textarea name="descripcion_persona" class="form-control"></textarea>
+                                            <textarea name="descripcion_persona" oninput="this.value = this.value.toUpperCase()" class="form-control"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Descripción de las conductas manifestadas<span style="color:red;">(*)</span></label>
-                                            <textarea name="descripcion_conductas" class="form-control" required></textarea>
+                                            <textarea name="descripcion_conductas" oninput="this.value = this.value.toUpperCase()" class="form-control" required></textarea>
                                             <div class="invalid-feedback">
                                                 La descripción es oligatoria.
                                             </div>
@@ -189,7 +189,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Ubicación:<span style="color:red;">(*)</span></label>
-                                            <textarea name="ubicacion" class="form-control"  required></textarea>
+                                            <textarea name="ubicacion" oninput="this.value = this.value.toUpperCase()" class="form-control"  required></textarea>
                                             <div class="invalid-feedback">
                                                 La ubicación son obligatoria.
                                             </div>
@@ -198,7 +198,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Observaciones<span style="color:red;">(*)</span></label>
-                                            <textarea name="observaciones" class="form-control"  required></textarea>
+                                            <textarea name="observaciones" oninput="this.value = this.value.toUpperCase()" class="form-control"  required></textarea>
                                             <div class="invalid-feedback">
                                                 Las observaciones son obligatorias.
                                             </div>
@@ -210,7 +210,7 @@
                                         <button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>
                                     
-                                </div>
+                                </div>s
                             </form>       
                         </div>
                     </div>

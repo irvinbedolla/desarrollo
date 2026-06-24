@@ -943,7 +943,7 @@ class RecepcionController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'prueba'.'pdf';
+        $nombreArchivo = 'casos_previstos'.'pdf';
         return $pdf->stream($nombreArchivo);       
     }
     public function Verpdfcanalizacion($id){
@@ -957,7 +957,7 @@ class RecepcionController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'prueba'.'pdf';
+        $nombreArchivo = 'canalizacion'.'pdf';
         return $pdf->stream($nombreArchivo);       
     }
 }
