@@ -161,7 +161,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Expediente<span style="color:red;">(*)</span></label>
-                                            <input type="text" class="form-control" name="expediente" required>
+                                            <input type="text" class="form-control" name="expediente" maxlength="18" required>
                                             <div class="invalid-feedback">
                                                 El número de expediente es obligatorio.
                                             </div>
