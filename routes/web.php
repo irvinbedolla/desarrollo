@@ -536,6 +536,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfcPTUNLaboraRat/{id}',                        [TurnosController::class, 'VerPDFConvenioPTU_rat'])->name('PDFconvenioPTU_NO_R');
         Route::get('/Verpdf/{id}',                                      [TurnosController::class, 'VerPDF'])->name('PDFratifi');
         Route::get('/Verpdfaudiencia/{id}',                             [TurnosController::class, 'VerPDFAudiencia'])->name('PDFaudiencia');
+        Route::get('/Verpdfc/{id}',                                     [TurnosController::class, 'VerPDFConvenio'])->name('PDFconvenioratificacion');
         
         Route::get('/ratificaciones/vista_previaCitas/{id_solicitud}',  [TurnosController::class, 'vista_previa_citas'])->name('vista_previa_citas'); //Vista previa de la vista citas(primera parte del llenado de la ratificación)
         Route::post('/ratificaciones/guardarEdicion_citas',             [TurnosController::class, 'guardarEdicion_citas'])->name('guardarEdicion_citas');
