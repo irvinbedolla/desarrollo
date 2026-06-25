@@ -117,13 +117,15 @@
         document.body.style.overflow = 'hidden';
     }
 
-    // Arrancar el loop de polling
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) verificarLock();
+    });
+    window.addEventListener('focus', verificarLock);
+
     (function loop() {
         if (!polling) return;
-        setTimeout(function () {
-            verificarLock();
-            loop();
-        }, POLL_INTERVAL);
+        verificarLock();
+        setTimeout(loop, POLL_INTERVAL);
     })();
 })();
 </script>
