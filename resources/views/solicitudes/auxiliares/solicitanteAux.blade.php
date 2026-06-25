@@ -705,13 +705,13 @@
                                                 </div>
                                             </div>
                                         </div>-->
-                                        <div class="canvas-wrapper">
+                                        <!--div class="canvas-wrapper">
                                             <canvas id="signature-canvas"></canvas>
-                                        </div>
-                                        <input type="hidden" name="firma" id="firma">
-                                        <div>
+                                        </!--div-->
+                                        <!--input type="hidden" name="firma" id="firma"-->
+                                        <!--div>
                                             <button id="clear-btn" type="button" class="btn btn-primary">Limpiar Pantalla</button>
-                                        </div>
+                                        </div-->
                                         <!--input type="hidden" name="firma" id="firma"-->
                                         <!--div class="col-xs-12 col-sm-12 col-md-12">
                                             <button type="button" class="btn btn-info open-modal" data-bs-toggle="modal" data-bs-target="#modalFirmas">Firma</button>                                                        
@@ -1218,14 +1218,14 @@
 
             
 
-            document.getElementById('save-btn').addEventListener('click', () => {
+            /*document.getElementById('save-btn').addEventListener('click', () => {
                 if (signaturePad.isEmpty()) {
                     alert("Por favor, estampe su firma antes de continuar.");
                     return;
                 }
                 document.getElementById('firma').value =
                     signaturePad.toDataURL('image/png');
-            });
+            });*/
             /*const form = document.getElementById('frmSolicitante');
             form.addEventListener('submit', function(){
             });*/

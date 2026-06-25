@@ -7418,6 +7418,7 @@ class SeerController extends Controller
         $user = User::find($id_usuario);
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name')->all();
+        $audiencia_id = $data['audiencia_id'] ?? $request->query('audiencia_id');
 
         $solicitante = SeerSolicitante::where('id_solicitud', $data['id'])->first();
     
@@ -7466,8 +7467,8 @@ class SeerController extends Controller
         }
             
         session()->flash('preserve_edit_session', true);
-        return redirect()->route('inicioAudiencia', ['id' => $data['id']]);
-      
+        return redirect()->route('inicioAudiencia', ['id' => $data['id'], 'audiencia_id' => $audiencia_id]);
+
     }
 
     public function insertar_citados_con(Request $request) {
@@ -12991,7 +12992,7 @@ class SeerController extends Controller
             }
         }
 
-        if ( $allCentro == 0 ){
+        /*if ( $allCentro == 0 ){
             $baseQuery = SeerCitados::
             leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
             ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
@@ -13004,13 +13005,13 @@ class SeerController extends Controller
             'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
             'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','abogados.tipo_identificacion');
 
-            /*$hayNotificadaAudiencia = (clone $baseQuery)
+            $hayNotificadaAudiencia = (clone $baseQuery)
                 ->where('seer_citados.estatus', 'Notificada en Audiencia')
                 ->exists();
 
             if ($hayNotificadaAudiencia) {
                 $baseQuery->where('seer_citados.estatus', 'Notificada en Audiencia');
-            }*/
+            }
 
             $representantes = $baseQuery->get();
         }else {
@@ -13024,7 +13025,19 @@ class SeerController extends Controller
             'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
             'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','abogados.tipo_identificacion')
             ->get();
-        }
+        }*/
+
+        $representantes = SeerCitados::
+            leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
+            ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
+            ->where('seer_citados.id_solicitud', $id)
+            ->where('seer_citados.audiencia_id', $audiencia_id)
+            ->whereNotNull('seer_citados.id_abogado')
+            ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
+            'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
+            'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
+            'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','abogados.tipo_identificacion')
+            ->get();
         
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $abogados = Poder::all();
@@ -16402,23 +16415,23 @@ class SeerController extends Controller
                 SeerSolicitante::create($solicitanteData);
 
                 //Almacenar firma del solicitante
-                $rawImage = $solicitanteData['firma'];
+                /*$rawImage = $solicitanteData['firma'];
 
                 $cleanBase64 = str_replace('data:image/png;base64,', '', $rawImage);
                 $cleanBase64 = str_replace(' ', '+', $cleanBase64);
                 $binaryData = base64_decode($cleanBase64);
                 $fileName = 'firma-'. $id . '-' . Str::random(10) . '.png';
                 $directoryPath = 'firmas/'. $id;
-                $fullStoragePath = $directoryPath . '/' . $fileName;
+                $fullStoragePath = $directoryPath . '/' . $fileName;*/
                 //dd($fullStoragePath);
                 // Guardar ruta de la firma en la base de datos
-                Firmas::create([
+                /*Firmas::create([
                     'id_solicitud' => $id,
                     'ruta_firma' => $fullStoragePath,
                     'tipo' => 'solicitud'
-                ]);
+                ]);*/
 
-                Storage::put($fullStoragePath, $binaryData);
+                //Storage::put($fullStoragePath, $binaryData);
 
 
                 // 4. Guardar Caso Excepción (si existe)
@@ -17211,7 +17224,7 @@ class SeerController extends Controller
             'identificacion'       => $data["identificacion"],
             'num_identificacion'   => $data["num_identificacion"],
             'descripcionSolicitud' => $data["descripcionSolicitud"],
-            'firma'                => $data["firma"]
+            //'firma'                => $data["firma"]
         ); 
 
         if(isset($data["rfc"])){
