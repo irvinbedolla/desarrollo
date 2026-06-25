@@ -17079,6 +17079,7 @@ class SeerController extends Controller
         ]);*/
 
         $año_actual = date('Y');
+        $fecha_actual = date('Y-m-d');
         $numero_consecutivo = 0;
         $consecutivo  = SeerPerGeneral::latest('consecutivo')
         ->where('delegacion',$data["delegacion"])
@@ -17101,6 +17102,7 @@ class SeerController extends Controller
             'tipo_generacion' => auth()->check() ? auth()->id() :0,
             'consecutivo'    => $numero_consecutivo,    
             'año'            => $año_actual,
+            'fecha'          => $fecha_actual,
         );
        
         // SeerPerGeneral::create($data_insert); 
