@@ -15266,10 +15266,11 @@ dd("lelgo");
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $folio = SeerCitados::find($data["id"]);
-        
+        $ruta_imagen = '/' . $folio->id_solicitud . '/';
+
         if ($request->hasFile('foto1')) {
             $imagen_domicilio1 = $data["id"] . "-domicilio_Citado1.jpg";
-            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $ruta_imagen . $imagen_domicilio1);
             $foto1 = $imagen_domicilio1;
         } else {
             $foto1 = $folio->imagen_domicilio1;
@@ -15277,7 +15278,7 @@ dd("lelgo");
         
         if ($request->hasFile('foto2')) {
             $imagen_domicilio2 = $data["id"] . "-domicilio_Citado2.jpg";
-            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $ruta_imagen . $imagen_domicilio2);
             $foto2 = $imagen_domicilio2;
         } else {
             $foto2 = $folio->imagen_domicilio2;
