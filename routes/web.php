@@ -293,7 +293,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/VerpdfactaAudiencia/{id}',                             [SeerController::class, 'VerPDFAudiencia'])->name('VerPDFAudiencia');
             Route::get('/Verpdfcr/{id}',                                        [SeerController::class, 'VerPDFConvenioRei'])->name('PDFconvenioreinstalacion');
             Route::get('/Verpdfincompetencias/{id}',                            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
-            //Route::get('/Verpdfcs/{id}',                                        [SeerController::class, 'VerPDFConvenioSol'])->name('PDFconveniosolicitud');
             Route::get('/VerpdfcumplimientoTotal/{id}',                         [SeerController::class, 'VerPDFCumplimientoTotal'])->name('PDFcumplimientoTotal');
             Route::get('/Verpdfnoconciliacion/{id}',                            [SeerController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
             Route::get('/VerPDFNoConciliacionIndividual/{id}',                  [SeerController::class, 'VerPDFNoConciliacionIndividual'])->name('PDFnoConciliacionIndividual');

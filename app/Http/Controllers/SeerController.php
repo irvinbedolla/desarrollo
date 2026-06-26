@@ -10603,84 +10603,75 @@ class SeerController extends Controller
         return $pdf->stream($nombreArchivo);                   
     }
 
-    public function audiencias_cumplimiento(){
-        // 1. Obtenemos directamente el objeto del usuario autenticado (evitamos User::find)
+    public function audiencias_cumplimiento()
+    {
         $user = auth()->user();
-        $userRole = $user->roles->pluck('name')->all();
-        $delegaciones = ["Morelia", "Zitácuaro", "Uruapan", "Lázaro Cárdenas", "Zamora", "Sahuayo"];
+        
+        $mapa_delegaciones = [
+            "Morelia"         => ["Morelia", "Zitácuaro"],
+            "Uruapan"         => ["Uruapan", "Lázaro Cárdenas"],
+            "Zamora"          => ["Zamora", "Sahuayo"],
+            "Lázaro Cárdenas" => ["Lázaro Cárdenas"],
+            "Zitácuaro"       => ["Zitácuaro"],
+            "Sahuayo"         => ["Sahuayo"]
+        ];
 
-        if($userRole[0] != "Super Usuario"){
-            if($user->delegacion == "Morelia"){
-                $delegaciones = ["Morelia", "Zitácuaro"];
-            }
-            else if($user->delegacion == "Uruapan"){
-                $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
-            }
-            else if($user->delegacion == "Zamora"){
-                $delegaciones = ["Zamora", "Sahuayo"];
-            }
-            else if($user->delegacion == "Lázaro Cárdenas"){
-                $delegaciones = ["Lázaro Cárdenas"];
-            }
-            else if($user->delegacion == "Zitácuaro"){
-                $delegaciones = ["Zitácuaro"];
-            }
-            else if($user->delegacion == "Sahuayo"){
-                $delegaciones = ["Sahuayo"];
-            }
-        }
+        $userRole = $user->roles->pluck('name')->first();
+        $delegaciones = ($userRole === "Super Usuario") 
+            ? ["Morelia", "Zitácuaro", "Uruapan", "Lázaro Cárdenas", "Zamora", "Sahuayo"]
+            : ($mapa_delegaciones[$user->delegacion] ?? [$user->delegacion]);
 
-        $cumplimientos = Pagos::whereIn('pago_solicitud.delegacion', $delegaciones)
-            ->whereIn('pago_solicitud.tipo_pago', ["Ratificacion", "Audiencia", "Conciliador"])
+        $caseNueFinal = "CASE 
+            WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.id_solicitud != 0 THEN turnos.NUE 
+            WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.NUE 
+            ELSE pago_solicitud.NUE 
+        END";
+
+        $buscar = request('buscar');
+
+        $cumplimientos = Pagos::whereIn('pago_solicitud.tipo_pago', ["Ratificacion", "Audiencia", "Conciliador"])
+            ->whereIn('pago_solicitud.delegacion', $delegaciones)
             ->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
             ->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
             ->leftJoin('users', 'users.id', '=', 'pago_solicitud.id_conciliador')
+            
+            // MODIFICACIÓN CRÍTICA:
+            // Si hay una búsqueda activa, quita el filtro de 'Pendiente' para buscar en todo.
+            // Si NO hay búsqueda, aplica el filtro 'Pendiente' por defecto para mantener el rendimiento.
+            ->when($buscar, function ($query) use ($buscar, $caseNueFinal) {
+                return $query->where(DB::raw($caseNueFinal), 'LIKE', "%{$buscar}%");
+            }, function ($query) {
+                return $query->where('pago_solicitud.estatus', 'Pendiente');
+            })
+            
             ->select(
-            // Agrupador principal (NUE unificado)
-            DB::raw("CASE 
-                WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.id_solicitud != 0 THEN turnos.NUE 
-                WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.NUE 
-                ELSE pago_solicitud.NUE 
-            END as NUE_FINAL"),
-            
-            DB::raw('MAX(pago_solicitud.id) as id'),
-            'pago_solicitud.id_solicitud',
-            DB::raw('MAX(pago_solicitud.descripcion) as descripcion'),
-            'pago_solicitud.tipo_pago',
-            'users.name as conciliador_name',
-            
-            // Usamos funciones de agregación para campos que pueden variar
-            DB::raw("DATE_FORMAT(MAX(pago_solicitud.fecha), '%d/%m/%Y') as fecha_formateada"),
-            DB::raw("DATE_FORMAT(MAX(pago_solicitud.hora), '%h:%i %p') as hora_formateada"),
-            DB::raw("MAX(pago_solicitud.descripcion) as descripcion_pago"),
+                DB::raw("{$caseNueFinal} as NUE_FINAL"),
+                DB::raw('MAX(pago_solicitud.id) as id'),
+                'pago_solicitud.id_solicitud',
+                DB::raw('MAX(pago_solicitud.descripcion) as descripcion'),
+                'pago_solicitud.tipo_pago',
+                'users.name as conciliador_name',
+                DB::raw("DATE_FORMAT(MAX(pago_solicitud.fecha), '%d/%m/%Y') as fecha_formateada"),
+                DB::raw("DATE_FORMAT(MAX(pago_solicitud.hora), '%h:%i %p') as hora_formateada"),
+                DB::raw("MAX(pago_solicitud.descripcion) as descripcion_pago"),
+                DB::raw("COUNT(pago_solicitud.id) as total_pagos"),
+                DB::raw("SUM(pago_solicitud.monto) as monto_total"),
+                DB::raw("SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 ELSE 0 END) as pagos_realizados"),
+                DB::raw("SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 ELSE 0 END) as pagos_pendientes")
+            )
+            ->groupBy(
+                DB::raw($caseNueFinal),
+                'pago_solicitud.id_solicitud',
+                'pago_solicitud.tipo_pago',
+                'pago_solicitud.NUE',
+                'turnos.NUE',
+                'seer_general.NUE',
+                'users.name'
+            )
+            ->orderBy(DB::raw("MAX(pago_solicitud.fecha)"), 'desc') // Cambiado a DESC para que si buscas veas lo más reciente primero
+            ->paginate(500);
 
-            // Agregaciones de montos y cantidades
-            DB::raw("COUNT(pago_solicitud.id) as total_pagos"),
-            DB::raw("SUM(pago_solicitud.monto) as monto_total"),
-            DB::raw("SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 ELSE 0 END) as pagos_realizados"),
-            DB::raw("SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 ELSE 0 END) as pagos_pendientes")
-        )
-        ->groupBy(
-            // 1. La lógica del CASE completa
-            DB::raw("CASE 
-                WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.id_solicitud != 0 THEN turnos.NUE 
-                WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.NUE 
-                ELSE pago_solicitud.NUE 
-            END"),
-            // 2. Las columnas físicas que SQL detecta en la consulta
-            'pago_solicitud.id_solicitud',
-            'pago_solicitud.tipo_pago',
-            'pago_solicitud.NUE',   // El campo de la tabla pagos
-            'turnos.NUE',           // El campo de la tabla turnos (aquí estaba el error)
-            'seer_general.NUE',     // El campo de la tabla seer_general
-            'users.name'            // El nombre del conciliador
-        )
-        ->where('pago_solicitud.estatus',"=","Pendiente")
-        ->orderBy(DB::raw("MAX(pago_solicitud.fecha)"), 'asc')
-        ->take(3500)
-        ->get();
-
-        return view('/cumplimientos/index',compact('cumplimientos'));
+        return view('/cumplimientos/index', compact('cumplimientos'));
     }
 
     public function solicitud_audiencia_revisar($id, Request $request) {
@@ -11225,8 +11216,8 @@ class SeerController extends Controller
         $id_solicitud = $pagos["id_solicitud"];
         Pagos::find($id)->update(['estatus'  => "No pagado", 'fecha_conclucion' => \Carbon\Carbon::now()->format('Y-m-d')]);
         Turnos::find($id_solicitud)->update(['estatus' => "Incumplimiento"]);
-
-        return redirect()->route('cumplimiento_actual');
+dd("lelgo");
+        return redirect()->route('audiencias.cumplimiento');
     }
 
     public function cumplimiento_pagar_audiencia(Request $request){
@@ -11270,7 +11261,7 @@ class SeerController extends Controller
             SeerPerGeneral::find($id_solicitud)->update(['estatus' => 'Concluida']);
         }
 
-        return redirect()->route('cumplimiento_actual');
+        return redirect()->route('audiencias.cumplimiento');
     }
 
     public function cumplimiento_rechazar_audiencia($id){
@@ -11278,10 +11269,11 @@ class SeerController extends Controller
         $pagos = Pagos::find($id);
         $id_solicitud = $pagos["id_solicitud"];
         Pagos::find($id)->update(['estatus'  => "No pagado", 'user_id' => $user_id, 'fecha_conclucion' => \Carbon\Carbon::now()->format('Y-m-d')]);
+        if($pagos["id_solicitud"] != 0){
+            SeerPerGeneral::find($id_solicitud)->update(['estatus' => "Incumplimiento"]);
+        }
 
-        SeerPerGeneral::find($id_solicitud)->update(['estatus' => "Incumplimiento"]);
-
-        return redirect()->route('cumplimiento_actual');
+        return redirect()->route('audiencias.cumplimiento');
     }
 
     public function cumplimientos_busqueda(Request $request){
@@ -14653,11 +14645,7 @@ class SeerController extends Controller
         $id_solicitud = $pago->id_solicitud;
         Pagos::find($id_solicitud)?->update(['estatus' => "Incomparecencia trabajador", 'user_id' => $user_id]);
         
-        return redirect()->route('agenda');  
-        /*Así estab antes de los cambios en los cumplimientos*/ 
-        /*Pagos::find($id)->update(['estatus'  => "Incomparecencia trabajador"]);
-
-        return redirect()->route('agenda');*/
+        return redirect()->route('audiencias.cumplimiento');  
     }
 
     public function PDFIncomparecenciaCumplimiento($id){
@@ -16190,7 +16178,7 @@ class SeerController extends Controller
             ->update(['estatus' => "Concluida"]);
         }
 
-        return redirect()->route('todas_audiencias'); 
+        return redirect()->route('audiencias.cumplimiento'); 
     }
 
     // Eliminar/Quitar representante legal asiganado al de iniciar la audiencia
