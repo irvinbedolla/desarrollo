@@ -2412,7 +2412,7 @@ class TurnosController extends Controller
         Deducciones::find($id_solicitud)->delete();
         return back()->with('success', 'Pago Deducción Correctamente.');
     }
-    
+
     public function pago_eliminar_pago_ratificacion($id_solicitud){
         Pagos::find($id_solicitud)->delete();
         return back()->with('success', 'Pago Borrado Correctamente.');
@@ -2426,6 +2426,20 @@ class TurnosController extends Controller
         $id = auth()->user()->id;
         $user = User::find($id);
         $sede = $user->delegacion;
+
+        //Revisar que exista al menos un concepto de pago (ya guardados + nuevos)
+        $conceptosExistentes = Concepto::where('id_solicitud', $id_solicitud)->where('tipo_pago', 'Ratificacion')->count();
+        $nuevosConceptos = isset($data["tipo_pago"]) ? count($data["tipo_pago"]) : 0;
+        if(($conceptosExistentes + $nuevosConceptos) < 1){
+            return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
+        }
+
+        //Revisar que exista al menos un pago (ya guardados + nuevos)
+        $pagosExistentes = Pagos::where('id_solicitud', $id_solicitud)->where('tipo_pago', 'Ratificacion')->count();
+        $nuevosPagos = isset($data["dias_pagos"]) ? count($data["dias_pagos"]) : 0;
+        if(($pagosExistentes + $nuevosPagos) < 1){
+            return back()->withErrors('Debes agregar por lo menos un pago.');
+        }
 
         //Revisar si existe
         if(isset($data["dias_pagos"])){
