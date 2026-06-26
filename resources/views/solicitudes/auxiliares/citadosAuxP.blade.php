@@ -360,7 +360,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label for="name">Código postal <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="cp" id="cp" class="form-control" maxlength="5">
+                                            <input type="number" name="cp" id="cp" class="form-control" maxlength="5">
                                             <div class="invalid-feedback">
                                                 El campo Código Postal es obligatorio. Debes ingresar 5 caracteres.
                                             </div>
@@ -448,7 +448,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
                                                 <label for="name">Número de Seguro Social (Opcional)</label>
-                                                <input type="number" name="seguro" minlength="11" maxlength="12" class="form-control soloNumeros"> 
+                                                <input type="number" name="seguro" minlength="11" maxlength="12" class="form-control soloNumeros" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"> 
                                                 <div class="invalid-feedback">
                                                     Debe tener 12 dígitos su número de seguridad social
                                                 </div>
@@ -490,8 +490,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
                                                 <label for="name">Total de horas trabajadas por semana <span style="color:red;">(*)</span></label>
-                                                <input type="number" name="horas" min="0" class="form-control" required> 
-                                                <div class="invalid-feedback">
+                                                <input type="number" name="horas" min="0" max="168" class="form-control" oninput="if(this.value > 168) this.value = 168; if(this.value < 0) this.value = 0;" required>                                                <div class="invalid-feedback">
                                                     El campo cantidad de horas trabajadas es obligatorio.
                                                 </div>
                                             </div>

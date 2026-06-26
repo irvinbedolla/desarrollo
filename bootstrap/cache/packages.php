@@ -22,6 +22,13 @@
       'Breadcrumbs' => 'Diglactic\\Breadcrumbs\\Breadcrumbs',
     ),
   ),
+  'enlightn/enlightn' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Enlightn\\Enlightn\\EnlightnServiceProvider',
+    ),
+  ),
   'kitloong/laravel-migrations-generator' => 
   array (
     'providers' => 

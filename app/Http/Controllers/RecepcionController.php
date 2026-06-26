@@ -510,10 +510,11 @@ class RecepcionController extends Controller
 
     public function misturnos(){
         $id = auth()->user()->id;
+        $fecha_actual = date('Y-m-d');
 
         /////Validar si es auxiliar o exepcion /////
         $misturnos = Recepcion::where('auxiliar', $id)
-        ->where('estatus', 'no atendido')
+        ->where('fecha', $fecha_actual)
         ->get();
 
         return view('turnos.misturnos',compact('misturnos'));

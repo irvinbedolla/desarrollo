@@ -25,6 +25,7 @@
 		"yajra/laravel-datatables-buttons": "^11.2"
 	},
 	"require-dev": {
+		"enlightn/enlightn": "^2.10",
 		"fakerphp/faker": "^1.9.1",
 		"kitloong/laravel-migrations-generator": "^7.4",
 		"laravel/breeze": "^2.0",
