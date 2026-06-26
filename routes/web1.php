@@ -658,17 +658,3 @@ Route::get('/error', function () {
 Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);
 
 require __DIR__ . '/auth.php';
-/*
-//Devuelve el conteo de registros pendientes de firma para el usuario logueado
-Route::middleware(['auth', 'throttle:120,1'])->get('/poll/pendiente-firma', function () {
-    $userId = Auth::id();
-    $count = 0;
-    if ($userId) {
-        $count = SeerPerGeneral::query()
-            ->where('pendiente_firma', 'Si')
-            ->where('conciliador_id', $userId)
-            ->count();
-    }
-    return response()->json(['count' => (int) $count]);
-})->name('poll.pendiente_firma');
-*/

@@ -42,16 +42,8 @@ use App\Http\Controllers\AsistenciaController;
 */
 
 Route::middleware('guest')->group(function () {
-    Route::get('register',                  [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('register',                 [RegisteredUserController::class, 'store']);
-
     Route::get('/',                         [AuthenticatedSessionController::class, 'create'])->name('inicio_seccion');
     Route::post('login',                    [AuthenticatedSessionController::class, 'store'])->name('login');
-
-    Route::get('forgot-password',           [PasswordResetLinkController::class, 'create'])->name('password.request');
-    Route::post('forgot-password',          [PasswordResetLinkController::class, 'store'])->name('password.email');
-    Route::get('reset-password/{token}',    [NewPasswordController::class, 'create'])->name('password.reset');
-    Route::post('reset-password',           [NewPasswordController::class, 'store'])->name('password.update');
 });
 
 Route::get('/debug-sesion', function () {
@@ -154,7 +146,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/agenda',                               [DashboardController::class, 'index'])->name('agenda');
     Route::get('/cambio_contraseña/index',              [HomeController::class, 'password_cambiar'])->name('password_cambiar');
     Route::post('/notificaciones/editar',               [HomeController::class, 'contraseña_update'])->name('contraseña_update'); 
-    Route::get('/ver-documento-abogado/{id}/{archivo}', [PoderesController::class, 'descargarPdf'])->name('abogado.documento');
 
     // Calendario Compartido
     Route::get('/calendario',                           [CalendarController::class, 'index'])->name('calendario.index');
@@ -367,7 +358,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/notificaciones/historial',             [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar');
         Route::post('notificaciones/actualizar',            [SeerController::class, 'editar_citados'])->name('actualizar_enlace'); 
         Route::post('/seer/store_enlace/{id}',              [SeerController::class, 'store_enlace'])->name('seer.store_enlace');
-         Route::post('/seer/mostrar',                       [SeerController::class, 'mostrar_reporte'])->name('seer.mostar');
+        Route::post('/seer/mostrar',                        [SeerController::class, 'mostrar_reporte'])->name('seer.mostar');
+        Route::post('/notificacion/editar',                 [SeerController::class, 'mostrar_citado'])->name('editar_citado_historial');
+        Route::post('notificaciones/actualizarH',           [SeerController::class, 'editar_citados_historial'])->name('actualizar_enlace_hitorial');  
     });
 
     /*
@@ -557,7 +550,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cumplimiento/rechazara/{id}',                      [SeerController::class, 'cumplimiento_rechazar_audiencia'])->name('cumplimiento_rechazar_audiencia');
         Route::post('/turnos/mostrar',                                  [TurnosController::class, 'mostrar'])->name('turnos_mostrar');
         Route::post('/turnos/archivar',          [TurnosController::class, 'archivar_ratificacion'])->name('archivar_ratificacion');
-        
+
         //Documentos
             Route::get('/INE_Solicitante/{id}',                         [SeerController::class, 'Ver_INE_Solicitante'])->name('PDF_INE_solicitante');
             Route::get('/documentos/solicitante/identificacion/{id}',   [SeerController::class, 'ver_identificacion_solicitante'])->name('documento_identificacion_solicitante_ver');
