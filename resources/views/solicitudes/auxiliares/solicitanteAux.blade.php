@@ -421,7 +421,9 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Total de horas trabajadas por semana <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="horas" min="0" max= "168" maxlength="3" class="form-control" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required> 
+                                                    <!--input type="number" name="horas" min="0" max= "168" maxlength="3" class="form-control" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required-->
+                                                    <input type="number" name="horas" min="0" max="168" class="form-control" oninput="if(this.value > 168) this.value = 168; if(this.value < 0) this.value = 0;" required>
+
                                                     <div class="invalid-feedback">
                                                         El campo cantidad de horas trabajadas es obligatorio.
                                                     </div>
