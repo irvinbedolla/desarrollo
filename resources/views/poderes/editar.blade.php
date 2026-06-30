@@ -39,7 +39,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <label for="name">Razón Social <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="razon" value="{{$poder->nombres_patronal}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="razon" value="{{$poder->nombres_patronal}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
@@ -48,7 +48,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">RFC <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="rfc_moral" value="{{$poder->rfc_patronal}}" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="rfc_moral" value="{{$poder->rfc_patronal}}" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
@@ -57,7 +57,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Giro Comercial <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="giro_moral" value="{{$poder->giroComercial}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" maxlength="200" name="giro_moral" value="{{$poder->giroComercial}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
@@ -72,8 +72,8 @@
                                                 
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Entidad Federativa</label>
-                                                        <select id="estado_moral" class="form-control" name="estado_moral" placeholder="*Entidad Federativa" >
+                                                        <label for="password">Entidad Federativa <span style="color:red;">(*)</span></label>
+                                                        <select id="estado_moral" class="form-control" name="estado_moral" placeholder="*Entidad Federativa" required>
                                                             <option value="">Seleccione</option>
                                                             @foreach($estados as $est)
                                                                 <option value="{{$est['id']}}" {{ $poder["estado_patronal"] == $est["id"] ? "selected" : '' }}>{{$est['nombre']}}</option>
@@ -86,8 +86,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre del Municipio o Alcaldía (*)</label>
-                                                        <select id="municipio_moral" class="form-control" name="municipio_moral" placeholder="*Municipio" >
+                                                        <label for="name">Nombre del Municipio o Alcaldía <span style="color:red;">(*)</span></label>
+                                                        <select id="municipio_moral" class="form-control" name="municipio_moral" placeholder="*Municipio" required>
                                                             <option value="">Seleccione</option>
                                                             @foreach($municipios as $mun)
                                                                 <option value="{{$mun['id']}}" {{ $poder["municipio_patronal"] == $mun["id"] ? "selected" : '' }}>{{$mun['nombre']}}</option>
@@ -100,8 +100,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Tipo de Vialidad (*)</label>
-                                                        <select name="vialidad_Moral" id="vialidad_Moral" class="form-control" placeholder="*Vialidad" >
+                                                        <label for="name">Tipo de Vialidad <span style="color:red;">(*)</span></label>
+                                                        <select name="vialidad_Moral" id="vialidad_Moral" class="form-control" placeholder="*Vialidad" required>
                                                             <option value="">SELECCIONE</option>
                                                             <option value="AMPLIACIÓN"  {{ $poder["tipo_vialidad_patronal"] == "AMPLIACIÓN" ? "selected" : '' }}>Ampliación</option>
                                                             <option value="ANDADOR"     {{ $poder["tipo_vialidad_patronal"] == "ANDADOR" ? "selected" : '' }}>Andador</option>
@@ -131,8 +131,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre de la Vialidad (*)</label>
-                                                        <input type="text" name="vialidad_calleMoral" value="{{$poder->vialidad_patronal}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <label for="name">Nombre de la Vialidad <span style="color:red;">(*)</span></label>
+                                                        <input type="text" maxlength="100" name="vialidad_calleMoral" value="{{$poder->vialidad_patronal}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El campo vialidad o calle es obligatorio.
                                                         </div>
@@ -141,7 +141,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Colonia <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" name="colonia_moral" value="{{$poder->colonia_patronal}}" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" maxlength="50" class="form-control" name="colonia_moral" value="{{$poder->colonia_patronal}}" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -150,7 +150,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Ext. <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" value="{{$poder->num_ext_patronal}}" name="num_ext_moral"  oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" maxlength="50" class="form-control" value="{{$poder->num_ext_patronal}}" name="num_ext_moral"  oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -159,7 +159,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Int.</label>
-                                                        <input type="text" class="form-control" value="{{$poder->mun_int_patronal}}" name="num_int" oninput="this.value = this.value.toUpperCase()">
+                                                        <input type="text" maxlength="50" class="form-control" value="{{$poder->mun_int_patronal}}" name="num_int" oninput="this.value = this.value.toUpperCase()">
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -168,7 +168,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Código Postal <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" name="cp_moral" value="{{$poder->cp_patronal}}"  minlength="5" maxlength="5" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="number" class="form-control" name="cp_moral" value="{{$poder->cp_patronal}}"  minlength="5" maxlength="5" oninput="this.value = this.value.toUpperCase(); if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required>
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -197,7 +197,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Nombre(s) del Representante Legal<span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="nombre_representante_Moral" value="{{$poder->nombre_representante}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" maxlength="50" name="nombre_representante_Moral" value="{{$poder->nombre_representante}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
@@ -206,7 +206,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="primer_Moral" value="{{$poder->primer_apellido_representante}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" maxlength="50" name="primer_Moral" value="{{$poder->primer_apellido_representante}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El primer apellido es obligatorio.
                                                         </div>
@@ -215,7 +215,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="segundo_Moral" value="{{$poder->segundo_apellido_representante}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" maxlength="50" name="segundo_Moral" value="{{$poder->segundo_apellido_representante}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El segundo apellido es obligatorio.
                                                         </div>
@@ -223,8 +223,8 @@
                                                 </div>  
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">CURP</label>
-                                                        <input type="text" class="form-control" name="curp_moral" value="{{$poder->curp_representante}}" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
+                                                        <label for="">CURP <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" name="curp_moral" value="{{$poder->curp_representante}}" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
                                                         </div>
@@ -233,7 +233,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Sexo <span style="color:red;">(*)</span></label>
-                                                        <select name="sexo_Moral" id="sexo_Moral" class="form-control">
+                                                        <select name="sexo_Moral" id="sexo_Moral" class="form-control" required>
                                                             <option value="">Seleccione</option>
                                                             <option value="Femenino"    {{ $poder["sexo_representante"] == "Femenino" ? "selected" : '' }}>Femenino</option>
                                                             <option value="Masculino"   {{ $poder["sexo_representante"] == "Masculino" ? "selected" : '' }}>Masculino</option>
@@ -254,7 +254,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="">Correo electrónico <span style="color:red;">(*)</label>
-                                                        <input type="email" class="form-control" name="correo_Moral" value="{{$poder->correo_representante}}" >
+                                                        <input type="email" maxlength="50" class="form-control" name="correo_Moral" value="{{$poder->correo_representante}}" required>
                                                         <div class="invalid-feedback">
                                                             El Correo electrónico es obligatorio.
                                                         </div>
@@ -263,7 +263,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="">Teléfono <span style="color:red;">(*)</label>
-                                                        <input type="text" class="form-control" name="telefono_Moral" value="{{$poder->numero_representante}}" maxlength="10" pattern="[0-9]+" >
+                                                        <input type="number" class="form-control" name="telefono_Moral" value="{{$poder->numero_representante}}" maxlength="10" pattern="[0-9]+" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required>
                                                         <div class="invalid-feedback">
                                                             El telefono es obligatorio.
                                                         </div>
@@ -279,7 +279,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">  
                                                     <div class="form-group">
                                                         <label for="name">Tipo de documento <span style="color:red;">(*)</span></label>
-                                                        <select name="tipo_Moral" id="tipo_Moral" class="form-control">
+                                                        <select name="tipo_Moral" id="tipo_Moral" class="form-control" required>
                                                             <option value="">Seleccione</option>
                                                             <option value="Carta Poder"                 {{ $poder["tipo_documento_representante"] == "Carta Poder" ? "selected" : '' }}>Carta Poder</option>
                                                                 <option value="Instrumento Notarial"    {{ $poder["tipo_documento_representante"] == "Instrumento Notarial" ? "selected" : '' }}>Instrumento Notarial</option>
@@ -292,7 +292,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Fecha expedición <span style="color:red;">(*)</span></label>
-                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_expedicicion_Moral" value="{{$poder->fechaRegistro}}">
+                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_expedicicion_Moral" value="{{$poder->fechaRegistro}}" required>
                                                         <div class="invalid-feedback">
                                                             La fecha es obligatoria.
                                                         </div>
@@ -309,8 +309,8 @@
                                                 </div>  
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <label for="">Descripción del documento que acredite la personaria</label>
-                                                        <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_Moral">{{$poder->descipcion_poder}}</textarea>
+                                                        <label for="">Descripción del documento que acredite la personaria <span style="color:red;">(*)</span></label>
+                                                        <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_Moral" required>{{$poder->descipcion_poder}}</textarea>
                                                         <div class="invalid-feedback">
                                                             La descripción es obligatoria.
                                                         </div>
@@ -318,8 +318,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="name">Identificación Oficial  <span style="color:red;">(*)</span></label>
-                                                        <select name="tipo_identificacion_Moral" class="form-control">
+                                                        <label for="name">Identificación Oficial <span style="color:red;">(*)</span></label>
+                                                        <select name="tipo_identificacion_Moral" class="form-control" required>
                                                             <option value="">Seleccione el tipo de indentificación</option>
                                                             <option value="Credencial de elector" {{ $poder["tipo_identificacion"] == "Credencial de elector" ? "selected" : '' }} >Credencial de Elector</option>
                                                             <option value="Pasaporte" {{ $poder["tipo_identificacion"] == "Pasaporte" ? "selected" : '' }}>Pasaporte</option>
@@ -339,7 +339,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6"> 
                                                     <div class="form-group">
                                                         <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
-                                                        <input type="text" name="num_identificacion_Moral" class="form-control" value="{{$poder->num_identificacion}}" oninput="this.value = this.value.toUpperCase()"> 
+                                                        <input type="text" maxlength="20" name="num_identificacion_Moral" class="form-control" value="{{$poder->num_identificacion}}" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El campo núm. de identificación es obligatorio.
                                                         </div>
@@ -354,8 +354,8 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Acta Constitutiva</label><br>
-                                                        <input type="file" name="documentoIne_Moral" id="documentoIne_Moral" class="form-control" accept=".pdf" >
+                                                        <label>Acta Constitutiva <span style="color:red;">(*)</span></label><br>
+                                                        <input type="file" name="documentoIne_Moral" id="documentoIne_Moral" class="form-control" accept=".pdf" {{ empty($poder->ineDocumento) ? 'required' : '' }}>
                                                         <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->ineDocumento}}">Existente</a>
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
@@ -364,8 +364,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Identificación del Representante Legal</label><br>
-                                                        <input type="file" name="documentoRepresentacion_Moral" id="documentoRepresentacion_Moral" class="form-control" accept=".pdf" >
+                                                        <label>Identificación del Representante Legal <span style="color:red;">(*)</span></label><br>
+                                                        <input type="file" name="documentoRepresentacion_Moral" id="documentoRepresentacion_Moral" class="form-control" accept=".pdf" {{ empty($poder->representacionDocumento) ? 'required' : '' }}>
                                                         @if($poder->representacionDocumento != NULL)
                                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->representacionDocumento}}">Existente</a>
                                                         @endif
@@ -376,8 +376,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Documento que acredite la personería</label><br>
-                                                        <input type="file" name="documentoPoder" id="documentoPoder" class="form-control" accept=".pdf">
+                                                        <label>Documento que acredite la personería <span style="color:red;">(*)</span></label><br>
+                                                        <input type="file" name="documentoPoder" id="documentoPoder" class="form-control" accept=".pdf" {{ empty($poder->cedulaDocumento) ? 'required' : '' }}>
                                                         @if($poder->cedulaDocumento != NULL)
                                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->cedulaDocumento}}">Existente</a>
                                                         @endif
@@ -413,7 +413,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Nombre(s) del Empleador<span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="nombre_pF" value="{{$poder->nombres_patronal}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="nombre_pF" value="{{$poder->nombres_patronal}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
@@ -422,7 +422,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="primero_PF" value="{{$poder->primer_apellido_patronal}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="primero_PF" value="{{$poder->primer_apellido_patronal}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El primer apellido es obligatorio.
                                                         </div>
@@ -431,7 +431,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="segundo_Pf" value="{{$poder->segundo_apellido_patronal}}"  class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="segundo_Pf" value="{{$poder->segundo_apellido_patronal}}"  class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El segundo apellido es obligatorio.
                                                         </div>
@@ -440,7 +440,7 @@
                                                  <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="">CURP <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" name="curp_PF" value="{{$poder->curp_patronal}}" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" class="form-control" name="curp_PF" value="{{$poder->curp_patronal}}" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
                                                         </div>
@@ -449,7 +449,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">RFC <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="RFC_pF" value="{{$poder->rfc_patronal}}" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="RFC_pF" value="{{$poder->rfc_patronal}}" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
@@ -458,7 +458,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Sexo <span style="color:red;">(*)</span></label>
-                                                        <select name="sexo_pf" id="sexo_pf" class="form-control">
+                                                        <select name="sexo_pf" id="sexo_pf" class="form-control" required>
                                                             <option value="">Seleccione</option>
                                                             <option value="Femenino"  {{ $poder["sexo_patronal"] == "Femenino" ? "selected" : '' }}>Femenino</option>
                                                             <option value="Masculino" {{ $poder["sexo_patronal"] == "Masculino" ? "selected" : '' }}>Masculino</option>
@@ -472,7 +472,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-9">
                                                     <div class="form-group">
                                                         <label for="name">Giro Comercial <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="giro_pF" value="{{$poder->giroComercial}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" maxlength="200" name="giro_pF" value="{{$poder->giroComercial}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
@@ -487,8 +487,8 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Correo electrónico</label>
-                                                        <input type="email" class="form-control" value="{{$poder->email_patronal}}" name="correo_pF" id="electrónico_pF" >
+                                                        <label for="">Correo electrónico <span style="color:red;">(*)</span></label>
+                                                        <input type="email" class="form-control" value="{{$poder->email_patronal}}" name="correo_pF" id="electrónico_pF" required>
                                                         <div class="invalid-feedback">
                                                             El Correo electrónico es obligatorio.
                                                         </div>
@@ -496,8 +496,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Teléfono</label>
-                                                            <input type="text" class="form-control"  name="telefono_PF" value="{{$poder->telefono_patronal}}" maxlength="10" pattern="[0-9]+" >
+                                                        <label for="">Teléfono <span style="color:red;">(*)</span></label>
+                                                            <input type="text" class="form-control"  name="telefono_PF" value="{{$poder->telefono_patronal}}" maxlength="10" pattern="[0-9]+" required>
                                                         <div class="invalid-feedback">
                                                             El telefono es obligatorio.
                                                         </div>
@@ -512,8 +512,8 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Entidad Federativa</label>
-                                                        <select id="estado_pF" class="form-control" name="estado_pF" placeholder="*Entidad Federativa" >
+                                                        <label for="password">Entidad Federativa <span style="color:red;">(*)</span></label>
+                                                        <select id="estado_pF" class="form-control" name="estado_pF" placeholder="*Entidad Federativa" required>
                                                             <option value="">Seleccione</option>
                                                             @foreach($estados as $est)
                                                                 <option value="{{$est['id']}}" {{ $est["id"] == $poder["estado_patronal"] ? "selected" : '' }}>{{$est['nombre']}}</option>
@@ -526,8 +526,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre del Municipio o Alcaldía (*)</label>
-                                                        <select id="municipio_pF" class="form-control" name="municipio_pF" placeholder="*Municipio" >
+                                                        <label for="name">Nombre del Municipio o Alcaldía <span style="color:red;">(*)</span></label>
+                                                        <select id="municipio_pF" class="form-control" name="municipio_pF" placeholder="*Municipio" required>
                                                             <option value="">Seleccione</option>
                                                             @foreach($municipios as $mun)
                                                                 <option value="{{$mun['id']}}" {{ $mun["id"] == $poder["municipio_patronal"] ? "selected" : '' }}>{{$mun['nombre']}}</option>
@@ -540,8 +540,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Tipo de Vialidad (*)</label>
-                                                        <select name="vialidad_pF" id="vialidad_pF" class="form-control" placeholder="*Vialidad" >
+                                                        <label for="name">Tipo de Vialidad <span style="color:red;">(*)</span></label>
+                                                        <select name="vialidad_pF" id="vialidad_pF" class="form-control" placeholder="*Vialidad" required>
                                                             <option value="">SELECCIONE</option>
                                                             <option value="AMPLIACIÓN"  {{ $poder["tipo_vialidad_patronal"] == "AMPLIACIÓN" ? "selected" : '' }}>Ampliación</option>
                                                             <option value="ANDADOR"     {{ $poder["tipo_vialidad_patronal"] == "ANDADOR" ? "selected" : '' }}>Andador</option>
@@ -572,7 +572,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Nombre de la Vialidad <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="vialidad_calle_pF" value="{{$poder->vialidad_patronal}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" maxlength="100" name="vialidad_calle_pF" value="{{$poder->vialidad_patronal}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El campo vialidad o calle es obligatorio.
                                                         </div>
@@ -581,7 +581,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Colonia <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" name="colonia_pF" value="{{$poder->colonia_patronal}}" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" maxlength="50" class="form-control" name="colonia_pF" value="{{$poder->colonia_patronal}}" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -590,7 +590,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Ext. <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" name="num_ext_pF" value="{{$poder->num_ext_patronal	}}" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" maxlength="50" class="form-control" name="num_ext_pF" value="{{$poder->num_ext_patronal	}}" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -599,7 +599,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Int.</label>
-                                                        <input type="text" class="form-control" name="num_int_pF" value="{{$poder->mun_int_patronal	}}"  oninput="this.value = this.value.toUpperCase()">
+                                                        <input type="text" maxlength="50" class="form-control" name="num_int_pF" value="{{$poder->mun_int_patronal	}}"  oninput="this.value = this.value.toUpperCase()">
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -608,7 +608,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Código Postal <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control"  name="cp_pF" value="{{$poder->cp_patronal	}}" minlength="5" maxlength="5" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" class="form-control"  name="cp_pF" value="{{$poder->cp_patronal	}}" minlength="5" maxlength="5" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -631,7 +631,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Nombre(s) del representante<span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="nombre_representante_pF" value="{{$poder->nombre_representante	}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" maxlength="50" name="nombre_representante_pF" value="{{$poder->nombre_representante	}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
@@ -640,7 +640,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="primer_representante_pF" value="{{$poder->primer_apellido_representante	}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" maxlength="50" name="primer_representante_pF" value="{{$poder->primer_apellido_representante	}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El primer apellido es obligatorio.
                                                         </div>
@@ -649,7 +649,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="segundo_representante_pF" value="{{$poder->segundo_apellido_representante	}}" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" maxlength="50" name="segundo_representante_pF" value="{{$poder->segundo_apellido_representante	}}" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             El segundo apellido es obligatorio.
                                                         </div>
@@ -657,8 +657,8 @@
                                                 </div>  
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">CURP</label>
-                                                        <input type="text" class="form-control" name="curp_representante_pF" value="{{$poder->curp_representante }}" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
+                                                        <label for="">CURP <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" name="curp_representante_pF" value="{{$poder->curp_representante }}" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" required>
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
                                                         </div>
@@ -667,7 +667,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Sexo <span style="color:red;">(*)</span></label>
-                                                        <select name="sexo_representante_pF" id="sexo_representante_pF" class="form-control">
+                                                        <select name="sexo_representante_pF" id="sexo_representante_pF" class="form-control" required>
                                                             <option value="">Seleccione</option>
                                                             <option value="Femenino"    {{ $poder["sexo_representante"] == "Femenino" ? "selected" : '' }}>Femenino</option>
                                                             <option value="Masculino"   {{ $poder["sexo_representante"] == "Masculino" ? "selected" : '' }}>Masculino</option>
@@ -688,7 +688,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="">Correo electrónico <span style="color:red;">(*)</span></label>
-                                                        <input type="email" class="form-control" name="correo_representante_pF" value="{{$poder->correo_representante }}">
+                                                        <input type="email" maxlength="50" class="form-control" name="correo_representante_pF" value="{{$poder->correo_representante }}" required>
                                                         <div class="invalid-feedback">
                                                             El Correo electrónico es obligatorio.
                                                         </div>
@@ -697,7 +697,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="">Teléfono <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control"  name="telefono_representante_pF" value="{{$poder->numero_representante }}" maxlength="10" pattern="[0-9]+" >
+                                                        <input type="text" class="form-control"  name="telefono_representante_pF" value="{{$poder->numero_representante }}" maxlength="10" pattern="[0-9]+" required>
                                                         <div class="invalid-feedback">
                                                             El telefono es obligatorio.
                                                         </div>
@@ -706,7 +706,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                         <div class="form-group">
                                                             <label for="name">Identificación Oficial<span style="color:red;">(*)</span></label>
-                                                            <select  name="tipo_identificacion_pFCR" class="form-control">
+                                                            <select  name="tipo_identificacion_pFCR" class="form-control" required>
                                                                 <option value="">Seleccione el tipo de indentificación</option>
                                                                 <option value="Credencial de elector" {{ $poder["tipo_identificacion"] == "Credencial de elector" ? "selected" : '' }} >Credencial de Elector</option>
                                                                 <option value="Pasaporte" {{ $poder["tipo_identificacion"] == "Pasaporte" ? "selected" : '' }}>Pasaporte</option>
@@ -726,7 +726,7 @@
                                                     <div class="col-xs-12 col-sm-12 col-md-6"> 
                                                         <div class="form-group">
                                                             <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
-                                                            <input type="text" name="num_identificacion_pFCR" class="form-control" oninput="this.value = this.value.toUpperCase()"  value="{{$poder->num_identificacion }}"> 
+                                                            <input type="text" maxlength="20" name="num_identificacion_pFCR" class="form-control" oninput="this.value = this.value.toUpperCase()"  value="{{$poder->num_identificacion }}" required>
                                                             <div class="invalid-feedback">
                                                                 El campo núm. de identificación es obligatorio.
                                                             </div>
@@ -742,7 +742,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">  
                                                     <div class="form-group">
                                                         <label for="name">Tipo de documento <span style="color:red;">(*)</span></label>
-                                                        <select name="tipo_documento_pF" id="tipo_documento_pF" class="form-control">
+                                                        <select name="tipo_documento_pF" id="tipo_documento_pF" class="form-control" required>
                                                             <option value="">Seleccione</option>
                                                             <option value="Carta Poder" {{ $poder["tipo_documento_representante"] == "Carta Poder" ? "selected" : '' }}>Carta Poder</option>
                                                             <option value="Instrumento Notarial" {{ $poder["tipo_documento_representante"] == "Instrumento Notarial" ? "selected" : '' }}>Instrumento Notarial</option>
@@ -755,7 +755,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="">Fecha expedición <span style="color:red;">(*)</span></label>
-                                                        <input type="date" class="form-control" name="fecha_expedicion_pF" value="{{$poder->fechaRegistro }}">
+                                                        <input type="date" class="form-control" name="fecha_expedicion_pF" value="{{$poder->fechaRegistro }}" required>
                                                         <div class="invalid-feedback">
                                                             La fecha es obligatoria.
                                                         </div>
@@ -789,7 +789,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>*Identificación del Empleador</label><br>
-                                                        <input type="file" name="documentoIne_pF"  class="form-control" accept=".pdf" >
+                                                        <input type="file" name="documentoIne_pF"  class="form-control" accept=".pdf" {{ empty($poder->ineDocumento) ? 'required' : '' }}>
                                                         <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->ineDocumento}}">Existente</a>
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
@@ -799,7 +799,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>*Identificación del Representante Legal</label><br>
-                                                        <input type="file" name="documentoRepresentacion_pF"  class="form-control" accept=".pdf" >
+                                                        <input type="file" name="documentoRepresentacion_pF"  class="form-control" accept=".pdf" {{ empty($poder->representacionDocumento) ? 'required' : '' }}>
                                                         @if($poder->representacionDocumento != NULL)
                                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->representacionDocumento}}">Existente</a>
                                                         @endif
@@ -811,7 +811,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>*Documento que acredite la personería</label><br>
-                                                        <input type="file" name="documentoPoder_pF"class="form-control" accept=".pdf">
+                                                        <input type="file" name="documentoPoder_pF" class="form-control" accept=".pdf" {{ empty($poder->cedulaDocumento) ? 'required' : '' }}>
                                                         @if($poder->cedulaDocumento != NULL)
                                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->cedulaDocumento}}">Existente</a>
                                                         @endif
@@ -851,7 +851,7 @@
                                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                                         <div class="form-group">
                                                             <label for="name">Identificación Oficial <span style="color:red;">(*)</span></label>
-                                                            <select  name="tipo_identificacion_pF" class="form-control">
+                                                            <select  name="tipo_identificacion_pF" class="form-control" required>
                                                                 <option value="">Seleccione el tipo de indentificación</option>
                                                                 <option value="Credencial de elector" {{ $poder["tipo_identificacion"] == "Credencial de elector" ? "selected" : '' }} >Credencial de Elector</option>
                                                                 <option value="Pasaporte" {{ $poder["tipo_identificacion"] == "Pasaporte" ? "selected" : '' }}>Pasaporte</option>
@@ -871,7 +871,7 @@
                                                     <div class="col-xs-12 col-sm-12 col-md-6"> 
                                                         <div class="form-group">
                                                             <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
-                                                            <input type="text" name="num_identificacion_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" value="{{$poder->num_identificacion }}"> 
+                                                            <input type="text" maxlength="20" name="num_identificacion_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" value="{{$poder->num_identificacion }}" required>
                                                             <div class="invalid-feedback">
                                                                 El campo núm. de identificación es obligatorio.
                                                             </div>
@@ -880,7 +880,7 @@
                                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                                         <div class="form-group">
                                                             <label>*Identificación Oficial</label><br>
-                                                            <input type="file" name="documentoIne_pFSR" id="documentoIne_pFSR" class="form-control" accept=".pdf" >
+                                                            <input type="file" name="documentoIne_pFSR" id="documentoIne_pFSR" class="form-control" accept=".pdf" {{ empty($poder->ineDocumento) ? 'required' : '' }}>
                                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{ $poder->idAbogado }}/{{$poder->ineDocumento}}">Existente</a>
 
                                                             <div class="invalid-feedback">
@@ -918,6 +918,7 @@
                                     @endif
                                     
                                 <button type="submit" class="btn btn-success">Guardar</button>
+                                <a class="btn btn-warning" href="{{ url()->previous() }}" class="btn btn-secondary">Regresar</a>
                                 
                             </form>
                         </div>
@@ -932,6 +933,21 @@
     <div>.</div>
     <div class="loader"></div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const limite = 10 * 1024 * 1024;
+        document.querySelectorAll('input[type="file"]').forEach(function(inputDocumento) {
+            inputDocumento.addEventListener('change', function(e) {
+                const archivo = e.target.files[0];
+                if (archivo && archivo.size > limite) {
+                    alert("El archivo no puede pasar de 10 Megas");
+                    this.value = "";
+                }
+            });
+        });
+    });
+</script>
 
 @section('scripts')
     <script src="../public/assets/js/poderes/general.js"></script>
