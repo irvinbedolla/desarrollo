@@ -41,9 +41,14 @@ use App\Http\Controllers\AsistenciaController;
 |--------------------------------------------------------------------------
 */
 
+Route::get('/login', function () {
+    return redirect('/');
+});
+Route::get('/',                         [AuthenticatedSessionController::class, 'create'])->name('login');
+
 Route::middleware('guest')->group(function () {
-    Route::get('/',                         [AuthenticatedSessionController::class, 'create'])->name('inicio_seccion');
-    Route::post('login',                    [AuthenticatedSessionController::class, 'store'])->name('login');
+    Route::get('/',                         [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('login',                    [AuthenticatedSessionController::class, 'store'])->name('login.post'); 
 });
 
 Route::get('/debug-sesion', function () {
@@ -81,7 +86,7 @@ Route::get('/pantallaZamora',                       [HomeController::class, 'pan
 Route::get('/poder-crear',                          [PoderController::class, 'registro'])->name('poder-crear');
 Route::get('/poder-guardar',                        [PoderController::class, 'show'])->name('poder');
 Route::post('/poderes/publico',                     [PoderController::class, 'publico'])->name('poderes.publico');
-Route::get('/cita_turno',                           [HomeController::class, 'citas'])->name('citas');
+Route::get('/generarCita',                           [HomeController::class, 'citas'])->name('citas');
 Route::post('/turnos_guardar',                      [HomeController::class, 'turnos_publico'])->name('turnos_publico'); 
 Route::get('citas',                                 [TurnosController::class, 'create_publico'])->name('create_cita');
 Route::post('/citas/store_publico',                 [TurnosController::class, 'store_publico'])->name('turnos.publico');
@@ -351,7 +356,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/notificador/historial',                [SeerController::class, 'todas_notificaciones'])->name('todas_notificaciones');
 
         //Enlace
-        Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name(' ');
+        Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados']);
         Route::post('/notificaciones/editar',               [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');   
         Route::get('/notificaciones/consultar_citado/{id}', [SeerController::class, 'mostrar_citadoC'])->name('consultar_citado');
         Route::get('/notificaciones/historial',             [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar');

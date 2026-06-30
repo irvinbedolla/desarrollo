@@ -56,6 +56,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect()->route('inicio_seccion');
+        return redirect()->route('login');
     }
 }
