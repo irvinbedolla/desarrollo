@@ -530,6 +530,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/ratificaciones/deduccion_eliminar_pago/{id_solicitud}',     [TurnosController::class, 'concepto_eliminar_deduccion_ratificacion'])->name('concepto_eliminar_deduccion_ratificacion');
         Route::delete('/ratificaciones/pago_eliminar_pago/{id_solicitud}',          [TurnosController::class, 'pago_eliminar_pago_ratificacion'])->name('pago_eliminar_pago_ratificacion');
         Route::post('/ratificaciones/terminar_ratificacion',            [TurnosController::class, 'terminar_ratificacion'])->name('terminar_ratificacion');
+        
+        //Oficialia de Partes
+        Route::get('/oficialia/index_oficialia',                                  [SeerController::class, 'index_oficialia'])->name('index_oficialia');
+        Route::post('/oficialia/generar_oficialia',                               [SeerController::class, 'generar_oficialia'])->name('generar_oficialia');
+        Route::post('/oficialia/concluir_oficialia',                               [SeerController::class, 'concluir_oficialia'])->name('concluir_oficialia');
+        Route::post('/oficialia/turnar_oficialia',                                 [SeerController::class, 'turnar_oficialia'])->name('turnar_oficialia');
 
         //PDF Ratificaciones
         Route::get('/cumplimiento/PDFIncumplimientoR/{id}',             [TurnosController::class, 'PDFincumplimientoRatificacion'])->name('PDFincumplimientoRatificacion');

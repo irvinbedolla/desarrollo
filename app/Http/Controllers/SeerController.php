@@ -37,6 +37,7 @@ use App\Models\SeerPerConciliador_old;
 use App\Models\Asistencia;
 use App\Models\SeerCasosExcepcion;
 use App\Models\Firmas;
+use App\Models\Oficialia;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -19713,6 +19714,124 @@ dd("lelgo");
             }
         }
         return redirect()->route('todas_audiencias')->with('success', 'Cambios guardados correctamente.');
+    }
+    public function index_oficialia(){
+        $user = auth()->user()->load('roles');
+        $id = $user->id;
+        $userRole = $user->roles->pluck('name')->first(); // Tomamos el primer rol principal
+        $mapaSedes = [
+            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo'],
+        ];
+        $usuariosR = User::where('delegacion', $user->delegacion)
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'Solicitante');
+            })
+            ->select('users.id', 'users.name')
+            ->get();
+            if($userRole == 'Turnos'){
+                $oficialias = Oficialia::where('user_id', $id)->with('usuarioResponsable')->orderBy('oficio_id', 'asc')->paginate(50)->withQueryString();
+            }
+            else{
+                $oficialias = Oficialia::where('usuario_responsable', $id)->with('usuarioResponsable')->orderBy('oficio_id', 'asc')->paginate(50)->withQueryString();
+            }
+        
+        return view('oficialia.index', compact('user','userRole', 'id','oficialias', 'usuariosR')); 
+
+    }
+    public function generar_oficialia(Request $request){
+        $user = auth()->user()->load('roles');
+        $data = $request->all();
+        $fecha_actual = date('Y-m-d');
+        $hora_actual = date('H:i');
+
+        $oficialia = Oficialia::create([
+            'user_id'             => $user->id, 
+            'oficio_id'           => 0,
+            'tipo_tramite'        => $request->tipo_tramite,
+            'oficio'              => $request->oficio,
+            'area_turno'          => $request->area_turno,
+            'usuario_responsable' => $request->usuario_responsable,
+            'fecha'               => $fecha_actual,
+            'hora'                => $hora_actual, 
+            'estatus'             => "creado",
+            'ruta_oficio'         => null,
+            'conclusion'          => null
+        ]);
+        $oficialia->update([
+                'oficio_id' => $oficialia->id
+        ]);
+
+        if ($request->hasFile('documento_oficio')) {
+            $file = $request->file('documento_oficio');
+            $nombreArchivo = 'oficio-' . Str::random(8) . '-' . $oficialia->id . ".pdf";
+            $rutaCarpeta = "documentosOficios/" . $oficialia->id;
+            
+            Storage::putFileAs($rutaCarpeta, $request->file('documento_oficio'), $nombreArchivo);
+
+            $oficialia->update([
+                'ruta_oficio' => $rutaCarpeta . '/' . $nombreArchivo
+            ]);
+        }
+
+        return back()->with('success', 'Registro agregado correctamente.');
+
+    }
+    
+    public function concluir_oficialia(Request $request){
+        $oficialia = Oficialia::find($request->oficialia_id);
+        $fecha_actual = date('Y-m-d');
+        $hora_actual = date('H:i');
+        
+
+        if ($oficialia) {
+            $oficialia->update([
+                'estatus' => "turnado"
+            ]);
+            $oficialia_conclusion = Oficialia::create([
+                'user_id'             => $oficialia->user_id,
+                'oficio_id'           => $oficialia->oficio_id,
+                'tipo_tramite'        => $oficialia->tipo_tramite,
+                'oficio'              => $oficialia->oficio,
+                'area_turno'          => $oficialia->area_turno,
+                'usuario_responsable' => $oficialia->usuario_responsable,
+                'fecha'               => $fecha_actual,
+                'hora'                => $hora_actual, 
+                'estatus'             => "concluido",
+                'ruta_oficio'         => $oficialia->ruta_oficio,
+                'conclusion'          => $request->conclusion,
+            ]);
+            
+        }
+        return back()->with('success', 'Registro concluido correctamente.');
+    }
+    public function turnar_oficialia(Request $request){
+        $data = $request->all(); 
+        $oficialia = Oficialia::find($data['oficialia_id']);
+        $fecha_actual = date('Y-m-d');
+        $hora_actual = date('H:i');
+        
+        if ($oficialia) {
+            $oficialia->update([
+                'estatus' => "turnado"
+            ]);
+            $oficialia_turnado = Oficialia::create([
+                'user_id'             => $oficialia->user_id,
+                'oficio_id'           => $oficialia->oficio_id,
+                'tipo_tramite'        => $oficialia->tipo_tramite,
+                'oficio'              => $oficialia->oficio,
+                'area_turno'          => $oficialia->area_turno,
+                'usuario_responsable' => $data['usuario_responsable'],
+                'fecha'               => $fecha_actual,
+                'hora'                => $hora_actual, 
+                'estatus'              => "creado",
+                'ruta_oficio'         => $oficialia->ruta_oficio,
+                'conclusion'          => null,
+            ]);
+        }
+        return back()->with('success', 'Registro turnado correctamente.');
+
     }
     /*public function edicion_solConcluida($id, $audiencia_id){ 
         $solicitudOriginal = SeerPerGeneral::findOrFail($id);

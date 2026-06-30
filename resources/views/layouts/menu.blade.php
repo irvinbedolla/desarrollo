@@ -47,6 +47,9 @@
             <a class="nav-link" href="{{ route('misturnos') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis Turnos</span>
             </a>
+            <a class="nav-link" href="{{ route('index_oficialia') }}">
+                <i class="bi bi-journal-text"></i><span class="text-dark" onclick="oficialia()">Oficialia de Partes</span>
+            </a>
             <a class="nav-link" href="{{ route('plantillas_index') }}">
                 <i class="bi bi-file-text-fill"></i><span class="text-dark" onclick="estadistica()">Plantillas</span>
             </a>
@@ -272,6 +275,9 @@
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
+            <a class="nav-link" href="{{ route('index_oficialia') }}">
+                <i class="bi bi-journal-text"></i><span class="text-dark" onclick="oficialia()">Oficialia de Partes</span>
+            </a>
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
@@ -284,6 +290,9 @@
         @role('Excepcion')
             <a class="nav-link" href="{{ route('agenda') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
+            <a class="nav-link" href="{{ route('index_oficialia') }}">
+                <i class="bi bi-people-fill"></i><span class="text-dark" onclick="oficialia()">Oficialia de Partes</span>
             </a>
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
@@ -380,6 +389,7 @@
             </a>
         @endrole
     @endauth
+    
     
 </li>
 
