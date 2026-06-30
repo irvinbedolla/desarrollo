@@ -49,7 +49,7 @@
                                         <tbody>
                                             @foreach($oficialias as $oficialia)
                                                 <tr>
-                                                    <td>{{ $oficialia->id }} {{ $oficialia->fecha }}</td>
+                                                    <td>{{ $oficialia->fecha }} {{ $oficialia->hora}}</td>
                                                     <td>{{ $oficialia->tipo_tramite }}</td>
                                                     <td>{{ $oficialia->oficio }}</td>
                                                     <td>{{ $oficialia->area_turno }}</td>
