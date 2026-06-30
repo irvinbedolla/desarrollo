@@ -250,9 +250,60 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Email <span style="color:red;">(*)</span></label>
+                                            <input type="email" name="email" class="form-control" required> 
+                                            <div class="invalid-feedback">
+                                                El email es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Teléfono <span style="color:red;">(*)</span></label>
+                                            <input type="text" name="telefono" class="form-control" required> 
+                                            <div class="invalid-feedback">
+                                                El teléfono es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                      
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-
+                                            <label for="name">Grupos vulnerables</label>
+                                            <select name="vulnerables" class="form-control" required>
+                                                <option value="">Seleccione</option>
+                                                <option value="Menores de edad">Menores de edad</option>
+                                                <option value="Adultos mayores">Adultos mayores</option>
+                                                <option value="Personas con discapacidad">Personas con discapacidad</option>
+                                                <option value="Población indígena">Población indígena</option>
+                                                <option value="Personas Migrantes">Personas Migrantes</option>
+                                                <option value="LGBTTTIQ">LGBTTTIQ+</option>
+                                                <option value="No aplica">No aplica</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Requiere Asesoria/Orientación Juridica <span style="color:red;">(*)</span></label>
+                                            <select name="orientacion" class="form-control">
+                                                <option value="">Seleccione</option>
+                                                <option value="Si">Si</option>
+                                                <option value="No">No</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo sexo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
                                             <label for="name">Posible caso de excepción 
                                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                                                     ?
@@ -288,39 +339,6 @@
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                                                        
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
-                                        <div class="form-group">
-                                            <label for="name">Grupos vulnerables</label>
-                                            <select name="vulnerables" class="form-control" required>
-                                                <option value="">Seleccione</option>
-                                                <option value="Menores de edad">Menores de edad</option>
-                                                <option value="Adultos mayores">Adultos mayores</option>
-                                                <option value="Personas con discapacidad">Personas con discapacidad</option>
-                                                <option value="Población indígena">Población indígena</option>
-                                                <option value="Personas Migrantes">Personas Migrantes</option>
-                                                <option value="LGBTTTIQ">LGBTTTIQ+</option>
-                                                <option value="No aplica">No aplica</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
-                                        <div class="form-group">
-                                            <label for="name">Requiere Asesoria/Orientación Juridica <span style="color:red;">(*)</span></label>
-                                            <select name="orientacion" class="form-control">
-                                                <option value="">Seleccione</option>
-                                                <option value="Si">Si</option>
-                                                <option value="No">No</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo sexo es obligatorio.
                                             </div>
                                         </div>
                                     </div>
