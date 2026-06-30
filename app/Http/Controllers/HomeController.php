@@ -13,6 +13,8 @@ use App\Models\Recepcion;
 use App\Models\CitaDireccion;
 use App\Models\Pagos;
 use App\Models\Audiencias;
+use App\Models\Estados;
+use App\Models\Municipios;
 use App\Imports\PagoSolicitudImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ConceptoPagoImport;
@@ -175,7 +177,9 @@ class HomeController extends Controller
     }
 
     public function citas(){
-        return view('turnos');
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+        return view('turnos', compact('estados', 'municipios'));
     }
 
     public function turnos_publico(Request $request){

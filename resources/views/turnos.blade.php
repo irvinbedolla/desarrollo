@@ -123,46 +123,37 @@
                     <div class="col-lg-12" >
                         <div class="card">
                             <div class="card-body">
-                                    @if(session()->has('success'))
-                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                            <strong>¡Registro correcto!</strong>
-                                            {{ session()->get('success') }}
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                    @endif
+                                @if(session()->has('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>¡Registro correcto!</strong>
+                                        {{ session()->get('success') }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                @endif
 
-                                    <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
-                                    @if (session()->has('error'))
-                                        <div class="alert alert-dark alert-dismissible fade show" role="alert">
-                                            <strong>¡Revise los campos!</strong>
-                                            {{ session()->get('error') }}
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                    @endif
-                                    <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                        <h3 class="text-center" style="color:black">Genera tu turno</h3>
-                                    </div>   
+                                <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
+                                @if (session()->has('error'))
+                                    <div class="alert alert-dark alert-dismissible fade show" role="alert">
+                                        <strong>¡Revise los campos!</strong>
+                                        {{ session()->get('error') }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                @endif
+                                <div style="background-color:#D2D3D5; width:100%; height:40px;">
+                                    <h3 class="text-center" style="color:black">Datos Generales</h3>
+                                </div>   
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('turnos_publico')}}">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
-                                        <div class="form-group">
-                                            <label for="name">Nombre del solicitante</label>
-                                            <input type="text" name="nombre" class="form-control" required> 
-                                            <div class="invalid-feedback">
-                                                El nombre es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Tipo de Tramite</label>
+                                            <label for="name">Tipo de Tramite <span style="color:red;">(*)</span></label>
                                             <select name="tipo" class="form-control" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="Solicitud">Solicitud</option>
@@ -176,17 +167,78 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Edad</label>
-                                            <input type="number" name="edad" class="form-control"> 
+                                            <label for="name">Estado <span style="color:red;">(*)</span></label>
+                                            <select id="estado_citado" class="form-control" name="estado_citado" required>
+                                                <option value="">Seleccione</option>
+                                                @foreach($estados as $es)
+                                                    <option value="{{$es['id']}}">{{$es['nombre']}}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo Estado es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
+                                            <select id="municipio_citado" class="form-control" name="municipio_citado" required>
+                                                <option value="">Seleccione</option>
+                                                    @foreach($municipios as $mun)
+                                                        <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                                    @endforeach
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo municipio o alcaldía es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="name">Delegación/Oficina <span style="color:red;">(*)</span></label>
+                                            <select name="delegacion" class="form-control" required>
+                                                <option value="">Seleccione</option>
+                                                <option value="Morelia">Morelia</option>
+                                                <option value="Zitácuaro">Zitácuaro</option>
+                                                <option value="Uruapan">Uruapan</option>
+                                                <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
+                                                <option value="Zamora">Zamora</option>
+                                                <option value="Sahuayo">Sahuayo</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="background-color:#D2D3D5; width:100%; height:40px;">
+                                    <h3 class="text-center" style="color:black">Datos Solicitante</h3>
+                                </div>   
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Nombre del solicitante <span style="color:red;">(*)</span></label>
+                                            <input type="text" name="nombre" class="form-control" required> 
+                                            <div class="invalid-feedback">
+                                                El nombre es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="name">Edad <span style="color:red;">(*)</span></label>
+                                            <input type="number" name="edad" class="form-control" required> 
                                             <div class="invalid-feedback">
                                                 El campo edad es obligatorio.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Sexo</label>
-                                            <select name="sexo" class="form-control">
+                                            <label for="name">Sexo <span style="color:red;">(*)</span></label>
+                                            <select name="sexo" class="form-control" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="H">Hombre</option>
                                                 <option value="M">Mujer</option>
@@ -261,7 +313,7 @@
                                     
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Requiere Asesoria/Orientación Juridica</label>
+                                            <label for="name">Requiere Asesoria/Orientación Juridica <span style="color:red;">(*)</span></label>
                                             <select name="orientacion" class="form-control">
                                                 <option value="">Seleccione</option>
                                                 <option value="Si">Si</option>
@@ -273,23 +325,6 @@
                                         </div>
                                     </div>
                                     
-                                     <div class="col-xs-12 col-sm-12 col-md-4">
-                                        <div class="form-group">
-                                            <label for="name">Delegación/Oficina</label>
-                                            <select name="delegacion" class="form-control" required>
-                                                <option value="">Seleccione</option>
-                                                <option value="Morelia">Morelia</option>
-                                                <option value="Zitácuaro">Zitácuaro</option>
-                                                <option value="Uruapan">Uruapan</option>
-                                                <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
-                                                <option value="Zamora">Zamora</option>
-                                                <option value="Sahuayo">Sahuayo</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="name">Observaciones</label>
