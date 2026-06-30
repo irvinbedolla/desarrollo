@@ -212,10 +212,16 @@ class HomeController extends Controller
             'edad'          => $data["edad"],
             'sexo'          => $data["sexo"],
             'vulnerables'   => $data["vulnerables"],
+            'estado'        => $data["estado_citado"],
+            'municipio'     => $data["municipio_citado"],
+            'correo'        => $data["email"],
+            'telefono'      => $data["telefono"],
+            'fecha'         => $fecha_actual,
+            'hora'          => $hora_actual
         );    
         Recepcion::create($data_insertar);
-        
-        return back()->with('success', 'Turno registrado correctamente favor de pasar a ventanilla.'); 
+
+        return back()->with('success', 'Turno registrado correctamente lllegar 10 minutos antes, llevar tu Identificación Oficial Vigente.'); 
     }
 
     public function password_cambiar(){

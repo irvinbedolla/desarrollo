@@ -86,7 +86,7 @@ Route::get('/pantallaZamora',                       [HomeController::class, 'pan
 Route::get('/poder-crear',                          [PoderController::class, 'registro'])->name('poder-crear');
 Route::get('/poder-guardar',                        [PoderController::class, 'show'])->name('poder');
 Route::post('/poderes/publico',                     [PoderController::class, 'publico'])->name('poderes.publico');
-Route::get('/generarCita',                           [HomeController::class, 'citas'])->name('citas');
+Route::get('/generarCita',                          [HomeController::class, 'citas'])->name('citas');
 Route::post('/turnos_guardar',                      [HomeController::class, 'turnos_publico'])->name('turnos_publico'); 
 Route::get('citas',                                 [TurnosController::class, 'create_publico'])->name('create_cita');
 Route::post('/citas/store_publico',                 [TurnosController::class, 'store_publico'])->name('turnos.publico');

@@ -10,7 +10,7 @@ class Recepcion extends Model
     use HasFactory;
     protected $table = 'recepcion';
     protected $primaryKey = 'id';
-    protected $fillable = ['consecutivo','fecha','hora','hora_fin','auxiliar','solicitante','tipo','lugar_auxiliar','estatus','delegacion','exepcion','edad','sexo','vulnerables','conflicto','tipo_caso','prestacionSS','orientacion','tarjeta','folio','resultado','INS', 'area_adscripcion', 'puesto', 'telefono', 'correo', 'nombre_empresa'];
+    protected $fillable = ['consecutivo','fecha','hora','hora_fin','auxiliar','solicitante','tipo','lugar_auxiliar','estatus','delegacion','exepcion','edad','sexo','vulnerables','conflicto','tipo_caso','prestacionSS','orientacion','tarjeta','folio','resultado','INS', 'telefono', 'correo', 'estado','municipio'];
 
     protected $casts = [
         'fecha' => 'date',

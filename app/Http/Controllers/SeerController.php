@@ -11219,7 +11219,7 @@ class SeerController extends Controller
         $id_solicitud = $pagos["id_solicitud"];
         Pagos::find($id)->update(['estatus'  => "No pagado", 'fecha_conclucion' => \Carbon\Carbon::now()->format('Y-m-d')]);
         Turnos::find($id_solicitud)->update(['estatus' => "Incumplimiento"]);
-dd("lelgo");
+
         return redirect()->route('audiencias.cumplimiento');
     }
 
