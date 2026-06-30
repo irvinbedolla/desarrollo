@@ -19752,7 +19752,7 @@ dd("lelgo");
             'tipo_tramite'        => $request->tipo_tramite,
             'oficio'              => $request->oficio,
             'area_turno'          => $request->area_turno,
-            'usuario_responsable' => $request->usuario_responsable,
+            'usuario_responsable' => $user->id,
             'fecha'               => $fecha_actual,
             'hora'                => $hora_actual, 
             'estatus'             => "creado",

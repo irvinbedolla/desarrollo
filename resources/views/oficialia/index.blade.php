@@ -57,7 +57,7 @@
                                                     <td>@if($oficialia->estatus == 'creado')Pendiente @elseif ($oficialia->estatus == 'turnado') Turnado @else Concluido @endif</td>
 
                                                     <td>
-                                                        @if($oficialia->estatus == 'creado')
+                                                        @if($oficialia->estatus == 'creado' && $oficialia->usuario_responsable == $id)
                                                         <a href="#" class="btn btn-success" data-bs-toggle="modal" data-id="{{ $oficialia->id }}" data-bs-target="#concluirModal">Concluir</a>
                                                             <!--form action="{{ route('concluir_oficialia', $oficialia->id) }}" method="POST" style="display:inline;">
                                                                 @csrf
@@ -68,7 +68,7 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        @if($oficialia->estatus == 'creado')
+                                                        @if($oficialia->estatus == 'creado' && $oficialia->usuario_responsable == $id)
                                                             <a href="#" class="btn btn-info" data-bs-toggle="modal" data-id="{{ $oficialia->id }}" data-bs-target="#turnarModal"> Turnar</a>
                                                         @endif
                                                     </td>
@@ -149,20 +149,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xs-12 col-sm-12 col-md-6">  
-                                                    <div class="form-group">
-                                                        <label for="name">Usuario Responsable<span style="color:red;">(*)</span></label>
-                                                        <select name="usuario_responsable" id="usuario_responable" class="form-control">
-                                                            <option value="">Seleccione</option>
-                                                            @foreach ($usuariosR as $usuarioR )
-                                                                <option value="{{ $usuarioR->id }}">{{$usuarioR->name}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div class="invalid-feedback">
-                                                            El campo es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Oficio <span style="color:red;">(*)</span></label>
