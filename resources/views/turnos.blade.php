@@ -254,7 +254,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group mb-3">
                                             <label for="name">Nombre del solicitante <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="nombre" class="form-control" required> 
+                                            <input type="text" name="nombre" class="form-control" maxlength="100" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" required> 
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
                                             </div>
@@ -263,7 +263,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group mb-3">
                                             <label for="name">Edad <span style="color:red;">(*)</span></label>
-                                            <input type="number" name="edad" class="form-control" required> 
+                                            <input type="number" name="edad" class="form-control" maxlength="3" max="150" min="0" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required> 
                                             <div class="invalid-feedback">
                                                 El campo edad es obligatorio.
                                             </div>
@@ -287,7 +287,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group mb-3">
                                             <label for="name">Email <span style="color:red;">(*)</span></label>
-                                            <input type="email" name="email" class="form-control" required> 
+                                            <input type="email" name="email" maxlength="50" class="form-control" required> 
                                             <div class="invalid-feedback">
                                                 El email es obligatorio.
                                             </div>
@@ -296,7 +296,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group mb-3">
                                             <label for="name">Teléfono <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="telefono" class="form-control" required> 
+                                            <input type="number" name="telefono" class="form-control" maxlength="10" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required> 
                                             <div class="invalid-feedback">
                                                 El teléfono es obligatorio.
                                             </div>
@@ -305,7 +305,7 @@
                                       
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group mb-3">
-                                            <label for="name">Grupos vulnerables</label>
+                                            <label for="name">Grupos vulnerables <span style="color:red;">(*)</span></label>
                                             <select name="vulnerables" class="form-control" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="Menores de edad">Menores de edad</option>
@@ -356,7 +356,7 @@
                                     </div>
                                     <div id="tipo_caso"  class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group mb-3">
-                                            <label for="name">Tipo de caso de excepción</label>
+                                            <label for="name">Tipo de caso de excepción <span style="color:red;">(*)</span></label>
                                             <select name="tipo_caso" class="form-control">
                                                 <option value="">Seleccione</option>
                                                 <option value="Discriminación">Maternidad</option>
@@ -380,7 +380,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group mb-3">
                                             <label for="name">Observaciones</label>
-                                            <textarea name="conflicto" class="form-control"></textarea>
+                                            <textarea name="conflicto" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();"></textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
                                             </div>

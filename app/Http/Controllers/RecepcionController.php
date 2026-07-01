@@ -822,17 +822,19 @@ class RecepcionController extends Controller
 
                     $cantidadOcupados = $ocupadosCount[$slotStart] ?? 0;
 
-                    if ($cantidadOcupados > 0 && $cantidadOcupados < $maxEmpalme) {
-                        $estado = 'turnos';
-                    } elseif ($cantidadOcupados > 0) {
-                        $estado = 'ocupado';
-                    } elseif ($esInhabil) {
+                    if ($esInhabil) {
                         $estado = 'inhabil';
                     } elseif ($esNoInhabil || $ahora > $slot) {
                         $estado = 'expirado';
                     }
                     elseif($slot == $hora_comida){
                         $estado = 'expirado';
+                    }
+                    elseif ($cantidadOcupados > 0 && $cantidadOcupados < $maxEmpalme) {
+                        $estado = 'turnos';
+                    }
+                    elseif ($cantidadOcupados > 0) {
+                        $estado = 'ocupado';
                     }
                      else {
                         $estado = 'disponible';

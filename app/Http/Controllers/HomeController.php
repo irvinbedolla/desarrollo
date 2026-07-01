@@ -224,6 +224,7 @@ class HomeController extends Controller
             'auxiliar'      => 0,
             'lugar_auxiliar'=> "Recepción",
             'tipo'          => $tipo,
+            'tipo_caso'     => $data["tipo_caso"],
             'fecha'         => $fecha_turno,
             'hora'          => $hora_turno,
             'hora_fin'      => $hora_fin,
@@ -237,6 +238,7 @@ class HomeController extends Controller
             'municipio'     => $data["municipio_citado"],
             'correo'        => $data["email"],
             'telefono'      => $data["telefono"],
+            'observaciones' => $data["conflicto"]
         );
         Recepcion::create($data_insertar);
 
