@@ -10,7 +10,6 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="text-center">Generar turno</h3>
 
                                     @if(session()->has('success'))
                                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -38,15 +37,7 @@
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('turnos_guardar_nuevo')}}">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
-                                        <div class="form-group">
-                                            <label for="name">Nombre del Solicitante</label>
-                                            <input type="text" name="nombre" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" required> 
-                                            <div class="invalid-feedback">
-                                                El nombre es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <h3 class="text-center">Datos generales</h3>
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">Tipo de Trámite</label>
@@ -57,144 +48,6 @@
                                             </select>
                                             <div class="invalid-feedback">
                                                 El tipo de solicitud es obligatoria.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
-                                        <div class="form-group">
-                                            <label for="name">Edad</label>
-                                            <input type="number" name="edad" class="form-control" required> 
-                                            <div class="invalid-feedback">
-                                                El campo edad es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
-                                        <div class="form-group">
-                                            <label for="name">Número de Teléfono</label>
-                                            <input type="number" name="telefono" maxlength="10" class="form-control" required> 
-                                            <div class="invalid-feedback">
-                                                El campo puesto es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
-                                        <div class="form-group">
-                                            <label for="name">Correo</label>
-                                            <input type="text" name="correo" maxlength="30" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" required> 
-                                            <div class="invalid-feedback">
-                                                El campo correo es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
-                                        <div class="form-group">
-                                            <label for="name">Sexo</label>
-                                            <select name="sexo" class="form-control" required>
-                                                <option value="">Seleccione</option>
-                                                <option value="H">Hombre</option>
-                                                <option value="M">Mujer</option>
-                                                <option value="NB">No Binarios</option>
-                                                <option value="Otros">Otros</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo sexo es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
-                                        <div class="form-group">
-
-                                            <label for="name">Posible caso de excepción 
-                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                                    ?
-                                                </button>
-                                            </label>
-
-                                            <select name="excepcion" class="form-control" onchange="cambiaExcepcion(this); blockCalendar();" required>
-                                                <option value="">Seleccione</option>
-                                                <option value="Si">Si</option>
-                                                <option value="No">No</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="tipo_caso"  class="col-xs-12 col-sm-12 col-md-4">
-                                        <div class="form-group">
-                                            <label for="name">Tipo de caso de excepción</label>
-                                            <select name="tipo_caso" class="form-control">
-                                                <option value="">Seleccione</option>
-                                                <option value="Discriminación">Maternidad</option>
-                                                <option value="Acoso u hostigamiento sexual">Riesgos de trabajo</option>
-                                                <option value="Discriminación">Accidentes de Trabajo</option>
-                                                <option value="Discriminación">Invalidez</option>
-                                                <option value="Discriminación">Seguros de Vida</option>
-                                                <option value="Discriminación">Otras</option>
-                                                <option value="Discriminación">Libertad y Asociación Sindical</option>
-                                                <option value="Discriminación">Trata Laboral y Trabajo Forzoso</option>
-                                                <option value="Discriminación">Trabajo Infantil</option>
-                                                <option value="Discriminación">Disputa de titularidad de Contrato Coletivo y Contrato Ley</option>
-                                                <option value="Discriminación">Impugnación de estatutos de Sindicato y su Modificación</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                                                        
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
-                                        <div class="form-group">
-                                            <label for="name">Grupos vulnerables</label>
-                                            <select name="vulnerables" class="form-control" required>
-                                                <option value="">Seleccione</option>
-                                                <option value="Menores de edad">Menores de edad</option>
-                                                <option value="Adultos mayores">Adultos mayores</option>
-                                                <option value="Discapacidad">Personas con discapacidad</option>
-                                                <option value="Población indígena">Población indígena</option>
-                                                <option value="Personas Migrantes">Personas Migrantes</option>
-                                                <option value="LGBTTTIQ">LGBTTTIQ+</option>
-                                                <option value="No aplica">No aplica</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
-                                        <div class="form-group">
-                                            <label for="name">Requiere Asesoria/Orientación Juridica</label>
-                                            <select name="orientacion" class="form-control" required>
-                                                <option value="">Seleccione</option>
-                                                <option value="Si">Si</option>
-                                                <option value="No">No</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo sexo es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                     <div class="col-xs-12 col-sm-12 col-md-4">
-                                        <div class="form-group">
-                                            <label for="name">Delegación/Oficina</label>
-                                            <select name="delegacion" class="form-control" onchange="blockCalendar();" required>
-                                                <option value="">Seleccione</option>
-                                                <option value="Morelia">Morelia</option>
-                                                <option value="Zitácuaro">Zitácuaro</option>
-                                                <option value="Uruapan">Uruapan</option>
-                                                <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
-                                                <option value="Zamora">Zamora</option>
-                                                <option value="Sahuayo">Sahuayo</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo es obligatorio.
                                             </div>
                                         </div>
                                     </div>
@@ -227,7 +80,153 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="form-group">
+                                                <label for="name">Delegación/Oficina<span style="color:red;">(*)</span></label>
+                                                <select name="delegacion" class="form-control" onchange="blockCalendar();" required>
+                                                    <option value="">Seleccione</option>
+                                                    <option value="Morelia">Morelia</option>
+                                                    <option value="Zitácuaro">Zitácuaro</option>
+                                                    <option value="Uruapan">Uruapan</option>
+                                                    <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
+                                                    <option value="Zamora">Zamora</option>
+                                                    <option value="Sahuayo">Sahuayo</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
 
+                                    <h3 class="text-center">Datos solicitante</h3>
+
+
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Nombre del Solicitante<span style="color:red;">(*)</span></label>
+                                            <input type="text" name="nombre" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" required> 
+                                            <div class="invalid-feedback">
+                                                El nombre es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <div class="form-group">
+                                            <label for="name">Edad<span style="color:red;">(*)</span></label>
+                                            <input type="number" name="edad" class="form-control" required> 
+                                            <div class="invalid-feedback">
+                                                El campo edad es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <div class="form-group">
+                                            <label for="name">Sexo<span style="color:red;">(*)</span></label>
+                                            <select name="sexo" class="form-control" required>
+                                                <option value="">Seleccione</option>
+                                                <option value="H">Hombre</option>
+                                                <option value="M">Mujer</option>
+                                                <option value="NB">No Binarios</option>
+                                                <option value="Otros">Otros</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo sexo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="name">Número de Teléfono<span style="color:red;">(*)</span></label>
+                                            <input type="number" name="telefono" class="form-control" maxlength="10" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required> 
+                                            <div class="invalid-feedback">
+                                                El campo puesto es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="name">Email<span style="color:red;">(*)</span></label>
+                                            <input type="text" name="correo" maxlength="30" class="form-control"  required> 
+                                            <div class="invalid-feedback">
+                                                El campo correo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Grupos vulnerables<span style="color:red;">(*)</span></label>
+                                            <select name="vulnerables" class="form-control" required>
+                                                <option value="">Seleccione</option>
+                                                <option value="Menores de edad">Menores de edad</option>
+                                                <option value="Adultos mayores">Adultos mayores</option>
+                                                <option value="Discapacidad">Personas con discapacidad</option>
+                                                <option value="Población indígena">Población indígena</option>
+                                                <option value="Personas Migrantes">Personas Migrantes</option>
+                                                <option value="LGBTTTIQ">LGBTTTIQ+</option>
+                                                <option value="No aplica">No aplica</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Requiere Asesoria/Orientación Juridica<span style="color:red;">(*)</span></label>
+                                            <select name="orientacion" class="form-control" required>
+                                                <option value="">Seleccione</option>
+                                                <option value="Si">Si</option>
+                                                <option value="No">No</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo de asesorias es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+
+                                            <label for="name">Posible caso de excepción <span style="color:red;">(*)</span>
+                                                <button type="button" class="btn btn-primary btn-sm lh-1 fs-6" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    ?
+                                                </button>
+                                            </label>
+
+                                            <select name="excepcion" class="form-control" onchange="cambiaExcepcion(this); blockCalendar();" required>
+                                                <option value="">Seleccione</option>
+                                                <option value="Si">Si</option>
+                                                <option value="No">No</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="tipo_caso"  class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Tipo de caso de excepción<span style="color:red;">(*)</span></label>
+                                            <select name="tipo_caso" class="form-control">
+                                                <option value="">Seleccione</option>
+                                                <option value="Discriminación">Maternidad</option>
+                                                <option value="Acoso u hostigamiento sexual">Riesgos de trabajo</option>
+                                                <option value="Discriminación">Accidentes de Trabajo</option>
+                                                <option value="Discriminación">Invalidez</option>
+                                                <option value="Discriminación">Seguros de Vida</option>
+                                                <option value="Discriminación">Otras</option>
+                                                <option value="Discriminación">Libertad y Asociación Sindical</option>
+                                                <option value="Discriminación">Trata Laboral y Trabajo Forzoso</option>
+                                                <option value="Discriminación">Trabajo Infantil</option>
+                                                <option value="Discriminación">Disputa de titularidad de Contrato Coletivo y Contrato Ley</option>
+                                                <option value="Discriminación">Impugnación de estatutos de Sindicato y su Modificación</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="name">Observaciones</label>
