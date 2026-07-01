@@ -30,7 +30,7 @@
                             
                                 
                                 <div class="table-responsive">
-                                    <table id="tablaPoderesEstatica" class="table table-striped mt-2" style="width:100%">
+                                    <table id="example" class="table table-striped mt-2" style="width:100%">
                                         <thead style="background-color: #4A001F;">
                                             <tr>
                                                 
@@ -185,7 +185,7 @@
                     @csrf
                     <input type="hidden" id="modal-id" name="oficialia_id" value="">
                     <input type="hidden" name="origen" value="previa">
-                    <table id="tabla1" class="table-striped" style="width:100%">
+                    <table id="tablaUsuariosTurnar" class="table table-striped mt-2" style="width:100%">
                         <thead style="background-color: #4A001F;">   
                             <!--<th style="display: none;">ID</th>-->
                             
@@ -268,7 +268,42 @@
 @section('scripts')
     <script src="../public/js/poderes/general.js"></script>
     <script>
+        // Inicializar DataTable solo cuando el modal se muestre
+        let tablaTurnar;
         document.addEventListener('DOMContentLoaded', function () {
+            // === Inicialización del DataTable en modal ===
+            const tablaTurnos = document.getElementById('turnarModal');
+            
+            if (tablaTurnos) {
+                tablaTurnos.addEventListener('shown.bs.modal', function () {
+                    if (!tablaTurnar) {
+                        tablaTurnar = $('#tablaUsuariosTurnar').DataTable({
+                            "language": {
+                                "search": "Buscar:",
+                                "lengthMenu": "Mostrar _MENU_ registros",
+                                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                                "infoEmpty": "No hay registros disponibles",
+                                "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                                "zeroRecords": "No se encontraron resultados",
+                                "paginate": {
+                                    "first": "Primero",
+                                    "last": "Último",
+                                    "next": "Siguiente",
+                                    "previous": "Anterior"
+                                }
+                            },
+                            "pageLength": 10,
+                            "responsive": true,
+                            "order": [[0, "asc"]],
+                            "columnDefs": [
+                                { "orderable": false, "targets": 1 }
+                            ]
+                        });
+                    } else {
+                        tablaTurnar.columns.adjust().responsive.recalc();
+                    }
+                });
+            }
             //modal de generar oficialia
             var oficialiaModal = document.getElementById('oficialiaModal');
             if (oficialiaModal) {
@@ -316,7 +351,7 @@
                 });
             }
 
-        });
+        });        
     </script>
     
 @endsection
