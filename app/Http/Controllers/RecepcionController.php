@@ -122,8 +122,13 @@ class RecepcionController extends Controller
         $relacionEloquent = 'roles';
         $id = auth()->user()->id;
         $user = User::find($id);
-        $last_solicitudes = SeerPerGeneral::where('delegacion', $user["delegacion"])->latest()->value('consecutivo');
-        $last_turnos = Turnos::where('delegacion', $user["delegacion"])->latest()->value('consecutivo');
+        $delegacion_user = $user["delegacion"];
+        $last_solicitudes = SeerPerGeneral::where('delegacion', $delegacion_user)->latest()->value('consecutivo');
+        $last_turnos = Turnos::where('delegacion', $delegacion_user)->latest()->value('consecutivo');
+        $last_sede_solicitud = Recepcion::where('delegacion', $delegacion_user)->where('tipo', "Solicitud")->count();
+        $last_sede_ratificacion = Recepcion::where('delegacion', $delegacion_user)->where('tipo', "Ratificación")->count();
+        $last_hora_solicitud = Recepcion::where('delegacion', $delegacion_user)->where('fecha', $fecha_actual)->where('tipo', "Solicitud")->count();
+        $last_hora_ratificacion = Recepcion::where('delegacion', $delegacion_user)->where('fecha', $fecha_actual)->where('tipo', "Ratificación")->count();
 
         $auxiliares = User::whereHas($relacionEloquent, function ($query) {
             return $query->where('name', '=', 'Auxiliar');
@@ -153,7 +158,7 @@ class RecepcionController extends Controller
         }
         $total = count($auxiliares_morelia);
 
-        return view('turnos.index',compact('auxiliares_morelia','total', 'last_solicitudes', 'last_turnos'));
+        return view('turnos.index',compact('auxiliares_morelia','total', 'last_hora_solicitud', 'last_hora_ratificacion', 'last_sede_solicitud', 'last_sede_ratificacion'));
     }
 
     public function create()
