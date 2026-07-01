@@ -13919,8 +13919,8 @@ class SeerController extends Controller
         $conciliador_id = $request->input('conciliador_id');
 
         $centrosConciliador = [$sede];
-        if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitácuaro'], true)) {
-            $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitácuaro'];
+        if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitacuaro'], true)) {
+            $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
         } elseif (in_array($sede, ['Uruapan', 'Lázaro Cárdenas'], true)) {
             $centrosConciliador = ['Uruapan', 'Lázaro Cárdenas'];
         } elseif (in_array($sede, ['Zamora', 'Sahuayo'], true)) {
@@ -13987,18 +13987,28 @@ class SeerController extends Controller
         while ($fecha <= $fin) {
             if ($fecha->format('N') < 6) {
                 $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
-                $finJornada    = (clone $fecha)->setTime(15, 0, 0);
+                $finJornada    = (clone $fecha)->setTime(16, 30, 0);
 
                 $fecha_str = $fecha->format('Y-m-d');
                 $conteoDiario = $pagosPorDiaMap[$fecha_str] ?? 0;
-                $diaEstaLleno = ($conteoDiario > 16);
+
+                if($sede == 'Morelia') {
+                    $diaEstaLleno = ($conteoDiario >= 20);
+                } else {
+                    $diaEstaLleno = ($conteoDiario >= 10);
+                }
 
                 $slot = clone $inicioJornada;
                 while ($slot < $finJornada) {
                     $slotStart = $slot->format('Y-m-d\\TH:i:s');
 
                     $conteoOcupados = $ocupadosMap[$slotStart] ?? 0;
-                    $ocupado = ($conteoOcupados >= 2);
+
+                    if($sede == 'Morelia'){
+                        $ocupado = ($conteoOcupados >= 2);
+                    } else {
+                        $ocupado = ($conteoOcupados >= 1);
+                    }
 
                     $esInhabil = false;
                     $esNoInhabil = false;
@@ -14187,12 +14197,40 @@ class SeerController extends Controller
 
         /* Las audiencias EXISTENTES cuya hora coincide exactamente con un slot corto (11:30 o 13:45)
         se asumen de 30 min (no 75) al calcular traslapes contra los slots largos vecinos (12:00 y 14:15),
-        para que una audiencia agendada en el slot corto no bloquee falsamente el siguiente slot largo.*/
+        para que una audiencia agendada en el slot corto no bloquee falsamente el siguiente slot largo.
+        Solo aplica al grid NUEVO: en el grid legacy el 11:30 es un slot largo normal de 75 min.*/
         $horasSlotCorto = ['11:30:00', '13:45:00'];
+
+        /* A partir de esta fecha rige el grid de horarios "nuevo". Antes de esta fecha se usa el
+        grid "legacy" (mismo corte que en ObtenerAudiencia). */
+        $fechaCorteHorario = '2026-08-10';
+
+        // Grid vigente a partir de $fechaCorteHorario.
+        $horariosConfigNuevo = [
+            ['hora' => [9, 0],   'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [10, 15], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [11, 30], 'duracion' => $duracionSlotMinutos, 'permite_empalme' => false],
+            ['hora' => [12, 0],  'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [13, 45], 'duracion' => $duracionSlotMinutos, 'permite_empalme' => false],
+            ['hora' => [14, 15], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [15, 30], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+        ];
+
+        /* Grid legacy (vigente antes de $fechaCorteHorario): 5 slots largos de 75 min, todos con
+        empalme permitido (máximo 2 audiencias por slot), sin slots cortos. */
+        $horariosConfigLegacy = [
+            ['hora' => [9, 0],   'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
+            ['hora' => [10, 15], 'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
+            ['hora' => [11, 30], 'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
+            ['hora' => [12, 45], 'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
+            ['hora' => [14, 0],  'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
+        ];
 
         /* Traemos cada audiencia existente (no agrupada por coincidencia exacta) para poder
         detectar traslapes de horario, incluyendo citas agendadas con el formato de horarios anterior
-        (p.ej. 11:30, 12:45, 14:00) que ya no coinciden con los puntos de inicio de $horarios.*/
+        (p.ej. 11:30, 12:45, 14:00) que ya no coinciden con los puntos de inicio de $horarios.
+        Se filtra solo por conciliador (sin sede) a propósito: un conciliador de tipo "Ambos" puede
+        tener audiencias en distintas sedes y el empalme debe detectarse sin importar en cuál se agendó.*/
         $audienciasExistentes = Audiencias::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
             ->where('id_conciliador', $id_conciliador)
             ->selectRaw('DATE(fecha) as fecha_dia, TIME(hora) as hora_inicio')
@@ -14212,17 +14250,9 @@ class SeerController extends Controller
         while ($fecha <= $fin_loop) {
             if ($fecha->format('N') < 6) { // Saltar fines de semana
 
-                $horariosConfig = [
-                    ['hora' => [9, 0],   'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
-                    ['hora' => [10, 15], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
-                    ['hora' => [11, 30], 'duracion' => $duracionSlotMinutos, 'permite_empalme' => false],
-                    ['hora' => [12, 0],  'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
-                    ['hora' => [13, 45], 'duracion' => $duracionSlotMinutos, 'permite_empalme' => false],
-                    ['hora' => [14, 15], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
-                    ['hora' => [15, 30], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
-                ];
-
                 $fechaDia = $fecha->format('Y-m-d');
+                $esDiaLegacy = $fechaDia < $fechaCorteHorario;
+                $horariosConfig = $esDiaLegacy ? $horariosConfigLegacy : $horariosConfigNuevo;
 
                 foreach ($horariosConfig as $config) {
                     $slot = (clone $fecha)->setTime($config['hora'][0], $config['hora'][1], 0);
@@ -14234,7 +14264,7 @@ class SeerController extends Controller
                     $audienciasEnSlot = 0;
                     foreach ($audienciasPorFecha[$fechaDia] ?? [] as $horaExistente) {
                         $existenteInicio = new \DateTime($fechaDia . ' ' . $horaExistente);
-                        $duracionExistente = in_array($horaExistente, $horasSlotCorto, true)
+                        $duracionExistente = (!$esDiaLegacy && in_array($horaExistente, $horasSlotCorto, true))
                             ? $duracionSlotMinutos
                             : $duracionCitaExistenteMinutos;
                         $existenteFin = (clone $existenteInicio)->modify("+{$duracionExistente} minutes");
@@ -14383,9 +14413,21 @@ class SeerController extends Controller
 
         $duracionSlotMinutos = 75;
 
+        /* A partir de esta fecha rige el grid de horarios "nuevo". Antes de esta fecha se usa el
+        grid "legacy" (mismo corte que en ObtenerAudiencia y en obtenerAudienciasParte2). */
+        $fechaCorteHorario = '2026-08-10';
+
+        // Horas de inicio vigentes a partir de $fechaCorteHorario.
+        $horasNuevo = [[9, 0], [10, 15], [12, 0], [14, 15], [15, 30]];
+
+        // Horas de inicio del grid legacy (vigente antes de $fechaCorteHorario).
+        $horasLegacy = [[9, 0], [10, 15], [11, 30], [12, 45], [14, 0]];
+
         /* Traemos cada audiencia existente (no agrupada por coincidencia exacta) para poder
         detectar traslapes de horario, incluyendo citas agendadas con el formato de horarios anterior
-        (p.ej. 11:30, 12:45, 14:00) que ya no coinciden con los puntos de inicio de $horarios.*/
+        (p.ej. 11:30, 12:45, 14:00) que ya no coinciden con los puntos de inicio de $horarios.
+        Se filtra solo por conciliador (sin sede) a propósito: un conciliador de tipo "Ambos" puede
+        tener audiencias en distintas sedes y el empalme debe detectarse sin importar en cuál se agendó.*/
         $audienciasExistentes = Audiencias::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
             ->where('id_conciliador', $id_conciliador)
             ->selectRaw('DATE(fecha) as fecha_dia, TIME(hora) as hora_inicio')
@@ -14405,15 +14447,14 @@ class SeerController extends Controller
         while ($fecha <= $fin_loop) {
             if ($fecha->format('N') < 6) { // Saltar fines de semana
 
-                $horarios = [
-                    (clone $fecha)->setTime(9, 0, 0),
-                    (clone $fecha)->setTime(10, 15, 0),
-                    (clone $fecha)->setTime(12, 0, 0),
-                    (clone $fecha)->setTime(14, 15, 0),
-                    (clone $fecha)->setTime(15, 30, 0),
-                ];
-
                 $fechaDia = $fecha->format('Y-m-d');
+                $esDiaLegacy = $fechaDia < $fechaCorteHorario;
+                $horasBase = $esDiaLegacy ? $horasLegacy : $horasNuevo;
+
+                $horarios = array_map(
+                    fn ($h) => (clone $fecha)->setTime($h[0], $h[1], 0),
+                    $horasBase
+                );
 
                 foreach ($horarios as $horario) {
                     $slot = $horario;
