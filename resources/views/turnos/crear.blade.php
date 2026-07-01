@@ -336,6 +336,13 @@
             cursor: not-allowed;
         }
 
+        .fc-event-turnos {
+            color: #ffff !important;
+            background-color: #00CE1C !important;
+            border-color: #00CE1C !important;
+            cursor: pointer;
+        }
+
         .fc-event-selected {
             border: 2px solid #FFD700 !important;
             box-shadow: 0 0 8px #FFD700;
@@ -444,7 +451,7 @@
                 eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
                 eventClick: function (info) {
                     const estado = info.event.extendedProps.estado;
-                    if (estado !== 'disponible') {
+                    if (estado !== 'disponible' && estado !== 'turnos') {
                         alert('Este horario no está disponible. Por favor seleccione otro.');
                         return;
                     }

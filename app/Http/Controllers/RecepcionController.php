@@ -55,7 +55,7 @@ class RecepcionController extends Controller
             }
         }
         // El horario seleccionado en el calendario ya no debe estar ocupado ni caer en un día/horario inhábil
-        if (!$this->turnoSlotDisponible($sede, $tipoTramite, $fecha_asignada_str, $hora_turno)) {
+        if (!$this->turnoSlotDisponible($sede, $tipoTramite, $fecha_asignada_str, $hora_turno, $data["excepcion"] ?? null)) {
             return redirect()->back()->with('error', 'El horario seleccionado ya no está disponible. Por favor selecciona otro.');
         }
 
@@ -761,15 +761,22 @@ class RecepcionController extends Controller
             })
             ->get();
 
-        // Los turnos no se pueden empalmar: cada slot de "tipo" y "delegacion" admite una sola cita.
-        $ocupados = Recepcion::where('delegacion', $sede)
-            ->where('tipo', $tipo)
-            ->whereBetween('fecha', [$fecha_inicio_str, $fecha_fin_str])
-            ->get(['fecha', 'hora']);
+        $esExcepcion = $excepcion === 'Si';
+        $maxEmpalme = $esExcepcion ? 1 : ($sede === 'Morelia' ? ($tipo === 'Ratificación' ? 2 : 3) : 1);
 
-        $ocupadosSet = [];
+        $ocupadosQuery = Recepcion::whereBetween('fecha', [$fecha_inicio_str, $fecha_fin_str]);
+        if ($esExcepcion) {
+            //Si es Exceción ignopra tipo de trámite y delegación
+            $ocupadosQuery->where('exepcion', 'Si');
+        } else {
+            $ocupadosQuery->where('tipo', $tipo)->where('delegacion', $sede);
+        }
+        $ocupados = $ocupadosQuery->get(['fecha', 'hora']);
+
+        $ocupadosCount = [];
         foreach ($ocupados as $turno) {
-            $ocupadosSet[$turno->fecha->format('Y-m-d') . 'T' . $turno->hora->format('H:i:s')] = true;
+            $key = $turno->fecha->format('Y-m-d') . 'T' . $turno->hora->format('H:i:s');
+            $ocupadosCount[$key] = ($ocupadosCount[$key] ?? 0) + 1;
         }
 
         $ahora = new \DateTime();
@@ -780,6 +787,7 @@ class RecepcionController extends Controller
         $colores = [
             'ocupado' => '#DA0909', 'inhabil' => '#3B78DB',
             'expirado' => '#F59727', 'disponible' => '#00CE1C',
+            'turnos' => '#00CE1C',
         ];
         $titulos = [
             'ocupado' => 'Ocupado', 'inhabil' => 'Inhábil',
@@ -809,7 +817,11 @@ class RecepcionController extends Controller
                         }
                     }
 
-                    if (isset($ocupadosSet[$slotStart])) {
+                    $cantidadOcupados = $ocupadosCount[$slotStart] ?? 0;
+
+                    if ($cantidadOcupados > 0 && $cantidadOcupados < $maxEmpalme) {
+                        $estado = 'turnos';
+                    } elseif ($cantidadOcupados > 0) {
                         $estado = 'ocupado';
                     } elseif ($esInhabil) {
                         $estado = 'inhabil';
@@ -823,8 +835,10 @@ class RecepcionController extends Controller
                         $estado = 'disponible';
                     }
 
+                    $titulo = $estado === 'turnos' ? "Turnos ({$cantidadOcupados})" : $titulos[$estado];
+
                     $eventos[] = [
-                        'title' => $titulos[$estado],
+                        'title' => $titulo,
                         'start' => $slotStart,
                         'color' => $colores[$estado],
                         'extendedProps' => ['estado' => $estado],
@@ -843,15 +857,20 @@ class RecepcionController extends Controller
         return response()->json($eventos);
     }
 
-    // Verifica que el slot elegido siga libre (sin empalme) y no caiga en un rango inhábil de la sede.
-    private function turnoSlotDisponible($sede, $tipo, $fecha, $hora){
-        $ocupado = Recepcion::where('delegacion', $sede)
-            ->where('tipo', $tipo)
-            ->where('fecha', $fecha)
-            ->where('hora', $hora)
-            ->exists();
+    public function turnoSlotDisponible($sede, $tipo, $fecha, $hora, $excepcion = null){
+        // El calendario de excepción no admite empalmes. Fuera de excepción, solo la sede Morelia admite empalmar varias citas en un mismo slot.
+        $esExcepcion = $excepcion === 'Si';
+        $maxEmpalme = $esExcepcion ? 1 : ($sede === 'Morelia' ? ($tipo === 'Ratificación' ? 2 : 3) : 1);
 
-        if ($ocupado) {
+        $cantidadQuery = Recepcion::where('fecha', $fecha)->where('hora', $hora);
+        if ($esExcepcion) {
+            //Si es excepción bloquea el slot sin importar el tipo de trámite o la sede
+            $cantidadQuery->where('exepcion', 'Si');
+        } else {
+            $cantidadQuery->where('tipo', $tipo)->where('delegacion', $sede);
+        }
+
+        if ($cantidadQuery->count() >= $maxEmpalme) {
             return false;
         }
 
