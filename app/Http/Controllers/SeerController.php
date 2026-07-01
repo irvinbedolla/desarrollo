@@ -14174,13 +14174,21 @@ class SeerController extends Controller
                 ->get();
         }
 
-        // Duración propia de los slots cortos
+        // Duración de los slots cortos (11:30 y 13:45) que no permiten empalme
         $duracionSlotMinutos = 30;
+
+        // Duración de los slots largos que sí permiten un empalme
+        $duracionSlotLargo = 75;
 
         /* Duración asumida de las citas YA EXISTENTES al buscar traslapes. Se mantiene en 75 min
         (igual que en obtenerAudienciasParte3) porque así se ha agendado históricamente toda
         audiencia en este sistema, sea formato viejo o el grid actual de parte3.*/
         $duracionCitaExistenteMinutos = 75;
+
+        /* Las audiencias EXISTENTES cuya hora coincide exactamente con un slot corto (11:30 o 13:45)
+        se asumen de 30 min (no 75) al calcular traslapes contra los slots largos vecinos (12:00 y 14:15),
+        para que una audiencia agendada en el slot corto no bloquee falsamente el siguiente slot largo.*/
+        $horasSlotCorto = ['11:30:00', '13:45:00'];
 
         /* Traemos cada audiencia existente (no agrupada por coincidencia exacta) para poder
         detectar traslapes de horario, incluyendo citas agendadas con el formato de horarios anterior
@@ -14204,29 +14212,40 @@ class SeerController extends Controller
         while ($fecha <= $fin_loop) {
             if ($fecha->format('N') < 6) { // Saltar fines de semana
 
-                $horarios = [
-                    (clone $fecha)->setTime(11, 30, 0),
-                    (clone $fecha)->setTime(13, 45, 0),
+                $horariosConfig = [
+                    ['hora' => [9, 0],   'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+                    ['hora' => [10, 15], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+                    ['hora' => [11, 30], 'duracion' => $duracionSlotMinutos, 'permite_empalme' => false],
+                    ['hora' => [12, 0],  'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+                    ['hora' => [13, 45], 'duracion' => $duracionSlotMinutos, 'permite_empalme' => false],
+                    ['hora' => [14, 15], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+                    ['hora' => [15, 30], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
                 ];
 
                 $fechaDia = $fecha->format('Y-m-d');
 
-                foreach ($horarios as $horario) {
-                    $slot = $horario;
+                foreach ($horariosConfig as $config) {
+                    $slot = (clone $fecha)->setTime($config['hora'][0], $config['hora'][1], 0);
+                    $duracionSlot = $config['duracion'];
                     $slotStart = $slot->format('Y-m-d\TH:i:s');
-                    $slotFin = (clone $slot)->modify("+{$duracionSlotMinutos} minutes");
+                    $slotFin = (clone $slot)->modify("+{$duracionSlot} minutes");
                     $slotEnd = $slotFin->format('Y-m-d\TH:i:s');
 
                     $audienciasEnSlot = 0;
                     foreach ($audienciasPorFecha[$fechaDia] ?? [] as $horaExistente) {
                         $existenteInicio = new \DateTime($fechaDia . ' ' . $horaExistente);
-                        $existenteFin = (clone $existenteInicio)->modify("+{$duracionCitaExistenteMinutos} minutes");
+                        $duracionExistente = in_array($horaExistente, $horasSlotCorto, true)
+                            ? $duracionSlotMinutos
+                            : $duracionCitaExistenteMinutos;
+                        $existenteFin = (clone $existenteInicio)->modify("+{$duracionExistente} minutes");
                         // Traslape de intervalos semiabiertos [inicio, fin)
                         if ($existenteInicio < $slotFin && $slot < $existenteFin) {
                             $audienciasEnSlot++;
                         }
                     }
-                    $ocupado = $audienciasEnSlot >= 2;
+                    // Los slots de 11:30 y 13:45 no permiten empalme: una sola audiencia ya ocupa el horario.
+                    $umbralOcupado = $config['permite_empalme'] ? 2 : 1;
+                    $ocupado = $audienciasEnSlot >= $umbralOcupado;
 
                     $esInhabil = false;
                     $esNoInhabil = false;
