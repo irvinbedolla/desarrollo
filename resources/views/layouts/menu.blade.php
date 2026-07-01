@@ -17,6 +17,9 @@
             <a class="nav-link" href="{{ route('todas_notificaciones') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Busqueda Notificaciones</span>
             </a>
+            <a class="nav-link" href="{{ route('excepcion') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Casos de Excepción</span>
+            </a>
             <a class="nav-link" href="{{ route('subir_doc_masivo') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Carga Masiva</span>
             </a>
@@ -269,17 +272,9 @@
     @endauth    
     @auth
         @role('Turnos')
-            <a class="nav-link" href="{{ route('indexDireccionGeneral') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Dirección General</span>
-            </a>
-            <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
-            </a>
+            
             <a class="nav-link" href="{{ route('index_oficialia') }}">
                 <i class="bi bi-journal-text"></i><span class="text-dark" onclick="oficialia()">Oficialia de Partes</span>
-            </a>
-            <a class="nav-link" href="{{ route('poderes') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
             <a class="nav-link" href="{{ route('turnos') }}">
                 <i class="bi bi-book" aria-hidden="true"></i></i><span class="text-dark" onclick="turnos()">Turnos</span>

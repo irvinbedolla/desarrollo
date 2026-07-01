@@ -72,26 +72,6 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Área de adscripción</label>
-                                            <input type="text" name="area" maxlength="50" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" required> 
-                                            <div class="invalid-feedback">
-                                                El campo área es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
-                                        <div class="form-group">
-                                            <label for="name">Puesto</label>
-                                            <input type="text" name="puesto" maxlength="50" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" required> 
-                                            <div class="invalid-feedback">
-                                                El campo puesto es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
-                                        <div class="form-group">
                                             <label for="name">Número de Teléfono</label>
                                             <input type="number" name="telefono" maxlength="10" class="form-control" required> 
                                             <div class="invalid-feedback">
@@ -110,15 +90,6 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
-                                        <div class="form-group">
-                                            <label for="name">Nombre de la Empresa</label>
-                                            <input type="text" name="empresa" maxlength="50" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" required> 
-                                            <div class="invalid-feedback">
-                                                El campo empresa es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
@@ -184,7 +155,7 @@
                                                 <option value="">Seleccione</option>
                                                 <option value="Menores de edad">Menores de edad</option>
                                                 <option value="Adultos mayores">Adultos mayores</option>
-                                                <option value="Personas con discapacidad">Personas con discapacidad</option>
+                                                <option value="Discapacidad">Personas con discapacidad</option>
                                                 <option value="Población indígena">Población indígena</option>
                                                 <option value="Personas Migrantes">Personas Migrantes</option>
                                                 <option value="LGBTTTIQ">LGBTTTIQ+</option>
@@ -227,6 +198,36 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="form-group">
+                                                <label for="password">Estado <span style="color:red;">(*)</span></label>
+                                                <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
+                                                    <option value="">Seleccione</option>
+                                                    @foreach($estados as $est)
+                                                        <option value="{{$est['id']}}">{{$est['nombre']}}</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo entidad federativa es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="form-group">
+                                                <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
+                                                <select id="municipio_solicitante" class="form-control" name="municipio_solicitante" required>
+                                                    <option value="">Seleccione</option>
+                                                    @foreach($municipios as $mun)
+                                                        <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo municipio o alcaldía es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="name">Observaciones</label>
@@ -353,6 +354,56 @@
     @endsection
 
     @section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function cargarMunicipiosSolicitante(estadoId) {
+                var $municipio = $('#municipio_solicitante');
+                if (!$municipio.length) return;
+                $municipio.html('<option value="">Cargando...</option>');
+                if (!estadoId) {
+                    $municipio.html('<option value="">Seleccione</option>');
+                    return;
+                }
+                $.get(base_url + '/api/munSolicitante/' + estadoId, function (data) {
+                    var html = '<option value="">Seleccione</option>';
+                    data.forEach(function (m) {
+                        html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                    });
+                    $municipio.html(html);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $.get(base_url + '/munSolicitante/' + estadoId, function (data) {
+                        var html = '<option value="">Seleccione</option>';
+                        data.forEach(function (m) {
+                            html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                        });
+                        $municipio.html(html);
+                    }).fail(function (jq2, t2, e2) {
+                        $municipio.html('<option value="">Error cargando municipios</option>');
+                        if (typeof iziToast !== 'undefined') {
+                            iziToast.error({
+                                title: 'Error',
+                                message: 'No se pudieron cargar los municipios. HTTP: ' + (jqXHR.status || jq2.status || 'N/A') + ' - ' + (errorThrown || e2 || textStatus),
+                                position: 'topRight'
+                            });
+                        } else {
+                            alert('No se pudieron cargar los municipios.');
+                        }
+                    });
+                });
+            }
+
+            var $estadoSolicitante = $('#estado_solicitante');
+            var base_url = "{{ url('') }}";
+
+            if ($estadoSolicitante.length) {
+                $estadoSolicitante.on('change', function () {
+                    cargarMunicipiosSolicitante(this.value);
+                });
+                var inicial = $estadoSolicitante.val();
+                if (inicial) cargarMunicipiosSolicitante(inicial);
+            }
+        });
+    </script>
     <script>
         document.getElementById("tipo_caso").style.display="none";
 

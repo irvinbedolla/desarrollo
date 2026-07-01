@@ -15,6 +15,9 @@ use Carbon\Carbon;
 use App\Models\DiasInhabiles;
 use App\Models\SeerCasosExcepcion;
 use App\Models\SeerChatR;
+use App\Models\Estados;
+use App\Models\Municipios;
+
 
 class RecepcionController extends Controller
 {   
@@ -41,7 +44,6 @@ class RecepcionController extends Controller
         $hora_turno = $data["hora_turno"];
         $id_auxiliar = auth()->user()->id;
         $hora_fin =$hora_turno;
-        
 
         if($data["excepcion"]== 'Si'){
              $hora_fin = date("H:i:s", strtotime($hora_turno . " +75 minutes"));
@@ -99,11 +101,10 @@ class RecepcionController extends Controller
             'folio'           => $data["folio"] ?? null,
             'INS'             => $data["INS"] ?? null,
             'resultado'       => null,
-            'area_adscripcion' => $data["area"],
-            'puesto'          => $data["puesto"],
             'telefono'        => $data["telefono"],
             'correo'          => $data["correo"],
-            'nombre_empresa'  => $data["empresa"]
+            'estado'          => $data["estado_solicitante"],
+            'municipio'       => $data["municipio_solicitante"],
         );
 
         // 5. Ejecutar el Insert a través de Eloquent
@@ -722,7 +723,9 @@ class RecepcionController extends Controller
     }
 
     public function nueva_cita(){
-        return view('turnos/crear');
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+        return view('turnos.crear', compact('estados','municipios'));
     }
 
     // Duración del slot (minutos) y hora de cierre de jornada según el tipo de trámite y si es caso de excepción.
@@ -923,7 +926,10 @@ class RecepcionController extends Controller
             'tipo_caso'         => $data['tipo_caso'],
             'vulnerables'       => $data['vulnerables'],
             'jefe_inmediato'    => $data['jefe_inmediato'],
+            'empresa'           => $data['empresa'],
             'ubicacion'         =>$data['ubicacion'],
+            'puesto'            => $data['puesto'],
+            'area_adscripcion'   => $data['area_adscripcion'],
             'fecha'             => $fecha_actual, 
             'hora'              => $hora_actual ,
         );
