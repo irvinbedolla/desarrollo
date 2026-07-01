@@ -170,9 +170,9 @@
                 </div>
                 <div class="datos">
                 <p>
-                    <b>Nombre de la empresa o persona empleadora:</b> {{$recepcion->nombre_empresa}}.<br><br>
-                    <b>Área de adscripción:</b> {{$recepcion->area_adscripcion}}.<br><br>
-                    <b>Puesto:</b> {{$recepcion->puesto}}.<br><br>
+                    <b>Nombre de la empresa o persona empleadora:</b> {{$caso->empresa}}.<br><br>
+                    <b>Área de adscripción:</b> {{$caso->area_adscripcion}}.<br><br>
+                    <b>Puesto:</b> {{$caso->puesto}}.<br><br>
                     <b>¿Cuál es el nombre del jefe inmediato?</b> {{ $caso->jefe_inmediato }}. 
                     
                     <br><br><br><br>

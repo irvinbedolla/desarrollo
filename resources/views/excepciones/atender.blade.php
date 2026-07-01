@@ -57,25 +57,25 @@
                                     
 
                                     
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Grupos vulnerables<span style="color:red;">(*)</span></label>
                                             <select name="vulnerables" class="form-control" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="Menores de edad" {{ $recepcion->vulnerables == 'Menores de edad' ? 'selected' : '' }}>Menores de edad</option>
-                                                <option value="Mayores" {{ $recepcion->vulnerables == 'Mayores' ? 'selected' : '' }}>Adultos mayores</option>
+                                                <option value="Adultos mayores" {{ $recepcion->vulnerables == 'Adultos mayores' ? 'selected' : '' }}>Adultos mayores</option>
                                                 <option value="Discapacidad" {{ $recepcion->vulnerables == 'Discapacidad' ? 'selected' : '' }}>Personas con discapacidad</option>
-                                                <option value="Indigena" {{ $recepcion->vulnerables == 'Indigena' ? 'selected' : '' }}>Población indígena</option>
+                                                <option value="Población indígena" {{ $recepcion->vulnerables == 'Población indígena' ? 'selected' : '' }}>Población indígena</option>
                                                 <option value="Personas Migrantes" {{ $recepcion->vulnerables == 'Personas Migrantes' ? 'selected' : '' }}>Personas Migrantes</option>
-                                                <option value='LGBTTTTIQ' {{ $recepcion->vulnerables == 'LGBTTTTIQ' ? 'selected' : '' }}>LGBTTTIQ+</option>
-                                                <option value="Ninguno" {{ $recepcion->vulnerables == 'Ninguno' ? 'selected' : '' }}>No aplica</option>
+                                                <option value='LGBTTTIQ' {{ $recepcion->vulnerables == 'LGBTTTIQ' ? 'selected' : '' }}>LGBTTTIQ+</option>
+                                                <option value="No aplica" {{ $recepcion->vulnerables == 'No aplica' ? 'selected' : '' }}>No aplica</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Frecuencia con la que han sucedido los hechos<span style="color:red;">(*)</span></label>
                                             <select name="frecuencia" class="form-control" required>
@@ -151,7 +151,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6" id="si_conoce" style="display:none;">
                                         <div class="form-group">
-                                            <label for="name">Especificar el nombre</label>
+                                            <label for="name">Especificar el nombre del Jefe inmediato</label>
                                             <input id="nombre_jefe" type="text" oninput="this.value = this.value.toUpperCase()" class="form-control" >
                                         </div>
                                     </div>
@@ -175,6 +175,33 @@
                                         <div class="form-group">
                                             <label for="name">¿La persona afectada comunicó los hechos a alguien más de su área de trabajo? <span style="color:rgb(102, 102, 102);">(Decriba a quién o a quiénes)</span></label>
                                             <textarea name="descripcion_persona" oninput="this.value = this.value.toUpperCase()" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Nombre de la Empresa</label>
+                                            <input type="text" name="empresa" maxlength="50" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" required> 
+                                            <div class="invalid-feedback">
+                                                El campo empresa es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Puesto:<span style="color:red;">(*)</span></label>
+                                            <input type=text name="puesto" oninput="this.value = this.value.toUpperCase()" class="form-control"  required>
+                                            <div class="invalid-feedback">
+                                                El puesto es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Área de adscripción:<span style="color:red;">(*)</span></label>
+                                            <input type=text name="area_adscripcion" oninput="this.value = this.value.toUpperCase()" class="form-control"  required>
+                                            <div class="invalid-feedback">
+                                                El área de adscripción es obligatorio.
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">

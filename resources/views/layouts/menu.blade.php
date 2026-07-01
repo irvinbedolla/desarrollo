@@ -17,6 +17,9 @@
             <a class="nav-link" href="{{ route('todas_notificaciones') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Busqueda Notificaciones</span>
             </a>
+            <a class="nav-link" href="{{ route('excepcion') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Casos de Excepción</span>
+            </a>
             <a class="nav-link" href="{{ route('subir_doc_masivo') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Carga Masiva</span>
             </a>
