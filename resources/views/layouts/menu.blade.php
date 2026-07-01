@@ -272,17 +272,9 @@
     @endauth    
     @auth
         @role('Turnos')
-            <a class="nav-link" href="{{ route('indexDireccionGeneral') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Dirección General</span>
-            </a>
-            <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
-            </a>
+            
             <a class="nav-link" href="{{ route('index_oficialia') }}">
                 <i class="bi bi-journal-text"></i><span class="text-dark" onclick="oficialia()">Oficialia de Partes</span>
-            </a>
-            <a class="nav-link" href="{{ route('poderes') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
             <a class="nav-link" href="{{ route('turnos') }}">
                 <i class="bi bi-book" aria-hidden="true"></i></i><span class="text-dark" onclick="turnos()">Turnos</span>
