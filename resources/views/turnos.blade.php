@@ -25,6 +25,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <style>
+        p {
+            text-align: justify;
+            padding: 20px 20px;
+
+        }
         .loader {
             position: fixed;
             left: 0px;
@@ -74,16 +79,27 @@
             box-shadow: 0 0 8px #FFD700;
         }
 
-        .modal-xl {
+        .modal-xl-2 {
             max-width: 95% !important;
         }
+        .modal-xl{
+            max-width: 50% !important;
+        }
 
-        .modal-content {
+        .modal-content-2 {
             height: 90vh;
         }
 
         .modal-body {
             overflow-y: auto;
+        }
+        .modal-titulo{
+            height: 50px;
+            font-size: 20px;
+            padding: 10px 10px;
+            background-color: #6A0F49 !important;
+            color: #fff !important;
+            border: none;
         }
 
         .btn-custom-morado {
@@ -367,7 +383,7 @@
 
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
-                    <div class="modal-content">
+                    <div class="modal-content-2">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Posibles Casos</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -388,8 +404,104 @@
                 </div>
             </div>
 
-        </section>
+    <!-- Modal de Aviso -->
+<div class="modal fade" id="avisoModal" tabindex="-1" aria-labelledby="avisoModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            
+            <div class="modal-body">
+                    
+                <div class="row">
 
+                   <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <h5 class="text-center modal-titulo" >Aviso Importante</h5>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <p>Los Datos Personales recabados por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, servirán únicamente para realizar el Procedimiento de Conciliación Individual Prejudicial, 
+                            serán tratados conforme lo dispuesto por la Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados y demás normativa aplicable.</p>
+                    
+                        </div>
+                    </div>
+                
+                </div> 
+                    
+        
+            </div> 
+            
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+   
+    <div class="modal fade" id="seguridadModal" tabindex="-1" aria-labelledby="seguridadModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+
+            
+                <div class="modal-body">
+                    
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <h5 class="text-center modal-titulo" >Aviso de Privacidad</h5>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <p>Los Datos Personales recabados por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, servirán únicamente para realizar el Procedimiento de Conciliación Individual Prejudicial, 
+                            serán tratados conforme lo dispuesto por la Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados y demás normativa aplicable.</p>
+                            <p>Los datos considerados sensibles no serán recabados, ni tratados, ni se realizaran transferencias de datos personales, salvo aquellos que no requieran el consentimiento de los titulares y que 
+                                sean necesarios para atender su solicitud o requerimientos de información realizados por autoridad competente, siempre y cuando se encuentren debidamente fundados y motivados; lo anterior, de 
+                                conformidad con los artículos 22, 66 y 70 de la Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados.</p>
+                            <p>Los datos personales que sean recabados serán empleados con los fines siguientes:</p>
+                            <ul>
+                                <li>Registrar al usuario en la plataforma digital denominada SICONCILIO (Sistema Integral para la Conciliación), dar seguimiento y trámite a su solicitud.</li><br>
+                                <li>Administrar la información y datos del solicitante para efectuar el Procedimiento de Conciliación Prejudicial obligatorio y las notificaciones que deriven del mismo.</li><br>
+                                <li>Generar información estadística y de control, en la que sus datos personales serán disociados de la información estadística para que no sea posible identificar a los titulares.</li><br>
+                                <li>Establecer comunicación con los trabajadores y patrones por correo electrónico, por escrito, mediante correo ordinario o por teléfono, sobre aspectos relacionados con las 
+                                    fases y etapas del procedimiento de conciliación individual.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div> 
+                    
+            
+            </div> 
+            
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Aceptar</button>
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+        </section>
+    <script>
+        $(document).ready(function() {
+            // Mostrar primer modal
+            $('#avisoModal').modal('show');
+
+            // Cuando se cierre, abrir el segundo
+            $('#avisoModal').on('hidden.bs.modal', function (e) {
+                $('#seguridadModal').modal('show');
+            });
+            
+        });
+        $(window).on('pageshow', function() {
+        $('#avisoModal').modal('show');
+    });
+</script>
+        
 
     <script>
         document.getElementById("tipo_caso").style.display="none";
