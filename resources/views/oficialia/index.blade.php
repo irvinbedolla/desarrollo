@@ -57,14 +57,8 @@
                                                     <td>@if($oficialia->estatus == 'creado')Pendiente @elseif ($oficialia->estatus == 'turnado') Turnado @else Concluido @endif</td>
 
                                                     <td>
-                                                        @if($oficialia->estatus == 'creado' && $oficialia->usuario_responsable == $id)
+                                                        @if($oficialia->estatus == 'creado' && $oficialia->usuario_responsable == $id && $userRole != 'Turnos')
                                                         <a href="#" class="btn btn-success" data-bs-toggle="modal" data-id="{{ $oficialia->id }}" data-bs-target="#concluirModal">Concluir</a>
-                                                            <!--form action="{{ route('concluir_oficialia', $oficialia->id) }}" method="POST" style="display:inline;">
-                                                                @csrf
-                                                                <button type="submit" class="btn btn-success">
-                                                                    Concluir
-                                                                </button>
-                                                            </form-->
                                                         @endif
                                                     </td>
                                                     <td>
@@ -122,7 +116,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Tipo de Tramite <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="tipo_tramite" id="tipo_tramite" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="tipo_tramite" id="tipo_tramite" class="form-control" oninput="this.value = this.value.toUpperCase()" required > 
                                                         <div class="invalid-feedback">
                                                             El tipo de tramite es obligatorio.
                                                         </div>
@@ -133,7 +127,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Area de Turno <span style="color:red;">(*)</span></label>
-                                                        <select name="area_turno" id="area_turno" class="form-control">
+                                                        <select name="area_turno" id="area_turno" class="form-control" required>
                                                             <option value="">Seleccione</option>
                                                             <option value="Dirección general">Dirección General</option>
                                                             <option value="Dirección Administrativa">Dirección Administrativa</option>
@@ -153,7 +147,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Oficio <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="oficio" id="oficio" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="oficio" id="oficio" class="form-control" oninput="this.value = this.value.toUpperCase()" maxlength="20" required > 
                                                         <div class="invalid-feedback">
                                                             El segundo apellido es obligatorio.
                                                         </div>
@@ -194,14 +188,14 @@
                     <table id="tabla1" class="table-striped" style="width:100%">
                         <thead style="background-color: #4A001F;">   
                             <!--<th style="display: none;">ID</th>-->
-                            <th style="color: #fff;">ID</th>
+                            
                             <th style="color: #fff;">Nombre</th>
                             <th style="color: #fff;">Acciones</th>
                         </thead>
                         <tbody class="contenidobusqueda">
                             @foreach ($usuariosR as $usuarioR )
                                 <tr>
-                                    <td>{{$usuarioR->id}}</td>
+                                    
                                     <td>{{$usuarioR->name}}</td>
                                     <td>
                                         <button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="{{$usuarioR->id}}">Seleccionar</button>
