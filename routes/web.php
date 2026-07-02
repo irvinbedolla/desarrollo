@@ -345,7 +345,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
      |-- SUB-GRUPO DE CONTROL DE ACCESO: NOTIFICADORES / ENLACES JURÍDICOS
      |-- (Estatus de entrega de citatorios, instructivos y levantamiento de razones de notificación)
      |*/
-    Route::middleware(['role:Super Usuario|Notificador|Enlace'])->group(function () {
+    Route::middleware(['role:Super Usuario|Notificador|Enlace|Estadistica'])->group(function () {
         Route::get('/notificaciones/index',                 [SeerController::class, 'notificaciones'])->name('notificaciones');
         Route::get('/notificaciones/busqueda',              [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar');
         Route::post('/notificaciones/resultado',            [SeerController::class, 'notificaciones_busqueda'])->name('notificaciones_busqueda');
