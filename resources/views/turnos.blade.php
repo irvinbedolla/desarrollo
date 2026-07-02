@@ -193,7 +193,7 @@
                                                 <option value="">Seleccione</option>
                                                 <option value="Solicitud">Solicitudes</option>
                                                 <option value="Ratificación">Ratificación</option>
-                                                <option value="Asesoria">Asesoria</option>
+                                                <option value="Asesoría">Asesorías</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El tipo de solicitud es obligatoria.

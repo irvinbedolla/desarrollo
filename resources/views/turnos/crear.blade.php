@@ -43,8 +43,9 @@
                                             <label for="name">Tipo de Trámite</label>
                                             <select name="tipo" class="form-control" onchange="blockCalendar();" required>
                                                 <option value="">Seleccione</option>
-                                                <option value="Solicitud">Solicitudes y Asesorías</option>
+                                                <option value="Solicitud">Solicitudes</option>
                                                 <option value="Ratificación">Ratificación</option>
+                                                <option value="Asesoría">Asesorías</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El tipo de solicitud es obligatoria.

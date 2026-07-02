@@ -777,7 +777,12 @@ class RecepcionController extends Controller
             //Si es Exceción ignopra tipo de trámite y delegación
             $ocupadosQuery->where('exepcion', 'Si');
         } else {
-            $ocupadosQuery->where('tipo', $tipo)->where('delegacion', $sede);
+            if($tipo == "Ratificación"){
+                $ocupadosQuery->where('tipo', $tipo)->where('delegacion', $sede);
+            }
+            else{
+                $ocupadosQuery->whereIn('tipo', ['Solicitud', 'Asesoría'])->where('delegacion', $sede);
+            }
         }
         $ocupados = $ocupadosQuery->get(['fecha', 'hora']);
 
