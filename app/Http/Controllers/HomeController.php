@@ -201,7 +201,7 @@ class HomeController extends Controller
 
         if ($excepcion === 'Si') {
             $hora_fin = date("H:i:s", strtotime($hora_turno . " +75 minutes"));
-        } elseif ($tipo === 'Solicitud') {
+        } elseif ($tipo === 'Solicitud' || $tipo === 'Asesoria') {
             $hora_fin = date("H:i:s", strtotime($hora_turno . " +40 minutes"));
         } else {
             $hora_fin = date("H:i:s", strtotime($hora_turno . " +60 minutes"));

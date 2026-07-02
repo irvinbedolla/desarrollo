@@ -191,8 +191,9 @@
                                             <label for="name">Tipo de Trámite <span style="color:red;">(*)</span></label>
                                             <select name="tipo" class="form-control" onchange="blockCalendar();" required>
                                                 <option value="">Seleccione</option>
-                                                <option value="Solicitud">Solicitudes y Asesorías</option>
+                                                <option value="Solicitud">Solicitudes</option>
                                                 <option value="Ratificación">Ratificación</option>
+                                                <option value="Asesoria">Asesoria</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El tipo de solicitud es obligatoria.
@@ -448,7 +449,7 @@
             </div>
 
     <!-- Modal de Aviso -->
-<div class="modal fade" id="avisoModal" tabindex="-1" aria-labelledby="avisoModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+<div class="modal fade" id="avisoModal" tabindex="-1" aria-labelledby="avisoModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
@@ -476,7 +477,7 @@
             </div> 
             
             <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
             
         </div>
@@ -484,7 +485,7 @@
 </div>
 
    
-    <div class="modal fade" id="seguridadModal" tabindex="-1" aria-labelledby="seguridadModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal fade" id="seguridadModal" tabindex="-1" aria-labelledby="seguridadModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
 
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -521,7 +522,7 @@
             </div> 
             
             <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Aceptar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Aceptar</button>
             </div>
 
             </div>
@@ -529,19 +530,35 @@
     </div>
 
         </section>
+        
     <script>
-        $(document).ready(function() {
-            // Mostrar primer modal
-            $('#avisoModal').modal('show');
+    document.addEventListener("DOMContentLoaded", function () {
 
-            // Cuando se cierre, abrir el segundo
-            $('#avisoModal').on('hidden.bs.modal', function (e) {
-                $('#seguridadModal').modal('show');
-            });
-            
+        const avisoModalEl = document.getElementById('avisoModal');
+        const seguridadModalEl = document.getElementById('seguridadModal');
+
+        const avisoModal = bootstrap.Modal.getOrCreateInstance(avisoModalEl);
+        const seguridadModal = bootstrap.Modal.getOrCreateInstance(seguridadModalEl);
+
+        // Mostrar el primer modal
+        avisoModal.show();
+
+        avisoModalEl.addEventListener('hidden.bs.modal', function () {
+            seguridadModal.show();
         });
-        $(window).on('pageshow', function() {
-        $('#avisoModal').modal('show');
+
+        seguridadModalEl.addEventListener('hidden.bs.modal', function () {
+
+            document.body.classList.remove('modal-open');
+
+            document.body.style.removeProperty('padding-right');
+
+            document.querySelectorAll('.modal-backdrop').forEach(function(backdrop){
+                backdrop.remove();
+            });
+
+        });
+
     });
 </script>
         
