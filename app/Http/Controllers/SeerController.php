@@ -12863,47 +12863,46 @@ class SeerController extends Controller
     }
 
     public function notificaciones_consultar(){
-       //return view('/notificaciones/consultar');
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
-        $delegacion = $user->delegacion;
-        if($userRole[0] == "Enlace" || $userRole[0] == "Estadistica"){
-            if($delegacion == "Morelia"){
-                $delegaciones = ["Morelia", "Zitácuaro"];
-            }
-            else if($delegacion == "Uruapan"){
-                $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
-            }
-            else if($delegacion == "Zamora"){
-                $delegaciones = ["Zamora", "Sahuayo"];
-            }
-            else if($delegacion == "Lázaro Cárdenas"){
-                $delegaciones = ["Lázaro Cárdenas"];
-            }
-            else if($delegacion == "Zitácuaro"){
-                $delegaciones = ["Zitácuaro"];
-            }
-            else if($delegacion == "Sahuayo"){
-                $delegaciones = ["Sahuayo"];
-            }
-            $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
-            ->leftjoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
-            ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
-            ->whereIn('seer_general.delegacion', $delegaciones)
-            ->select('seer_citados.*','seer_general.NUE','municipios.nombre as municipio_citado','estados.nombre as estado_citado')
-            ->orderBy('created_at', 'desc')->limit(3000)->get();
+        $user = auth()->user();
+        $userRoles = $user->roles->pluck('name')->toArray();
+        $esRestringido = in_array('Enlace', $userRoles) || in_array('Estadistica', $userRoles);
+
+        $query = SeerCitados::join('seer_general', 'seer_general.id', '=', 'seer_citados.id_solicitud')
+            ->leftJoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+            ->leftJoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
+            ->select(
+                'seer_citados.*', 
+                'seer_general.NUE', 
+                'municipios.nombre as municipio_citado_nombre', 
+                'estados.nombre as estado_citado_nombre'
+            )
+            ->orderBy('seer_citados.created_at', 'desc') // Especificamos la tabla para evitar ambigüedad
+            ->limit(3000);
+
+        // 4. Aplicar filtro condicional de delegaciones si corresponde
+        if ($esRestringido) {
+            // Mapeo limpio usando un arreglo asociativo en lugar de múltiples else if
+            $mapaDelegaciones = [
+                'Morelia'         => ['Morelia', 'Zitácuaro'],
+                'Uruapan'         => ['Uruapan', 'Lázaro Cárdenas'],
+                'Zamora'          => ['Zamora', 'Sahuayo'],
+                'Lázaro Cárdenas' => ['Lázaro Cárdenas'],
+                'Zitácuaro'       => ['Zitácuaro'],
+                'Sahuayo'         => ['Sahuayo']
+            ];
+
+            $delegacionActual = $user->delegacion;
+            
+            // Asigna las delegaciones correspondientes, o usa la actual por defecto si no coincide
+            $delegacionesFiltrar = $mapaDelegaciones[$delegacionActual] ?? [$delegacionActual];
+
+            $query->whereIn('seer_general.delegacion', $delegacionesFiltrar);
         }
-        else{
-            $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
-            ->leftjoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
-            ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
-            ->select('seer_citados.*','seer_general.NUE','municipios.nombre as municipio_citado','estados.nombre as estado_citado')
-            ->orderBy('created_at', 'desc')->limit(3000)->get();
-        }
-       
-        return view('/notificaciones.index_busqueda',compact('notificaciones'));
+
+        // 5. Ejecutar la consulta una sola vez
+        $notificaciones = $query->get();
+
+        return view('notificaciones.index_busqueda', compact('notificaciones'));
     }
 
     public function notificaciones_busqueda(Request $request){
