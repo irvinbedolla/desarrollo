@@ -156,6 +156,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/calendario',                           [CalendarController::class, 'index'])->name('calendario.index');
     Route::get('/citas/eventos',                        [CitaController::class, 'citas'])->name('citas.eventos');
     Route::get('/pagos/eventos',                        [CitaController::class, 'pagos'])->name('pagos.eventos');
+    Route::get('/recepcion/eventos',                    [RecepcionController::class, 'eventosRolTurnos'])->name('recepcion.eventos');
     Route::get('/obtenerBloqueosCalendario',            [AdministracionController::class, 'obtenerBloqueosCalendario'])->name('calendario.bloqueos');
 
     /*

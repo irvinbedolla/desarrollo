@@ -161,6 +161,63 @@ class RecepcionController extends Controller
         return view('turnos.index',compact('auxiliares_morelia','total', 'last_hora_solicitud', 'last_hora_ratificacion', 'last_sede_solicitud', 'last_sede_ratificacion'));
     }
 
+    // Eventos del calendario del dashboard para el rol 'Turnos': solo su propia sede, filtrado por tipo o por excepción.
+    public function eventosRolTurnos(Request $request){
+        $sede = auth()->user()->delegacion;
+        $filtro = $request->input('filtro', 'Solicitud');
+
+        $query = Recepcion::where('delegacion', $sede);
+
+        if ($filtro === 'Excepcion') {
+            $query->where('exepcion', 'Si');
+        } else {
+            $query->where('tipo', $filtro)
+                ->where(function ($q) {
+                    $q->whereNull('exepcion')->orWhere('exepcion', '!=', 'Si');
+                });
+        }
+
+        $start = $request->input('start');
+        $end = $request->input('end');
+        if ($start) {
+            $query->where('fecha', '>=', substr($start, 0, 10));
+        }
+        if ($end) {
+            $query->where('fecha', '<=', substr($end, 0, 10));
+        }
+
+        $recepciones = $query->get();
+        $creadoresIds = $recepciones->pluck('auxiliar')->filter()->unique();
+        $creadores = $creadoresIds->isNotEmpty()
+            ? User::whereIn('id', $creadoresIds)->pluck('name', 'id')
+            : collect();
+
+        $eventos = $recepciones->map(function ($r) use ($creadores) {
+            $esAtendido = str_contains(mb_strtolower($r->estatus ?? '', 'UTF-8'), 'no atendid') ? false : true;
+            $color = $esAtendido ? '#00CE1C' : '#F59727';
+
+            return [
+                'title' => $r->solicitante,
+                'start' => $r->fecha->format('Y-m-d') . 'T' . $r->hora->format('H:i:s'),
+                'end'   => $r->hora_fin ? $r->fecha->format('Y-m-d') . 'T' . $r->hora_fin : null,
+                'color' => $color,
+                'extendedProps' => [
+                    'folio'       => $r->id,
+                    'solicitante' => $r->solicitante,
+                    'tipo'        => $r->tipo,
+                    'excepcion'   => $r->exepcion,
+                    'estatus'     => $r->estatus,
+                    'fecha'       => $r->fecha->format('d/m/Y'),
+                    'hora'        => $r->hora->format('H:i'),
+                    'consecutivo' => $r->consecutivo,
+                    'creador'     => $creadores->get($r->auxiliar, 'Público (sin auxiliar)'),
+                ],
+            ];
+        });
+
+        return response()->json($eventos);
+    }
+
     public function create()
     {
         //Vamos a traer un usuario para asignarle los roles

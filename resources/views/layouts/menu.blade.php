@@ -272,7 +272,9 @@
     @endauth    
     @auth
         @role('Turnos')
-            
+            <a class="nav-link" href="{{ route('agenda') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
             <a class="nav-link" href="{{ route('index_oficialia') }}">
                 <i class="bi bi-journal-text"></i><span class="text-dark" onclick="oficialia()">Oficialia de Partes</span>
             </a>

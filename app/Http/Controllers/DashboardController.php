@@ -12,9 +12,14 @@ class DashboardController extends Controller
         
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
-        $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $delegacion = $user->delegacion;
+
+        if (in_array('Turnos', $userRole)) {
+            return view('pages/dashboards.turnos', compact('delegacion'));
+        }
+
+        $roles = Role::pluck('name', 'name')->all();
         $relacionEloquent = "roles";
 
         if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador" || $userRole[0] == "Estadistica"){
