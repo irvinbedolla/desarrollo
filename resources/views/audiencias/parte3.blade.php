@@ -1551,6 +1551,10 @@
                     eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
                     eventClick: function(info) {
                         const slot = new Date(info.event.start);
+                        const horaSlot = slot.getHours();
+                        const minutosSlot = slot.getMinutes();
+                        const fechaLimite = new Date('2026-08-10');
+
                         const estadoClick = info.event.extendedProps && info.event.extendedProps.estado ? info.event.extendedProps.estado : null;
                         const titulo = (info.event && info.event.title) ? String(info.event.title) : '';
 
@@ -1571,6 +1575,16 @@
                                     icon: 'info',
                                     title: 'Horario con audiencia',
                                     html: 'Este horario ya cuenta con una audiencia programada. <br><br>Si continúas, la <b>audiencia se empalmará</b>.',
+                                });
+                            }
+                        }
+
+                        if(slot.getTime() >= fechaLimite.getTime() && (horaSlot === 11 && minutosSlot === 30) || (horaSlot === 13 && minutosSlot === 45)) {
+                            if (window.Swal && typeof Swal.fire === 'function') {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: '¡Aviso importante!',
+                                    html: 'El horario seleccionado tiene una duración máxima de <b>30 minutos</b>. <br><br>Se sugiere utilizar este espacio para audiencias de <b>rápido desahogo</b>. <br><br>¿Desea <b>continuar</b>?',
                                 });
                             }
                         }
