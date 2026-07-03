@@ -154,6 +154,12 @@
                                     </tbody> 
                                 </table>
                             </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-info mb-2" data-bs-toggle="modal" data-bs-target="#modalAgregarCitadoAudiencia">
+                                    Agregar Citado
+                                </button>
+                            </div>
+                            <br>
                             <a type="button" class="btn btn-success open-modal" data-bs-toggle="modal" data-bs-target="#ModalTerminar" data-id="{{ $id }}">Continuar</a>
                         </div>
                     </div>
@@ -162,6 +168,308 @@
         </div>
     </section>
 @endsection
+
+@php
+    $hasRepresentantesNotif = isset($representantes) && count($representantes) > 0;
+    $defaultNotificacionCA = '';
+    if ($hasRepresentantesNotif) {
+        $hasCentroCA = $representantes->where('notificacion', 'Centro')->count() > 0;
+        $defaultNotificacionCA = $hasCentroCA ? 'Centro' : 'Trabajador';
+    }
+@endphp
+<!-- Modal Agregar Citado a la Audiencia -->
+<div class="modal fade" id="modalAgregarCitadoAudiencia" tabindex="-1" aria-labelledby="modalAgregarCitadoAudienciaLabel" aria-hidden="true">
+    <form class='needs-validation novalidate' method='POST' action="{{route('agregar_citado_audiencia_directo')}}" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="id" value="{{$id}}">
+        <input type="hidden" name="audiencia_id" value="{{ $audiencia_id ?? '' }}">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAgregarCitadoAudienciaLabel">Agregar citado a esta audiencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        @if($hasRepresentantesNotif)
+                            <input type="hidden" name="notificacion" value="{{ $defaultNotificacionCA }}">
+                        @else
+                            <div class="col-xs-12 col-sm-12 col-md-6">
+                              <div class="form-group">
+                                  <label for="name">¿Quién entregará las notificaciones? <span style="color:red;">(*)</span></label>
+                                  <select name="notificacion" class="form-control" required>
+                                      <option value="">SELECCIONE</option>
+                                      <option value="Trabajador">Solicitante</option>
+                                      <option value="Centro">Centro de conciliación Laboral</option>
+                                  </select>
+                                  <div class="invalid-feedback">
+                                      El campo es obligatorio.
+                                  </div>
+                              </div>
+                            </div>
+                        @endif
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                <div class="form-group">
+                                    <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
+                                    <select name="tipo" id="tipo_ca" class="form-control" required>
+                                        <option value="">Seleccione</option>
+                                        <option value="Fisica">Física</option>
+                                        <option value="Moral">Moral</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        El tipo de persona es obligatorio.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-4" id="campo_curp_ca">
+                                <div class="form-group">
+                                    <label for="name">CURP (Opcional)</label>
+                                    <input type="text" name="curp" id="curp_input_ca" oninput="validarInput(this)" class="form-control">
+                                    <div class="invalid-feedback">
+                                        El nombre es obligatorio.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-4" id="tipoPersona_razon_ca" style="display:none;">
+                                <div class="form-group">
+                                    <label for="name">Razón social <span style="color:red;">(*)</span></label>
+                                    <input type="text" name="razon" id="razon_ca" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                    <div class="invalid-feedback">
+                                        La razón social es obligatorio.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                <div class="form-group">
+                                    <label for="name">RFC (Opcional)</label>
+                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">
+                                    <div class="invalid-feedback">
+                                         El campo RFC es obligatorio.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                <div class="form-group">
+                                    <label for="name">¿Requiere algún traductor? <span style="color:red;">(*)</span></label>
+                                    <select name="traductor" id="traductor_ca" class="form-control" required>
+                                        <option value="">SELECCIONE</option>
+                                        <option value="Si">Si</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-3" id="lenguaje_ca_wrap" style="display:none;">
+                                <div class="form-group">
+                                    <label for="name">¿Qué tipo de lenguaje require? <span style="color:red;">(*)</span></label>
+                                    <input type="text" name="lenguaje" id="lenguaje_ca" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                    <div class="invalid-feedback">
+                                        La nacionalidad es obligatoria.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre_ca" style="display:none;">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
+                                            <input type="text" name="nombre" id="nombre_ca" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                            <div class="invalid-feedback">
+                                                El nombre es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
+                                            <input type="text" name="primer_apellido" id="primer_apellido_ca" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                            <div class="invalid-feedback">
+                                                El nombre es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Segundo apellido</label>
+                                            <input type="text" name="segundo_apellido" id="segundo_apellido_ca" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                            <div class="invalid-feedback">
+                                                El nombre es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; color:black; width:100%; height:30px;">
+                            <div class="form-group">
+                                <h4 class="text-center">Dirección de la fuente de empleo</h4>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                            <div class="form-group">
+                                <label for="name">Tipo de vialidad <span style="color:red;">(*)</span></label>
+                                <select name="vialidad" class="form-control" required oninput="this.value = this.value.toUpperCase()">
+                                    <option value="">SELECCIONE</option>
+                                    <option value="AMPLIACIÓN">Ampliación</option>
+                                    <option value="ANDADOR">Andador</option>
+                                    <option value="AUTOPISTA">Autopista</option>
+                                    <option value="AVENIDA">Avenida</option>
+                                    <option value="BOULEVARD">Boulevard</option>
+                                    <option value="CALLE">Calle</option>
+                                    <option value="CALLEJÓN">Callejón</option>
+                                    <option value="CALZADA">Calzada</option>
+                                    <option value="CARRETERA">Carretera</option>
+                                    <option value="CERRADA">Cerrada</option>
+                                    <option value="CIRCUITO">Circuito</option>
+                                    <option value="CIRCUNVALACIÓN">Circunvalación</option>
+                                    <option value="CONTINUACIÓN">Continuación</option>
+                                    <option value="CORREDOR">Corredor</option>
+                                    <option value="DIAGONAL">Diagonal</option>
+                                    <option value="EJE VIAL">Eje vial</option>
+                                    <option value="PERIFÉRICO">Periférico</option>
+                                    <option value="PRIVADA">Privada</option>
+                                    <option value="PROLONGACIÓN">Prolongación</option>
+                                    <option value="RETORNO">Retorno</option>
+                                    <option value="VIADUCTO">Viaducto</option>
+                                    <option value="PASEO">Paseo</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    El campo vialidad es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                            <div class="form-group">
+                                <label for="name">Nombre de la vialidad <span style="color:red;">(*)</span></label>
+                                <input type="text" name="calle" class="form-control" required oninput="this.value = this.value.toUpperCase()">
+                                <div class="invalid-feedback">
+                                    El campo calle es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                            <div class="form-group">
+                                <label for="name">Colonia <span style="color:red;">(*)</span></label>
+                                <input type="text" name="colonia" class="form-control" required oninput="this.value = this.value.toUpperCase()">
+                                <div class="invalid-feedback">
+                                    El campo colonia es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                            <div class="form-group">
+                                <label for="name">Entre calle (Opcional)</label>
+                                <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                <div class="invalid-feedback">
+                                    El campo calle es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3">
+                            <div class="form-group">
+                                <label for="name">y calle (Opcional)</label>
+                                <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                <div class="invalid-feedback">
+                                    El campo calle es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-2">
+                            <div class="form-group">
+                                <label for="name">Núm. Ext. <span style="color:red;">(*)</span></label>
+                                <input type="text" name="exterior" class="form-control" required oninput="this.value = this.value.toUpperCase()">
+                                <div class="invalid-feedback">
+                                    El campo núm. ext. es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-2">
+                            <div class="form-group">
+                                <label for="name">Núm. Int. (Opcional)</label>
+                                <input type="text" name="interior" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                <div class="invalid-feedback">
+                                    El campo núm. int. es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-2">
+                            <div class="form-group">
+                                <label for="name">Código postal <span style="color:red;">(*)</span></label>
+                                <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required>
+                                <div class="invalid-feedback">
+                                    El campo Código Postal es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3">
+                            <div class="form-group">
+                                <label for="name">Estado <span style="color:red;">(*)</span></label>
+                                <select id="estado_citado_ca" class="form-control" name="estado_citado" required oninput="this.value = this.value.toUpperCase()">
+                                    <option value="">Seleccione</option>
+                                    @foreach($estados as $es)
+                                        <option value="{{$es['id']}}">{{$es['nombre']}}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    El campo Estado es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3">
+                            <div class="form-group">
+                                <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
+                                <select id="municipio_citado_ca" class="form-control" name="municipio_citado" required oninput="this.value = this.value.toUpperCase()">
+                                    <option value="">SELECCIONE</option>
+                                    @foreach($municipios as $mun)
+                                        <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    El campo municipio o alcaldía es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-9">
+                            <div class="form-group">
+                            <label for="floatingTextarea">Referencias del domicilio <span style="color:red;">(*)</span></label>
+                                <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" required oninput="this.value = this.value.toUpperCase()"></textarea>
+                                <div class="invalid-feedback">
+                                    El campo referencias es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Referencia 1 <span style="color:red;">(*)</span></label>
+                                <input type="file" class="form-control" name="foto1" accept="image/*" required>
+                                <div class="invalid-feedback">
+                                    El campo imagen 1 es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Referencia 2 (Opcional)</label>
+                                <input type="file" class="form-control" name="foto2" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
 <!-- Modal Solicitantes -->
 <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST' action="{{route('editar_solicitud')}}">
@@ -1975,6 +2283,78 @@
         }
     </script>
 
+    <script>
+        // Modal Agregar Citado a la Audiencia
+        (function(){
+            const selectTipoCA = document.getElementById('tipo_ca');
+            const nombreDivCA = document.getElementById('tipoPersona_nombre_ca');
+            const razonDivCA = document.getElementById('tipoPersona_razon_ca');
+            const curpDivCA = document.getElementById('campo_curp_ca');
+            const nombreInputCA = document.getElementById('nombre_ca');
+            const primerApellidoInputCA = document.getElementById('primer_apellido_ca');
+            const segundoApellidoInputCA = document.getElementById('segundo_apellido_ca');
+            const razonInputCA = document.getElementById('razon_ca');
+
+            function actualizarTipoPersonaCA() {
+                if (!selectTipoCA || !nombreDivCA || !razonDivCA || !curpDivCA) return;
+                const valor = selectTipoCA.value;
+
+                nombreDivCA.style.display = 'none';
+                razonDivCA.style.display = 'none';
+                curpDivCA.style.display = 'none';
+
+                if (nombreInputCA) nombreInputCA.required = false;
+                if (primerApellidoInputCA) primerApellidoInputCA.required = false;
+                if (razonInputCA) razonInputCA.required = false;
+
+                if (valor === 'Fisica') {
+                    nombreDivCA.style.display = 'block';
+                    curpDivCA.style.display = 'block';
+                    if (nombreInputCA) nombreInputCA.required = true;
+                    if (primerApellidoInputCA) primerApellidoInputCA.required = true;
+                    if (razonInputCA) razonInputCA.value = '';
+                } else if (valor === 'Moral') {
+                    razonDivCA.style.display = 'block';
+                    if (razonInputCA) razonInputCA.required = true;
+                    if (nombreInputCA) nombreInputCA.value = '';
+                    if (primerApellidoInputCA) primerApellidoInputCA.value = '';
+                    if (segundoApellidoInputCA) segundoApellidoInputCA.value = '';
+                } else {
+                    if (nombreInputCA) nombreInputCA.value = '';
+                    if (primerApellidoInputCA) primerApellidoInputCA.value = '';
+                    if (segundoApellidoInputCA) segundoApellidoInputCA.value = '';
+                    if (razonInputCA) razonInputCA.value = '';
+                }
+            }
+
+            if (selectTipoCA) {
+                selectTipoCA.addEventListener('change', actualizarTipoPersonaCA);
+                actualizarTipoPersonaCA();
+            }
+
+            const tradCA = document.getElementById('traductor_ca');
+            const langWrapCA = document.getElementById('lenguaje_ca_wrap');
+            const langInputCA = document.getElementById('lenguaje_ca');
+
+            function syncLenguajeCA(){
+                if (!tradCA || !langWrapCA || !langInputCA) return;
+                if (tradCA.value === 'Si') {
+                    langWrapCA.style.display = '';
+                    langInputCA.required = true;
+                } else {
+                    langWrapCA.style.display = 'none';
+                    langInputCA.required = false;
+                    try { langInputCA.value = ''; } catch (err) {}
+                }
+            }
+
+            if (tradCA) {
+                syncLenguajeCA();
+                tradCA.addEventListener('change', syncLenguajeCA);
+            }
+        })();
+    </script>
+
 
     <script>
         let calendarReagendar;
@@ -2358,6 +2738,57 @@
         });
     </script>
 
-    <script src="../../public/assets/js/validaciones.js"></script> 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function cargarMunicipiosCitadoCA(estadoId) {
+                var $municipio = $('#municipio_citado_ca');
+                if (!$municipio.length) return;
+                $municipio.html('<option value="">Cargando...</option>');
+                if (!estadoId) {
+                    $municipio.html('<option value="">SELECCIONE</option>');
+                    return;
+                }
+                $.get(base_url + '/api/munSolicitante/' + estadoId, function (data) {
+                    var html = '<option value="">SELECCIONE</option>';
+                    data.forEach(function (m) {
+                        html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                    });
+                    $municipio.html(html);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $.get(base_url + '/munSolicitante/' + estadoId, function (data) {
+                        var html = '<option value="">SELECCIONE</option>';
+                        data.forEach(function (m) {
+                            html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                        });
+                        $municipio.html(html);
+                    }).fail(function (jq2, t2, e2) {
+                        $municipio.html('<option value="">Error cargando municipios</option>');
+                        if (typeof iziToast !== 'undefined') {
+                            iziToast.error({
+                                title: 'Error',
+                                message: 'No se pudieron cargar los municipios. HTTP: ' + (jqXHR.status || jq2.status || 'N/A') + ' - ' + (errorThrown || e2 || textStatus),
+                                position: 'topRight'
+                            });
+                        } else {
+                            alert('No se pudieron cargar los municipios.');
+                        }
+                    });
+                });
+            }
+
+            var $estadoCitadoCA = $('#estado_citado_ca');
+            var base_url = "{{ url('') }}";
+
+            if ($estadoCitadoCA.length) {
+                $estadoCitadoCA.on('change', function () {
+                    cargarMunicipiosCitadoCA(this.value);
+                });
+                var inicialCA = $estadoCitadoCA.val();
+                if (inicialCA) cargarMunicipiosCitadoCA(inicialCA);
+            }
+        });
+    </script>
+
+    <script src="../../public/assets/js/validaciones.js"></script>
     <script src="../../public/assets/js/poderes/general.js"></script>
 @endsection

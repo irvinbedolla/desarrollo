@@ -6714,6 +6714,96 @@ class SeerController extends Controller
         return back()->with('success', 'Citado agregado. Guarde los cambios para confirmar.');
     }
 
+    public function agregar_citado_audiencia_directo(Request $request){
+        $data = $request->all();
+        $idSolicitud = $data['id'];
+        $imagen_domicilio1 = "Sin documento";
+        $imagen_domicilio2 = "Sin documento";
+
+        $municipio_input = $data['municipio_citado'] ?? null;
+        $estado_input = $data['estado_citado'] ?? null;
+        $municipioId = is_array($municipio_input) ? ($municipio_input[0] ?? null) : $municipio_input;
+        $estadoId = is_array($estado_input) ? ($estado_input[0] ?? null) : $estado_input;
+
+        $traductor_input = $data['traductor'] ?? 'No';
+        $lenguaje_input = $data['lenguaje'] ?? null;
+        $traductorVal = is_array($traductor_input) ? ($traductor_input[0] ?? 'No') : $traductor_input;
+        $lenguajeVal = is_array($lenguaje_input) ? ($lenguaje_input[0] ?? null) : $lenguaje_input;
+
+        if ((trim($traductorVal) === 'Si' || trim($traductorVal) === 'sí') && empty($lenguajeVal)) {
+            return back()->withErrors(['citados' => 'Debe especificar el lenguaje cuando el citado requiere traductor.'])->withInput();
+        }
+
+        if ($request->hasFile('foto1')) {
+            $imagen_domicilio1 = $idSolicitud . "-domicilio_Citado1_" . Str::random(8) . ".jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+        }
+
+        if ($request->hasFile('foto2')) {
+            $imagen_domicilio2 = $idSolicitud . "-domicilio_Citado2_" . Str::random(8) . ".jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+        }
+
+        $audienciaId = $data['audiencia_id'] ?? session("audiencia_id_{$idSolicitud}");
+
+        $data_insert = [
+            'id_solicitud'      => $idSolicitud,
+            'colonia'           => $data['colonia'],
+            'cp'                => $data['cp'],
+            'n_ext'             => $data['exterior'],
+            'calle'             => $data['calle'],
+            'tipo_vialidad'     => $data['vialidad'],
+            'referencia'        => $data['referencia'],
+            'municipio_citado'  => $municipioId,
+            'estado_citado'     => $estadoId,
+            'imagen_domicilio1' => $imagen_domicilio1,
+            'imagen_domicilio2' => $imagen_domicilio2,
+            'notificacion'      => $data['notificacion'],
+            'audiencia_id'      => $audienciaId,
+            'resulte_responsable' => 'No',
+        ];
+
+        if (!empty($data['rfc'])) {
+            $data_insert['rfc'] = $data['rfc'];
+        }
+        if (!empty($data['curp'])) {
+            $data_insert['curp'] = $data['curp'];
+        }
+        if (!empty($data['interior'])) {
+            $data_insert['n_int'] = $data['interior'];
+        }
+        if (!empty($data['calle1'])) {
+            $data_insert['calle1'] = $data['calle1'];
+        }
+        if (!empty($data['calle2'])) {
+            $data_insert['calle2'] = $data['calle2'];
+        }
+
+        $requiresTraductor = trim($traductorVal) === 'Si' || trim($traductorVal) === 'sí';
+        $data_insert['traductor'] = $requiresTraductor ? 1 : 0;
+        $data_insert['lenguaje'] = $requiresTraductor ? $lenguajeVal : null;
+
+        if (isset($data['tipo'])) {
+            $data_insert['tipo_persona'] = $data['tipo'];
+
+            if ($data['tipo'] === 'Moral' && isset($data['razon'])) {
+                $data_insert['nombre'] = $data['razon'];
+            }
+
+            if ($data['tipo'] === 'Fisica') {
+                $data_insert['nombre'] = $data['nombre'] ?? null;
+                $data_insert['primer_apellido'] = $data['primer_apellido'] ?? null;
+                $data_insert['segundo_apellido'] = $data['segundo_apellido'] ?? null;
+            }
+        }
+
+        SeerCitados::create($data_insert);
+
+        session()->forget("audiencia_data_{$idSolicitud}");
+
+        return back()->with('success', 'Citado agregado correctamente a la audiencia.');
+    }
+
     public function borrar_citado_edicion(Request $request){
         $data = $request->all();
         $id = $data["borrar"];
