@@ -36,12 +36,14 @@
                                                 
                                                 <th style="color: #fff;">Fecha</th>
                                                 <th style="color: #fff;">Tipo de Tramite</th>
-                                                <th style="color: #fff;">Oficio</th>
+                                                <th style="color: #fff;">Núm. Oficio</th>
                                                 <th style="color: #fff;">Area de Turno</th>
                                                 <th style="color: #fff;">Usuario Responsable</th>
                                                 <th style="color: #fff;">Estado</th>
                                                 <th style="color: #fff;"></th>
                                                 <th style="color: #fff;"></th>
+                                                <th style="color: #fff;">Documento</th>
+                                                <th style="color: #fff;">Detalles</th>
                                                 <th style="color: #fff;">Conclusiones</th>
 
                                             </tr>
@@ -49,7 +51,7 @@
                                         <tbody>
                                             @foreach($oficialias as $oficialia)
                                                 <tr>
-                                                    <td>{{ $oficialia->fecha }} {{ $oficialia->hora}}</td>
+                                                    <td>{{ $oficialia->fecha_registro }} {{ $oficialia->hora_registro}}</td>
                                                     <td>{{ $oficialia->tipo_tramite }}</td>
                                                     <td>{{ $oficialia->oficio }}</td>
                                                     <td>{{ $oficialia->area_turno }}</td>
@@ -58,13 +60,26 @@
 
                                                     <td>
                                                         @if($oficialia->estatus == 'creado' && $oficialia->usuario_responsable == $id && $userRole != 'Turnos')
-                                                        <a href="#" class="btn btn-success" data-bs-toggle="modal" data-id="{{ $oficialia->id }}" data-bs-target="#concluirModal">Concluir</a>
+                                                        <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-id="{{ $oficialia->id }}" data-bs-target="#concluirModal">Concluir</a>
                                                         @endif
                                                     </td>
                                                     <td>
                                                         @if($oficialia->estatus == 'creado' && $oficialia->usuario_responsable == $id)
-                                                            <a href="#" class="btn btn-info" data-bs-toggle="modal" data-id="{{ $oficialia->id }}" data-bs-target="#turnarModal"> Turnar</a>
+                                                            <a href="#" class="btn btn-success" data-bs-toggle="modal" data-id="{{ $oficialia->id }}" data-bs-target="#turnarModal"> Turnar</a>
                                                         @endif
+                                                    </td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                        
+                                                            @if (!empty($oficialia->ruta_oficio) )
+                                                                <a class="btn btn-info" target='_blank' href="{{ asset('storage/app/'. $oficialia->ruta_oficio) }}">Oficio</a>
+                                                            @else
+                                                                <span class="text-muted">No se subió oficio</span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-oficialia='@json($oficialia)' data-bs-target="#detallesModal"> Detalles</a>
                                                     </td>
                                                     <td>@if($oficialia->conclusion){{ $oficialia->conclusion }} @endif</td>
 
@@ -83,7 +98,6 @@
             </div>
         </div>
     </section>
-//Modal generar
     <div class="modal fade" id="oficialiaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <form class='needs-validation novalidate' method='POST' action="{{ route('generar_oficialia') }}" enctype="multipart/form-data">
             @csrf
@@ -96,72 +110,125 @@
                     </div>
                     <div class="modal-body">
                         <div class="col-xs-12 col-sm-12 col-md-12" id="Conrepresentante">
-                                            <div class="row">
-                                                
-                                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                                    <div class="form-group">
-                                                        <h5 class="text-center">Datos de identificación</h5>
-                                                    </div>
-                                                </div>
+                            <div class="row">
+                                
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="form-group">
+                                        <h5 class="text-center">Datos de identificación</h5>
+                                    </div>
+                                </div>
 
-                                                <!--div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="name">Nombre(s) del representante <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="nombre_representante_pF" id="nombre_representante_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            El nombre es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div-->
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="name">Tipo de Tramite <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="tipo_tramite" id="tipo_tramite" class="form-control" oninput="this.value = this.value.toUpperCase()" required > 
-                                                        <div class="invalid-feedback">
-                                                            El tipo de tramite es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="name">Area de Turno <span style="color:red;">(*)</span></label>
-                                                        <select name="area_turno" id="area_turno" class="form-control" required>
-                                                            <option value="">Seleccione</option>
-                                                            <option value="Dirección general">Dirección General</option>
-                                                            <option value="Dirección Administrativa">Dirección Administrativa</option>
-                                                            <option value="Unidad Jurídica">Unidad Jurídica</option>
-                                                            <option value="Delegación Morelia">Delegación Morelia</option>
-                                                            <option value="Delegación Uruapan">Delegación Uruapan</option>
-                                                            <option value="Delegación Zamora">Delegación Zamora</option>
-                                                            
-                                                        </select>
-                                                        <div class="invalid-feedback">
-                                                            El area de turno es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="name">Oficio <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="oficio" id="oficio" class="form-control" oninput="this.value = this.value.toUpperCase()" maxlength="20" required > 
-                                                        <div class="invalid-feedback">
-                                                            El segundo apellido es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>  
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Documento de Oficio</label><br>
-                                                        <input type="file" name="documento_oficio" id="documento_oficio" class="form-control" accept=".pdf" >
-
-                                                    </div>
-                                                </div>
-                                            </div>
+                                <!--div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">Nombre(s) del representante <span style="color:red;">(*)</span></label>
+                                        <input type="text" name="nombre_representante_pF" id="nombre_representante_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                        <div class="invalid-feedback">
+                                            El nombre es obligatorio.
                                         </div>
+                                    </div>
+                                </div-->
+                                <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="form-group">
+                                        <label for="name">Fecha de registro <span style="color:red;">(*)</span></label>
+                                        <input type="date" id="fecha_registro" name="fecha_registro"  class="form-control" required> 
+                                        <div class="invalid-feedback">
+                                            El campo fecha de nacimiento es obligatoria.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="form-group">
+                                        <label for="name">Hora de registro<span style="color:red;">(*)</span></label>
+                                        <input type="time" id="hora_registro" name="hora_registro" class="form-control">
+                                        <div class="invalid-feedback">
+                                            El campo es obligatorio.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="form-group">
+                                        <label for="name">Tipo de Tramite <span style="color:red;">(*)</span></label>
+                                        <input type="text" name="tipo_tramite" id="tipo_tramite" class="form-control" oninput="this.value = this.value.toUpperCase()" required > 
+                                        <div class="invalid-feedback">
+                                            El tipo de tramite es obligatorio.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                                          
+                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">Area de Turno <span style="color:red;">(*)</span></label>
+                                        <select name="area_turno" id="area_turno" class="form-control" required>
+                                            <option value="">Seleccione</option>
+                                            <option value="Dirección general">Dirección General</option>
+                                            <option value="Dirección Administrativa">Dirección Administrativa</option>
+                                            <option value="Unidad Jurídica">Unidad Jurídica</option>
+                                            <option value="Delegación Morelia">Delegación Morelia</option>
+                                            <option value="Delegación Uruapan">Delegación Uruapan</option>
+                                            <option value="Delegación Zamora">Delegación Zamora</option>
+                                            
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            El area de turno es obligatorio.
+                                        </div>
+                                    </div>
+                                </div>       
+                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">Dependencia de Precendencia <span style="color:red;">(*)</span></label>
+                                        <input type="text" name="precedencia" id="precedencia" class="form-control" oninput="this.value = this.value.toUpperCase()" maxlength="20" required > 
+                                        
+                                        <div class="invalid-feedback">
+                                            La dependencia de precedencia es obligatoria.
+                                        </div>
+                                    </div>
+                                </div>      
+                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">Núm. de oficio <span style="color:red;">(*)</span></label>
+                                        <input type="text" name="oficio" id="oficio" class="form-control" oninput="this.value = this.value.toUpperCase()" maxlength="20" required > 
+                                        <div class="invalid-feedback">
+                                            El segundo apellido es obligatorio.
+                                        </div>
+                                    </div>
+                                </div>  
+                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="form-group">
+                                        <label>Documento de Oficio</label><br>
+                                        <input type="file" name="documento_oficio" id="documento_oficio" class="form-control" accept=".pdf" >
+
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="form-group">
+                                        <label>Hubo termino</label><br>
+                                        <input type="checkbox" id="check_termino" name="termino" value="1">
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-4 d-none" id="contenedor_input_extra">
+                                    <div class="form-group">
+                                        <label for="name">Fecha de término <span style="color:red;">(*)</span></label>
+                                        <input type="date" id="fecha_termino" name="fecha_termino" class="form-control" required> 
+                                        <div class="invalid-feedback">
+                                            El campo fecha de término es obligatoria.
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-4 d-none" id="contenedor_input_hora">
+                                    <div class="form-group">
+                                        <label for="name">hora de término <span style="color:red;">(*)</span></label>
+                                        <input type="time" id="hora_termino" name="hora_termino" class="form-control" required> 
+                                        <div class="invalid-feedback">
+                                            El campo hora de término es obligatoria.
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                          
+                            </div>
                         
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -171,7 +238,6 @@
             </div>
         </form>
     </div>
-    //ModalTurnar
 <div class="modal fade" id="turnarModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -256,6 +322,62 @@
             </div>
         </form>
     </div>
+
+    <div class="modal fade" id="detallesModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Detalles</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-xs-12 col-sm-12 col-md-12" id="Conrepresentante">
+                            <div class="row">
+                                
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="form-group">
+                                        <h6>Núm. Oficio:
+                                            <span id="detalleOficio"></span>
+                                        </h6>
+
+                                        <h6>Fecha de registro:
+                                            <span id="detalleFecha"></span>
+                                        </h6>
+
+                                        <h6>Tipo de trámite:
+                                            <span id="detalleTipo"></span>
+                                        </h6>
+
+                                        <h6>Área de Turno:
+                                            <span id="detalleArea"></span>
+                                        </h6>
+
+                                        <h6>Dependencia:
+                                            <span id="detallePrecedencia"></span>
+                                        </h6>
+                                        <h6>Fecha término:
+                                            <span id="detalleTermino"></span>
+                                        </h6>
+                                        <h6>Fecha turnada:
+                                            <span id="detalleTurnada"></span>
+                                        </h6>
+                                        
+                                        
+                                        
+                                        
+                                    </div>
+                                </div>
+                                          
+                            </div>
+                        </div>
+                        
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
 
     
 @endsection
@@ -350,8 +472,75 @@
                     }
                 });
             }
+            
+            const checkTermino = document.getElementById('check_termino');
+            const contenedorInputExtra = document.getElementById('contenedor_input_extra');
+            const contenedorInputHora = document.getElementById('contenedor_input_hora');
+            const fechaTermino = document.getElementById('fecha_termino');
+            const horaTermino = document.getElementById('hora_termino');
 
-        });        
+            if (checkTermino && contenedorInputExtra && fechaTermino) {
+                checkTermino.addEventListener('change', function() {
+                    if (this.checked) {
+                        // Si esta marcado el check
+                        contenedorInputExtra.classList.remove('d-none');
+                        fechaTermino.setAttribute('required', 'required');
+                        
+                    } else {
+                        // Si se desmarca
+                        contenedorInputExtra.classList.add('d-none');
+                        fechaTermino.removeAttribute('required');
+                        fechaTermino.value = ''; 
+                        
+                    }
+                });
+            }
+            if (checkTermino && contenedorInputHora&& horaTermino) {
+                checkTermino.addEventListener('change', function() {
+                    if (this.checked) {
+                        // Si esta marcado el check
+                        
+                        contenedorInputHora.classList.remove('d-none');
+                        horaTermino.setAttribute('required', 'required');
+                    } else {
+                        // Si se desmarca
+                        
+                        contenedorInputHora.classList.add('d-none');
+                        horaTermino.removeAttribute('required');
+                        horaTermino.value = ''; 
+                    }
+                });
+            }
+
+        });  
+        
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const detallesModal = document.getElementById('detallesModal');
+
+        if (detallesModal) {
+
+            document.body.appendChild(detallesModal);
+
+            detallesModal.addEventListener('show.bs.modal', function (event) {
+
+                const button = event.relatedTarget;
+
+                const oficialia = JSON.parse(button.dataset.oficialia);
+                console.log(oficialia);
+                document.getElementById('detalleOficio').textContent = oficialia.oficio;
+                document.getElementById('detalleFecha').textContent = oficialia.fecha_registro + ' ' + oficialia.hora_registro;
+                document.getElementById('detalleTipo').textContent = oficialia.tipo_tramite;
+                document.getElementById('detalleArea').textContent = oficialia.area_turno;
+                document.getElementById('detallePrecedencia').textContent = oficialia.precedencia;
+                document.getElementById('detalleTurnada').textContent = oficialia.fecha_turno ? oficialia.fecha_turno + ' ' + oficialia.hora_turno : 'Sin turnar';
+                document.getElementById('detalleTermino').textContent = oficialia.fecha_termino ? oficialia.fecha_termino + ' ' + oficialia.hora_termino : 'Sin término';
+                
+            });
+
+        }
+
+    });
     </script>
     
 @endsection

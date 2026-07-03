@@ -19894,6 +19894,9 @@ class SeerController extends Controller
         $data = $request->all();
         $fecha_actual = date('Y-m-d');
         $hora_actual = date('H:i');
+        if(!isset($data['termino'])){
+            $data['termino'] = 0;
+        }
 
         $oficialia = Oficialia::create([
             'user_id'             => $user->id, 
@@ -19901,9 +19904,17 @@ class SeerController extends Controller
             'tipo_tramite'        => $request->tipo_tramite,
             'oficio'              => $request->oficio,
             'area_turno'          => $request->area_turno,
+            'precedencia'         => $data['precedencia'],
             'usuario_responsable' => $user->id,
             'fecha'               => $fecha_actual,
-            'hora'                => $hora_actual, 
+            'hora'                => $hora_actual,
+            'fecha_registro'      => $data['fecha_registro'],
+            'hora_registro'       => $data['hora_registro'],
+            'fecha_turno'         => null,
+            'hora_turno'          => null,
+            'fecha_termino'       => $data['fecha_termino'],
+            'hora_termino'       => $data['hora_termino'],
+            'termino'             => $data['termino'],
             'estatus'             => "creado",
             'ruta_oficio'         => null,
             'conclusion'          => null
@@ -19944,9 +19955,17 @@ class SeerController extends Controller
                 'tipo_tramite'        => $oficialia->tipo_tramite,
                 'oficio'              => $oficialia->oficio,
                 'area_turno'          => $oficialia->area_turno,
+                'precedencia'         => $oficialia->precedencia,
                 'usuario_responsable' => $oficialia->usuario_responsable,
                 'fecha'               => $fecha_actual,
-                'hora'                => $hora_actual, 
+                'hora'                => $hora_actual,
+                'fecha_registro'      => $oficialia->fecha_registro,
+                'hora_registro'       => $oficialia->hora_registro,
+                'fecha_turno'         => null,
+                'hora_turno'          => null,
+                'fecha_termino'       => $oficialia->fecha_termino,
+                'hora_termino'       =>  $oficialia->hora_termino,
+                'termino'             => $oficialia->termino,
                 'estatus'             => "concluido",
                 'ruta_oficio'         => $oficialia->ruta_oficio,
                 'conclusion'          => $request->conclusion,
@@ -19963,6 +19982,8 @@ class SeerController extends Controller
         
         if ($oficialia) {
             $oficialia->update([
+                'fecha_turno'         => $fecha_actual,
+                'hora_turno'          => $hora_actual,
                 'estatus' => "turnado"
             ]);
             $oficialia_turnado = Oficialia::create([
@@ -19971,9 +19992,17 @@ class SeerController extends Controller
                 'tipo_tramite'        => $oficialia->tipo_tramite,
                 'oficio'              => $oficialia->oficio,
                 'area_turno'          => $oficialia->area_turno,
+                'precedencia'         => $oficialia->precedencia,
                 'usuario_responsable' => $data['usuario_responsable'],
                 'fecha'               => $fecha_actual,
-                'hora'                => $hora_actual, 
+                'hora'                => $hora_actual,
+                'fecha_registro'      => $oficialia->fecha_registro,
+                'hora_registro'       => $oficialia->hora_registro,
+                'fecha_turno'         => null,
+                'hora_turno'          => null,
+                'fecha_termino'       => $oficialia->fecha_termino,
+                'hora_termino'       =>  $oficialia->hora_termino,
+                'termino'             => $oficialia->termino,
                 'estatus'              => "creado",
                 'ruta_oficio'         => $oficialia->ruta_oficio,
                 'conclusion'          => null,
@@ -19982,6 +20011,7 @@ class SeerController extends Controller
         return back()->with('success', 'Registro turnado correctamente.');
 
     }
+    
     /*public function edicion_solConcluida($id, $audiencia_id){ 
         $solicitudOriginal = SeerPerGeneral::findOrFail($id);
         $audienciaAEditar = Audiencias::findOrFail($audiencia_id);
