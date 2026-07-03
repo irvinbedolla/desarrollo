@@ -13,7 +13,6 @@ use App\Models\Recepcion;
 use App\Models\CitaDireccion;
 use App\Models\Pagos;
 use App\Models\Audiencias;
-use App\Models\Estados;
 use App\Models\Municipios;
 use App\Imports\PagoSolicitudImport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -177,9 +176,8 @@ class HomeController extends Controller
     }
 
     public function citas(){
-        $estados = Estados::all();
-        $municipios = Municipios::all();
-        return view('turnos', compact('estados', 'municipios'));
+        $municipios = Municipios::where('estado', 16)->get();
+        return view('turnos', compact('municipios'));
     }
 
     public function turnos_publico(Request $request){
@@ -234,7 +232,6 @@ class HomeController extends Controller
             'edad'          => $data["edad"],
             'sexo'          => $data["sexo"],
             'vulnerables'   => $data["vulnerables"],
-            'estado'        => $data["estado_citado"],
             'municipio'     => $data["municipio_citado"],
             'correo'        => $data["email"],
             'telefono'      => $data["telefono"],
@@ -242,7 +239,7 @@ class HomeController extends Controller
         );
         Recepcion::create($data_insertar);
 
-        return back()->with('success', 'Turno registrado correctamente lllegar 10 minutos antes, llevar tu Identificación Oficial Vigente.');
+        return back()->with('success', 'Turno registrado correctamente. Debe llegar con 10 minutos de antelación, llevar tu Identificación Oficial Vigente.');
     }
 
     public function password_cambiar(){

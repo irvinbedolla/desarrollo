@@ -16,6 +16,7 @@ use App\Models\DiasInhabiles;
 use App\Models\SeerCasosExcepcion;
 use App\Models\SeerChatR;
 use App\Models\Estados;
+use App\Models\Sedes;
 use App\Models\Municipios;
 
 
@@ -103,7 +104,6 @@ class RecepcionController extends Controller
             'resultado'       => null,
             'telefono'        => $data["telefono"],
             'correo'          => $data["correo"],
-            'estado'          => $data["estado_solicitante"],
             'municipio'       => $data["municipio_solicitante"],
         );
 
@@ -113,7 +113,7 @@ class RecepcionController extends Controller
         // Traducir fecha legible (Ej: "Martes 9 de Junio")
         $fechaFormateada = ucfirst(Carbon::parse($fecha_asignada_str)->isoFormat('dddd D [de] MMMM'));
 
-        return redirect()->back()->with('success', 'Turno #' . $numero_consecutivo . ' (' . $tipoTramite . ') generado exitosamente para la sede ' . $sede . ' el día ' . $fechaFormateada . ' a las ' . substr($hora_turno, 0, 5) . ' horas.');
+        return redirect()->back()->with('success', 'Turno de ' . $tipoTramite . ' generado exitosamente para la sede ' . $sede . ' el día ' . $fechaFormateada . ' a las ' . substr($hora_turno, 0, 5) . ' horas.');
     }
 
     public function index_turnos()
@@ -728,9 +728,9 @@ class RecepcionController extends Controller
     }
 
     public function nueva_cita(){
-        $estados = Estados::all();
-        $municipios = Municipios::all();
-        return view('turnos.crear', compact('estados','municipios'));
+        $del=Sedes::all();
+        $municipios=Municipios::where('estado',16)->get();
+        return view('turnos.crear', compact('municipios'));
     }
 
     // Duración del slot (minutos) y hora de cierre de jornada según el tipo de trámite y si es caso de excepción.
@@ -743,7 +743,7 @@ class RecepcionController extends Controller
             return ['intervalo' => 60, 'fin' => ['hour' => 16, 'minute' => 30],'comida' => ['hour' => 13, 'minute' => 0]];
         }
 
-        return ['intervalo' => 40, 'fin' => ['hour' => 16, 'minute' => 50],'comida' => ['hour' => 12, 'minute' => 20]]; //cambio fin a las 16:50
+        return ['intervalo' => 40, 'fin' => ['hour' => 16, 'minute' => 20],'comida' => ['hour' => 12, 'minute' => 20]]; //cambio fin a las 16:50
     }
 
     public function obtenerTurnosDisponibles(Request $request){
@@ -859,7 +859,11 @@ class RecepcionController extends Controller
                         'extendedProps' => ['estado' => $estado],
                     ];
                     if($slot == $hora_comida){
-                        $slot->modify("+30 minutes");
+                        if(($tipo == 'Solicitud' || $tipo == 'Asesoría') && !$esExcepcion){
+                            $slot->modify("+40 minutes");
+                        } else {
+                            $slot->modify("+30 minutes");
+                        }   
                     }
                     else{
                         $slot->modify("+{$config['intervalo']} minutes");

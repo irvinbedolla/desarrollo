@@ -40,7 +40,7 @@
                                     <h3 class="text-center">Datos generales</h3>
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Tipo de Trámite</label>
+                                            <label for="name">Tipo de Trámite <span style="color:red;">(*)</span></label>
                                             <select name="tipo" class="form-control" onchange="blockCalendar();" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="Solicitud">Solicitudes</option>
@@ -52,28 +52,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
-                                            <div class="form-group">
-                                                <label for="password">Estado <span style="color:red;">(*)</span></label>
-                                                <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
-                                                    <option value="">Seleccione</option>
-                                                    @foreach($estados as $est)
-                                                        <option value="{{$est['id']}}">{{$est['nombre']}}</option>
-                                                    @endforeach
-                                                </select>
-                                                <div class="invalid-feedback">
-                                                    El campo entidad federativa es obligatorio.
-                                                </div>
-                                            </div>
-                                        </div>
-
                                         <div class="col-xs-12 col-sm-12 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
                                                 <select id="municipio_solicitante" class="form-control" name="municipio_solicitante" required>
                                                     <option value="">Seleccione</option>
                                                     @foreach($municipios as $mun)
-                                                        <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                                        <option value="{{$mun['id']}}" data-delegacion-id="{{ $mun['delegacion_id'] }}">
+                                                        {{ $mun['nombre'] }}</option>
                                                     @endforeach
                                                 </select>
                                                 <div class="invalid-feedback">
@@ -84,14 +70,8 @@
                                         <div class="col-xs-12 col-sm-12 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Delegación/Oficina<span style="color:red;">(*)</span></label>
-                                                <select name="delegacion" class="form-control" onchange="blockCalendar();" required>
+                                                <select id="delegacion" name="delegacion" class="form-control" onchange="blockCalendar();" required>
                                                     <option value="">Seleccione</option>
-                                                    <option value="Morelia">Morelia</option>
-                                                    <option value="Zitácuaro">Zitácuaro</option>
-                                                    <option value="Uruapan">Uruapan</option>
-                                                    <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
-                                                    <option value="Zamora">Zamora</option>
-                                                    <option value="Sahuayo">Sahuayo</option>
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -238,7 +218,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-12" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 d-flex align-items-center gap-2">
                                         <input type="hidden" name="fecha_turno" id="fecha_turno" value="">
                                         <input type="hidden" name="hora_turno" id="hora_turno" value="">
                                         <button type="button" id="botonCalendar" class="btn btn-lg btn-custom-morado" data-bs-toggle="modal" data-bs-target="#calendarModal" disabled>
@@ -247,7 +227,7 @@
                                         <div id="resumenTurno" class="alert alert-info mt-2" style="display:none;"></div>
                                     </div>
 
-                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 d-flex justify-content-center align-items-center">
                                         <button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>
                                 </div>
@@ -355,53 +335,38 @@
 
     @section('scripts')
     <script>
+        //Dependiendo del Municipio seleccionado muestra la delegación y oficina de apoyo que le corresponde
         document.addEventListener('DOMContentLoaded', function () {
-            function cargarMunicipiosSolicitante(estadoId) {
-                var $municipio = $('#municipio_solicitante');
-                if (!$municipio.length) return;
-                $municipio.html('<option value="">Cargando...</option>');
-                if (!estadoId) {
-                    $municipio.html('<option value="">Seleccione</option>');
-                    return;
+            const delegacionSelect = document.getElementById('delegacion');
+            const municipioSelect = document.getElementById('municipio_solicitante');
+
+            const delegaciones = {
+                1: ['Morelia'],
+                2: ['Zitácuaro'],
+                3: ['Uruapan'],
+                4: ['Lázaro Cárdenas'],
+                5: ['Zamora'],
+                6: ['Sahuayo']
+            };
+
+            municipioSelect.addEventListener('change', function () {
+                const selectedOption = municipioSelect.options[municipioSelect.selectedIndex];
+                const delegacionId = selectedOption.getAttribute('data-delegacion-id');
+
+                // Limpia el select de delegación
+                delegacionSelect.innerHTML = '<option value="">Seleccione</option>';
+
+                if (delegacionId && delegaciones[delegacionId]) {
+                    delegaciones[delegacionId].forEach(delegacion => {
+                        const option = document.createElement('option');
+                        option.value = delegacion;
+                        option.textContent = delegacion;
+                        delegacionSelect.appendChild(option);
+                    });
                 }
-                $.get(base_url + '/api/munSolicitante/' + estadoId, function (data) {
-                    var html = '<option value="">Seleccione</option>';
-                    data.forEach(function (m) {
-                        html += '<option value="' + m.id + '">' + m.nombre + '</option>';
-                    });
-                    $municipio.html(html);
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    $.get(base_url + '/munSolicitante/' + estadoId, function (data) {
-                        var html = '<option value="">Seleccione</option>';
-                        data.forEach(function (m) {
-                            html += '<option value="' + m.id + '">' + m.nombre + '</option>';
-                        });
-                        $municipio.html(html);
-                    }).fail(function (jq2, t2, e2) {
-                        $municipio.html('<option value="">Error cargando municipios</option>');
-                        if (typeof iziToast !== 'undefined') {
-                            iziToast.error({
-                                title: 'Error',
-                                message: 'No se pudieron cargar los municipios. HTTP: ' + (jqXHR.status || jq2.status || 'N/A') + ' - ' + (errorThrown || e2 || textStatus),
-                                position: 'topRight'
-                            });
-                        } else {
-                            alert('No se pudieron cargar los municipios.');
-                        }
-                    });
-                });
-            }
 
-            var $estadoSolicitante = $('#estado_solicitante');
-            var base_url = "{{ url('') }}";
-
-            if ($estadoSolicitante.length) {
-                $estadoSolicitante.on('change', function () {
-                    cargarMunicipiosSolicitante(this.value);
-                });
-                var inicial = $estadoSolicitante.val();
-                if (inicial) cargarMunicipiosSolicitante(inicial);
-            }
+                blockCalendar();
+            });
         });
     </script>
     <script>
@@ -543,7 +508,7 @@
             resumen.textContent = "Turno seleccionado: " + formatoFechaLocal(inicio) + " a las " + pad(inicio.getHours()) + ":" + pad(inicio.getMinutes());
             resumen.style.display = "block";
 
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('calendarModal')).hide();
+            document.querySelector('#calendarModal [data-bs-dismiss="modal"]').click();
         });
 
         document.getElementById("form_roles").addEventListener("submit", function (e) {

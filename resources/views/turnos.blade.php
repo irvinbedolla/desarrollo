@@ -202,26 +202,12 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group mb-3">
-                                            <label for="name">Estado <span style="color:red;">(*)</span></label>
-                                            <select id="estado_citado" class="form-control" name="estado_citado" required>
-                                                <option value="">Seleccione</option>
-                                                @foreach($estados as $es)
-                                                    <option value="{{$es['id']}}">{{$es['nombre']}}</option>
-                                                @endforeach
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo Estado es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
-                                        <div class="form-group mb-3">
                                             <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
                                             <select id="municipio_citado" class="form-control" name="municipio_citado" required>
                                                 <option value="">Seleccione</option>
                                                     @foreach($municipios as $mun)
-                                                        <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                                        <option value="{{$mun['id']}}" data-delegacion-id="{{ $mun['delegacion_id'] }}">
+                                                        {{ $mun['nombre'] }}</option>
                                                     @endforeach
                                             </select>
                                             <div class="invalid-feedback">
@@ -233,14 +219,8 @@
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group mb-3">
                                             <label for="name">Delegación/Oficina <span style="color:red;">(*)</span></label>
-                                            <select name="delegacion" class="form-control" onchange="blockCalendar();" required>
+                                            <select id="delegacion" name="delegacion" class="form-control" onchange="blockCalendar();" required>
                                                 <option value="">Seleccione</option>
-                                                <option value="Morelia">Morelia</option>
-                                                <option value="Zitácuaro">Zitácuaro</option>
-                                                <option value="Uruapan">Uruapan</option>
-                                                <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
-                                                <option value="Zamora">Zamora</option>
-                                                <option value="Sahuayo">Sahuayo</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -711,28 +691,38 @@
             }
         });
 
-        //Cargar municipios conforme al estado seleccionado
-        document.getElementById("estado_citado").addEventListener("change", function () {
-            const estadoId = this.value;
-            const municipioSelect = document.getElementById("municipio_citado");
+        //Dependiendo del Municipio seleccionado muestra la delegación y oficina de apoyo que le corresponde
+        document.addEventListener('DOMContentLoaded', function () {
+            const delegacionSelect = document.getElementById('delegacion');
+            const municipioSelect = document.getElementById('municipio_citado');
 
-            municipioSelect.innerHTML = '<option value="">Seleccione</option>';
+            const delegaciones = {
+                1: ['Morelia'],
+                2: ['Zitácuaro'],
+                3: ['Uruapan'],
+                4: ['Lázaro Cárdenas'],
+                5: ['Zamora'],
+                6: ['Sahuayo']
+            };
 
-            if (!estadoId) return;
+            municipioSelect.addEventListener('change', function () {
+                const selectedOption = municipioSelect.options[municipioSelect.selectedIndex];
+                const delegacionId = selectedOption.getAttribute('data-delegacion-id');
 
-            fetch("{{ url('/munCitado') }}/" + estadoId)
-                .then(function (res) { return res.json(); })
-                .then(function (data) {
-                    data.forEach(function (mun) {
-                        const option = document.createElement("option");
-                        option.value = mun.id;
-                        option.textContent = mun.nombre;
-                        municipioSelect.appendChild(option);
+                // Limpia el select de delegación
+                delegacionSelect.innerHTML = '<option value="">Seleccione</option>';
+
+                if (delegacionId && delegaciones[delegacionId]) {
+                    delegaciones[delegacionId].forEach(delegacion => {
+                        const option = document.createElement('option');
+                        option.value = delegacion;
+                        option.textContent = delegacion;
+                        delegacionSelect.appendChild(option);
                     });
-                })
-                .catch(function (err) {
-                    console.error('Error al cargar municipios', err);
-                });
+                }
+
+                blockCalendar();
+            });
         });
     </script>
 
