@@ -8918,24 +8918,12 @@ class SeerController extends Controller
         $mapa_sedes = ["Zitácuaro" => "Morelia", "Lázaro Cárdenas" => "Uruapan", "Sahuayo" => "Zamora"];
         $oficina = $mapa_sedes[$delegacion] ?? $delegacion;
 
-        // FILTRAR POR DELEGACIÓN: Buscamos la última audiencia de esa oficina/delegación específica
-        $ultima_audiencia = Audiencias::where('delegacion', $oficina) // o 'centro', usa el nombre de tu columna
-        ->latest()
-        ->first();
-
-        $fecha_texto = date('Y-m-d', strtotime($ultima_audiencia->fecha));
-
-        //dd($fecha_texto);
         // El punto de partida real para los 45 días siempre es HOY
         $hoy = \Carbon\Carbon::now();
 
-       if ($fecha_texto > '2026-08-07') {
-            // Horarios para después del 9 de agosto de 2026
-            $horarios_disponibles = ["09:00:00", "10:15:00", "12:00:00", "14:15:00", "15:30:00"];
-        } else {
-            // Horarios anteriores o iguales al 9 de agosto de 2026
-            $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
-        }
+        $fechaCorteHorario = '2026-08-10';
+        $horariosLegacy = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
+        $horariosNuevos = ["09:00:00", "10:15:00", "12:00:00", "14:15:00", "15:30:00"];
 
         $permisos_requeridos = array_key_exists($delegacion, $mapa_sedes) ? ["Ambos", "Virtual"] : ["Ambos", "Precencial"];
 
@@ -9013,10 +9001,6 @@ class SeerController extends Controller
 
         $fecha_revisar = $fecha_inicio_busqueda->copy();
 
-        if($fecha_texto > '2026-08-07'){
-            $fecha_revisar = \Carbon\Carbon::parse('2026-08-10');
-        }
-
         // 5. Bucle principal de búsqueda de espacios vacíos
         while ($fecha_revisar->lte($fecha_limite_natural)) {
             $fecha_str = $fecha_revisar->format('Y-m-d');
@@ -9033,6 +9017,8 @@ class SeerController extends Controller
                 $fecha_revisar->addDay();
                 continue;
             }
+
+            $horarios_disponibles = ($fecha_str < $fechaCorteHorario) ? $horariosLegacy : $horariosNuevos;
 
             foreach ($horarios_disponibles as $h) {
 
