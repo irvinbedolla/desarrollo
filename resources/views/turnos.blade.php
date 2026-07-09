@@ -106,7 +106,7 @@
             max-width: 95% !important;
         }
         .modal-xl{
-            max-width: 50% !important;
+            max-width: 40% !important;
         }
 
         .modal-content-2 {
@@ -115,6 +115,7 @@
 
         .modal-body {
             overflow-y: auto;
+            font-size: 18px;
         }
         .modal-titulo{
             height: 50px;
@@ -162,22 +163,8 @@
                     <div class="col-lg-12" >
                         <div class="card">
                             <div class="card-body">
-                                @if(session()->has('success'))
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <strong>¡Registro correcto!</strong>
-                                        {{ session()->get('success') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                @endif
-
                                 <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
-                                @if (session()->has('error'))
-                                    <div class="alert alert-dark alert-dismissible fade show" role="alert">
-                                        <strong>¡Revise los campos!</strong>
-                                        {{ session()->get('error') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                @endif
+                                
                                 <div style="background-color:#D2D3D5; width:100%; height:40px;">
                                     <h3 class="text-center" style="color:black">Datos Generales</h3>
                                 </div>   
@@ -286,7 +273,7 @@
                                       
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group mb-3">
-                                            <label for="name">Grupos vulnerables <span style="color:red;">(*)</span></label>
+                                            <label for="name">Grupo de atención prioritaria<span style="color:red;">(*)</span></label>
                                             <select name="vulnerables" class="form-control" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="Menores de edad">Menores de edad</option>
@@ -340,17 +327,18 @@
                                             <label for="name">Tipo de caso de excepción <span style="color:red;">(*)</span></label>
                                             <select name="tipo_caso" class="form-control">
                                                 <option value="">Seleccione</option>
-                                                <option value="Discriminación">Maternidad</option>
-                                                <option value="Acoso u hostigamiento sexual">Riesgos de trabajo</option>
-                                                <option value="Discriminación">Accidentes de Trabajo</option>
-                                                <option value="Discriminación">Invalidez</option>
-                                                <option value="Discriminación">Seguros de Vida</option>
-                                                <option value="Discriminación">Otras</option>
-                                                <option value="Discriminación">Libertad y Asociación Sindical</option>
-                                                <option value="Discriminación">Trata Laboral y Trabajo Forzoso</option>
-                                                <option value="Discriminación">Trabajo Infantil</option>
+                                                <option value="Riesgo o accidente">Accidentes de Trabajo</option>
+                                                <option value="Acoso u hostigamiento sexual">Acoso/Hostigamiento Sexual</option>
                                                 <option value="Discriminación">Disputa de titularidad de Contrato Coletivo y Contrato Ley</option>
                                                 <option value="Discriminación">Impugnación de estatutos de Sindicato y su Modificación</option>
+                                                <option value="Discriminación">Invalidez</option>
+                                                <option value="Discriminación">Libertad y Asociación Sindical</option>
+                                                <option value="Discriminación">Maternidad</option>
+                                                <option value="Riesgo o accidente">Riesgos de trabajo</option>
+                                                <option value="Discriminación">Seguros de Vida</option>
+                                                <option value="Malos tratos o violencia">Trabajo Infantil</option>
+                                                <option value="Malos tratos o violencia">Trata Laboral y Trabajo Forzoso</option>
+                                                <option value="Discriminación">Otras</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -360,8 +348,8 @@
                                     
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group mb-3">
-                                            <label for="name">Observaciones</label>
-                                            <textarea name="conflicto" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();"></textarea>
+                                            <label for="name">Descripción de hechos</label>
+                                            <textarea name="conflicto" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" maxlength="200"></textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
                                             </div>
@@ -378,7 +366,7 @@
                                     </div>
 
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <button type="submit" class="btn btn-primary">Guardar</button>
+                                        <button type="submit" class="btn btn-secondary">Guardar</button>
                                     </div>
                                 </div>
                             </form>
@@ -440,13 +428,19 @@
 
                    <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
-                            <h5 class="text-center modal-titulo" >Aviso Importante</h5>
+                            <h5 class="text-center modal-titulo" >¡ATENCIÓN!</h5>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
-                        <div class="form-group">
-                            <p>Los Datos Personales recabados por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, servirán únicamente para realizar el Procedimiento de Conciliación Individual Prejudicial, 
-                            serán tratados conforme lo dispuesto por la Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados y demás normativa aplicable.</p>
+                        <div class="form-group" >
+                          
+                            <p class="text-center">Todos los servicios que brinda este Centro de Conciliación Laboral son completamente gratuitos<br><br>
+                            Ningún servidor público, asociación, sindicato o gestor particular está autorizado para solicitar dinero o gratificaciones para agendar una cita, iniciar una solicitud o realizar tus trámitees de conciliación.<br><br>
+                            Si detectas o eres víctima de cualquier cobro indebido, ¡denúncialo inmediatamente por nuestros medios oficiales!<br><br>
+                            <b>¡No te dejes engañar!</b><br><br>
+                            Proteger tus derechos laborales es nuestra prioridad.<br>
+                            </p>
+                         
                     
                         </div>
                     </div>

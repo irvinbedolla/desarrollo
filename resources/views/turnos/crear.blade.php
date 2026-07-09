@@ -138,7 +138,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Grupos vulnerables<span style="color:red;">(*)</span></label>
+                                            <label for="name">Grupo de atención prioritaria<span style="color:red;">(*)</span></label>
                                             <select name="vulnerables" class="form-control" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="Menores de edad">Menores de edad</option>
@@ -191,17 +191,18 @@
                                             <label for="name">Tipo de caso de excepción<span style="color:red;">(*)</span></label>
                                             <select name="tipo_caso" class="form-control">
                                                 <option value="">Seleccione</option>
-                                                <option value="Discriminación">Maternidad</option>
-                                                <option value="Acoso u hostigamiento sexual">Riesgos de trabajo</option>
-                                                <option value="Discriminación">Accidentes de Trabajo</option>
-                                                <option value="Discriminación">Invalidez</option>
-                                                <option value="Discriminación">Seguros de Vida</option>
-                                                <option value="Discriminación">Otras</option>
-                                                <option value="Discriminación">Libertad y Asociación Sindical</option>
-                                                <option value="Discriminación">Trata Laboral y Trabajo Forzoso</option>
-                                                <option value="Discriminación">Trabajo Infantil</option>
+                                                <option value="Riesgo o accidente">Accidentes de Trabajo</option>
+                                                <option value="Acoso u hostigamiento sexual">Acoso/Hostigamiento Sexual</option>
                                                 <option value="Discriminación">Disputa de titularidad de Contrato Coletivo y Contrato Ley</option>
                                                 <option value="Discriminación">Impugnación de estatutos de Sindicato y su Modificación</option>
+                                                <option value="Discriminación">Invalidez</option>
+                                                <option value="Discriminación">Libertad y Asociación Sindical</option>
+                                                <option value="Discriminación">Maternidad</option>
+                                                <option value="Riesgo o accidente">Riesgos de trabajo</option>
+                                                <option value="Discriminación">Seguros de Vida</option>
+                                                <option value="Malos tratos o violencia">Trabajo Infantil</option>
+                                                <option value="Malos tratos o violencia">Trata Laboral y Trabajo Forzoso</option>
+                                                <option value="Discriminación">Otras</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -210,8 +211,8 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label for="name">Observaciones</label>
-                                            <textarea name="conflicto" class="form-control"></textarea>
+                                            <label for="name">Descripción de hechos</label>
+                                            <textarea name="conflicto" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" maxlength="200"></textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
                                             </div>

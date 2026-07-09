@@ -181,6 +181,8 @@ class HomeController extends Controller
     }
 
     public function turnos_publico(Request $request){
+        
+        
         if (!$request->filled('fecha_turno') || !$request->filled('hora_turno')) {
             return back()->withInput()->with('error', 'Es necesario seleccionar la fecha y el horario del turno en el calendario.');
         }
@@ -191,6 +193,7 @@ class HomeController extends Controller
         $excepcion = $data["excepcion"] ?? "No";
         $fecha_turno = $data["fecha_turno"];
         $hora_turno = $data["hora_turno"];
+        
 
         //El horario seleccionado en el calendario ya no debe estar ocupado ni caer en un día/horario inhábil
         if (!(new RecepcionController())->turnoSlotDisponible($sede, $tipo, $fecha_turno, $hora_turno, $excepcion)) {
@@ -216,11 +219,38 @@ class HomeController extends Controller
             $numero_consecutivo++;
         }
 
+        $listado_auxiliares = array();
+        $relacionEloquent = 'roles';
+        $usuariosauxiliares = User::whereHas($relacionEloquent, function ($query) {
+            return $query->where('name', '=', 'Auxiliar');
+        })
+        ->where('delegacion', $sede)
+        ->get();
+
+        foreach($usuariosauxiliares as $token ){
+            array_push($listado_auxiliares, $token["id"]);
+        }
+        
+        //validar si hay disponibles
+        $random = array_rand($listado_auxiliares);
+        $nombre_usuario = User::find($listado_auxiliares[$random]);
+        if($sede == 'Morelia'){
+            $auxiliaresOcupados = Recepcion::where('delegacion', $sede)->where('hora', $hora_turno)->pluck('auxiliar')->toArray();
+            $disponibles = array_diff($listado_auxiliares, $auxiliaresOcupados);
+            $random = array_rand($disponibles);
+            $modulo = $this->asignarModulo($listado_auxiliares[$random]);
+
+        }
+        else{
+            $modulo = $this->asignarModulo($listado_auxiliares[$random]);
+        }
+        
+
         $data_insertar= array(
             'consecutivo'   => $numero_consecutivo,
             'solicitante'   => $data["nombre"],
-            'auxiliar'      => 0,
-            'lugar_auxiliar'=> "Recepción",
+            'auxiliar'      => $listado_auxiliares[$random],
+            'lugar_auxiliar'=> $modulo,
             'tipo'          => $tipo,
             'tipo_caso'     => $data["tipo_caso"],
             'fecha'         => $fecha_turno,
@@ -237,9 +267,52 @@ class HomeController extends Controller
             'telefono'      => $data["telefono"],
             'observaciones' => $data["conflicto"]
         );
-        Recepcion::create($data_insertar);
+        $recepcion=Recepcion::create($data_insertar);
+        $fecha=$recepcion->fecha->format('Y-m-d');
+        $hora=$recepcion->hora->format('H:i');
+        return redirect()->route('citas_exito')->with(['success' => true,'folio' => $recepcion->id,'fecha' => $fecha,'hora' => $hora,'delegacion' => $recepcion->delegacion, 'modulo' => $recepcion->lugar_auxiliar]);
+    }
+    public function citas_exito(){
+        if (!session()->has('success')) {
+            return redirect()->route('citas')->with('error', 'No se ha podrido completar tu cita.'); 
+        }
+        return view('turnos_exito');
+    }
+    private function asignarModulo(int $aux){
+        switch($aux){
+                case '4': return 'Modulo 1';
+                case '5': return 'Modulo 2';
+                case '6': return 'Modulo 3';
+                case '10': return 'Modulo 4';
+                case '13': return 'Modulo 5';
+                case '209': return 'Modulo 6';
+                case '30': return 'Modulo 1';
+                case '32': return 'Modulo 2';
+                case '19': return 'Modulo 1';
+                case '20': return 'Modulo 2';
+                case '21': return 'Modulo 3';
+                case '154': return 'Modulo 1';
+                case '245': return 'Modulo 1';
+                case '47': return 'Modulo 1';
+                case '61': return 'Modulo 1';
+                case '44': return 'Modulo 1';
+                case '70': return 'Modulo 1';
+                case '501': return 'Modulo 7';
+                case '739': return 'Modulo 8';
+                case '1297': return 'Modulo 9';
+                case '1409': return 'Modulo 10';
+                case '2092': return 'Modulo 11';
+                case '56': return 'Modulo 3';
+                case '243': return 'Modulo 4';
+                case '217': return 'Modulo 3';
+                case '246': return 'Modulo 4';
+                case '731': return 'Modulo 3';
+                case '244': return 'Modulo 3';
+                case '247': return 'Modulo 3';
+                default: break;
 
-        return back()->with('success', 'Turno registrado correctamente. Debe llegar con 10 minutos de antelación, llevar tu Identificación Oficial Vigente.');
+        }
+        return 'Modulo 0';
     }
 
     public function password_cambiar(){

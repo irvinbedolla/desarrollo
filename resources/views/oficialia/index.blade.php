@@ -35,8 +35,8 @@
                                             <tr>
                                                 
                                                 <th style="color: #fff;">Fecha</th>
-                                                <th style="color: #fff;">Tipo de Tramite</th>
                                                 <th style="color: #fff;">Núm. Oficio</th>
+                                                <th style="color: #fff;">Tipo de Tramite</th>
                                                 <th style="color: #fff;">Area de Turno</th>
                                                 <th style="color: #fff;">Usuario Responsable</th>
                                                 <th style="color: #fff;">Estado</th>
@@ -52,8 +52,8 @@
                                             @foreach($oficialias as $oficialia)
                                                 <tr>
                                                     <td>{{ $oficialia->fecha_registro }} {{ $oficialia->hora_registro}}</td>
-                                                    <td>{{ $oficialia->tipo_tramite }}</td>
                                                     <td>{{ $oficialia->oficio }}</td>
+                                                    <td>{{ $oficialia->tipo_tramite }}</td>
                                                     <td>{{ $oficialia->area_turno }}</td>
                                                     <td>{{ strtoupper($oficialia->usuarioResponsable->name )}}</td>
                                                     <td>@if($oficialia->estatus == 'creado')Pendiente @elseif ($oficialia->estatus == 'turnado') Turnado @else Concluido @endif</td>
@@ -162,9 +162,9 @@
                                         <label for="name">Area de Turno <span style="color:red;">(*)</span></label>
                                         <select name="area_turno" id="area_turno" class="form-control" required>
                                             <option value="">Seleccione</option>
-                                            <option value="Dirección general">Dirección General</option>
-                                            <option value="Dirección Administrativa">Dirección Administrativa</option>
-                                            <option value="Unidad Jurídica">Unidad Jurídica</option>
+                                            <option value="Dirección general">Delegación General</option>
+                                            <option value="Unidad Jurídica">Unidad de Asuntos Jurídicos</option>
+                                            <option value="Dirección Administrativa">Delegación Administrativa</option>
                                             <option value="Delegación Morelia">Delegación Morelia</option>
                                             <option value="Delegación Uruapan">Delegación Uruapan</option>
                                             <option value="Delegación Zamora">Delegación Zamora</option>
@@ -177,7 +177,7 @@
                                 </div>       
                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                     <div class="form-group">
-                                        <label for="name">Dependencia de Precendencia <span style="color:red;">(*)</span></label>
+                                        <label for="name">Dependencia de Procendencia <span style="color:red;">(*)</span></label>
                                         <input type="text" name="precedencia" id="precedencia" class="form-control" oninput="this.value = this.value.toUpperCase()" maxlength="20" required > 
                                         
                                         <div class="invalid-feedback">
@@ -201,16 +201,16 @@
 
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                <!--div class="col-xs-12 col-sm-12 col-md-4">
                                     <div class="form-group">
                                         <label>Hubo termino</label><br>
                                         <input type="checkbox" id="check_termino" name="termino" value="1">
                                     </div>
-                                </div>
+                                </div-->
                                 <div class="col-xs-12 col-sm-12 col-md-4 d-none" id="contenedor_input_extra">
                                     <div class="form-group">
                                         <label for="name">Fecha de término <span style="color:red;">(*)</span></label>
-                                        <input type="date" id="fecha_termino" name="fecha_termino" class="form-control" required> 
+                                        <input type="date" id="fecha_termino" name="fecha_termino" class="form-control"> 
                                         <div class="invalid-feedback">
                                             El campo fecha de término es obligatoria.
                                         </div>
@@ -220,7 +220,7 @@
                                 <div class="col-xs-12 col-sm-12 col-md-4 d-none" id="contenedor_input_hora">
                                     <div class="form-group">
                                         <label for="name">hora de término <span style="color:red;">(*)</span></label>
-                                        <input type="time" id="hora_termino" name="hora_termino" class="form-control" required> 
+                                        <input type="time" id="hora_termino" name="hora_termino" class="form-control"> 
                                         <div class="invalid-feedback">
                                             El campo hora de término es obligatoria.
                                         </div>
@@ -259,15 +259,33 @@
                             <th style="color: #fff;">Acciones</th>
                         </thead>
                         <tbody class="contenidobusqueda">
-                            @foreach ($usuariosR as $usuarioR )
-                                <tr>
-                                    
-                                    <td>{{$usuarioR->name}}</td>
-                                    <td>
-                                        <button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="{{$usuarioR->id}}">Seleccionar</button>
-                                    </td>
-                                </tr>
-                            @endforeach
+                            
+                            <tr>
+                                <td>Delegación General </td> 
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="220">Seleccionar</button></td>
+                            </tr>
+                            <tr>
+                                <td>Unidad de Asuntos Jurídicos</td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2925">Seleccionar</button></td>
+                            </tr>
+                            <tr>
+                                <td>Delegación Administrativa</td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2980">Seleccionar</button></td>
+                            </tr>
+                            <tr>
+                                <td>Delegación Morelia</td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="11">Seleccionar</button></td>
+                            </tr>
+                            <tr>
+                                <td>Delegación Uruapan</td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="33">Seleccionar</button></td>
+                            </tr>
+                            <tr>
+                                <td>Delegación Zamora</td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="26">Seleccionar</button></td>
+                            </tr>
+
+        
                         </tbody>
                     </table>
                 </form>
@@ -343,6 +361,12 @@
                                         <h6>Fecha de registro:
                                             <span id="detalleFecha"></span>
                                         </h6>
+                                        <h6>Fecha turnada:
+                                            <span id="detalleTurnada"></span>
+                                        </h6>
+                                        <h6>Fecha término:
+                                            <span id="detalleTermino"></span>
+                                        </h6>
 
                                         <h6>Tipo de trámite:
                                             <span id="detalleTipo"></span>
@@ -355,16 +379,6 @@
                                         <h6>Dependencia:
                                             <span id="detallePrecedencia"></span>
                                         </h6>
-                                        <h6>Fecha término:
-                                            <span id="detalleTermino"></span>
-                                        </h6>
-                                        <h6>Fecha turnada:
-                                            <span id="detalleTurnada"></span>
-                                        </h6>
-                                        
-                                        
-                                        
-                                        
                                     </div>
                                 </div>
                                           
