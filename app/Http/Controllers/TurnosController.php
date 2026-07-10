@@ -889,10 +889,10 @@ class TurnosController extends Controller
 
         $pagos = Pagos::find($data["id"]);
         $id_solicitud = $pagos["id_solicitud"];
-        $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('estatus',"Pendiente")->get();
+        $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('tipo_pago', 'Ratificacion')->where('estatus',"Pendiente")->exists();
 
-        if(count($faltantes) == 0){
-            Turnos::find($id_solicitud)
+        if(!$faltantes){
+            Turnos::where('id', $id_solicitud)
             ->update(['estatus' => "Concluida"]);
         }
 
