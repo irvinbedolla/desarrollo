@@ -193,6 +193,8 @@ class HomeController extends Controller
         $excepcion = $data["excepcion"] ?? "No";
         $fecha_turno = $data["fecha_turno"];
         $hora_turno = $data["hora_turno"];
+        $lista_solicitudes=[5,209,4,28,2664,70,2814,61,2988,2986];
+        $lista_ratificaciones = [10,6,3,32,2663,74,44,731,47,2987];
         
 
         //El horario seleccionado en el calendario ya no debe estar ocupado ni caer en un día/horario inhábil
@@ -227,22 +229,25 @@ class HomeController extends Controller
         ->where('delegacion', $sede)
         ->get();
 
-        foreach($usuariosauxiliares as $token ){
-            array_push($listado_auxiliares, $token["id"]);
+        $listado_auxiliares = $usuariosauxiliares->pluck('id')->toArray();
+        if($tipo == "Ratificación"){
+            $auxiliares = array_intersect($listado_auxiliares,$lista_ratificaciones);
+        }
+        else{
+            $auxiliares = array_intersect($listado_auxiliares,$lista_solicitudes);
         }
         
         //validar si hay disponibles
-        $random = array_rand($listado_auxiliares);
-        $nombre_usuario = User::find($listado_auxiliares[$random]);
+        $random = array_rand($auxiliares);
+        $nombre_usuario = User::find($auxiliares[$random]);
         if($sede == 'Morelia'){
-            $auxiliaresOcupados = Recepcion::where('delegacion', $sede)->where('hora', $hora_turno)->pluck('auxiliar')->toArray();
-            $disponibles = array_diff($listado_auxiliares, $auxiliaresOcupados);
+            $auxiliaresOcupados = Recepcion::where('delegacion', $sede)->where('fecha',$fecha_turno)->where('hora', $hora_turno)->where('tipo', $tipo)->pluck('auxiliar')->toArray();
+            $disponibles = array_diff($auxiliares, $auxiliaresOcupados);
             $random = array_rand($disponibles);
-            $modulo = $this->asignarModulo($listado_auxiliares[$random]);
-
+            $modulo = $this->asignarModulo($disponibles[$random]);
         }
         else{
-            $modulo = $this->asignarModulo($listado_auxiliares[$random]);
+            $modulo = $this->asignarModulo($auxiliares[$random]);
         }
         
 
@@ -280,35 +285,23 @@ class HomeController extends Controller
     }
     private function asignarModulo(int $aux){
         switch($aux){
-                case '4': return 'Modulo 1';
-                case '5': return 'Modulo 2';
-                case '6': return 'Modulo 3';
+                case '5': return 'Modulo 1';
+                case '209': return 'Modulo 2';
+                case '4': return 'Modulo 3';
                 case '10': return 'Modulo 4';
-                case '13': return 'Modulo 5';
-                case '209': return 'Modulo 6';
-                case '30': return 'Modulo 1';
+                case '6': return 'Modulo 5';
+                case '3': return 'Modulo 6';
+                case '28': return 'Modulo 1';
                 case '32': return 'Modulo 2';
-                case '19': return 'Modulo 1';
-                case '20': return 'Modulo 2';
-                case '21': return 'Modulo 3';
-                case '154': return 'Modulo 1';
-                case '245': return 'Modulo 1';
-                case '47': return 'Modulo 1';
-                case '61': return 'Modulo 1';
-                case '44': return 'Modulo 1';
-                case '70': return 'Modulo 1';
-                case '501': return 'Modulo 7';
-                case '739': return 'Modulo 8';
-                case '1297': return 'Modulo 9';
-                case '1409': return 'Modulo 10';
-                case '2092': return 'Modulo 11';
-                case '56': return 'Modulo 3';
-                case '243': return 'Modulo 4';
-                case '217': return 'Modulo 3';
-                case '246': return 'Modulo 4';
-                case '731': return 'Modulo 3';
-                case '244': return 'Modulo 3';
-                case '247': return 'Modulo 3';
+                case '2664': return 'Modulo 1';
+                case '2663': return 'Modulo 2';
+                case '74': return 'Modulo 3';
+                case '70': return  'Modulo 1';
+                case '44': return  'Modulo 2';
+                case '2814': return  'Modulo 1';
+                case '731': return  'Modulo 2';
+                case '61': return  'Modulo 1';
+                case '47': return 'Modulo 2';
                 default: break;
 
         }
