@@ -1597,6 +1597,8 @@ class SeerController extends Controller
             //return Excel::download(new ReporteGeneral($fecha_inicial, $fecha_final,$sede), 'reporte.xlsx');
         }
         else if($data["tipo_reporte"] == "GeneralSede"){
+            // 💡 SOLUCIÓN AQUÍ: Desactivamos temporalmente la restricción de joins para procesar este reporte cuantitativo pesado
+            \Illuminate\Support\Facades\DB::statement('SET SESSION SQL_BIG_SELECTS=1');
             //Auxiliares
                 $id_usuario = auth()->user()->id;
                 $userActual = User::find($id_usuario);
@@ -1807,7 +1809,7 @@ class SeerController extends Controller
 
                 $ratificacionesTotal= $dataTurnos->sum('ratificaciones');
 
-                // Notificadores - Centro
+            // Notificadores - Centro
                 $notificaciones = SeerPerGeneral::whereBetween('seer_citados.fecha', [$fecha_inicial, $fecha_final])
                     ->join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
                     ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
@@ -16056,7 +16058,8 @@ class SeerController extends Controller
         $citados = SeerCitados::where('id_solicitud', $id)->get();
        
         $pdf = \PDF::loadView('PDF/Solicitudes/acuseConfirmacion', compact('id','solicitud','solicitante','citados','inicialesConcluye','etiquetaIniciales'))
-        ->setPaper('a4', 'portrait')
+        //->setPaper('a4', 'portrait')
+        ->setPaper('letter', 'portrait')
         ->setOption('isHtml5ParserEnabled', true)
         ->setOption('isPhpEnabled', true);
 

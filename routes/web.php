@@ -92,6 +92,7 @@ Route::post('/turnos_guardar',                      [HomeController::class, 'tur
 Route::get('citas',                                 [TurnosController::class, 'create_publico'])->name('create_cita');
 Route::post('/citas/store_publico',                 [TurnosController::class, 'store_publico'])->name('turnos.publico');
 Route::get('/validar_folio_abogado/{folio}',        [TurnosController::class, 'validarFolio'])->name('validar_folio_abogado');
+ Route::get('AgendaRatificacion',                   [TurnosController::class, 'create_ratiMultiple'])->name('create_cita-12');
 
 // Flujo dinámico de Solicitudes (Trabajador / Patronal)
 Route::get('Patronal/{tipo_solicitud}',             [SeerController::class, 'patron'])->name('solicitud_patron');
