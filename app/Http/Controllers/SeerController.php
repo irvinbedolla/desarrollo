@@ -14079,7 +14079,7 @@ class SeerController extends Controller
                     $conteoOcupados = $ocupadosMap[$slotStart] ?? 0;
 
                     if($sede == 'Morelia'){
-                        $ocupado = ($conteoOcupados >= 2);
+                        $ocupado = ($conteoOcupados >= 4);
                     } else {
                         $ocupado = ($conteoOcupados >= 1);
                     }
