@@ -10218,22 +10218,19 @@ class SeerController extends Controller
 
     private function convertirNumerosALetras($valor) {
         $numberToWords = new NumberToWords();
-        $numberTransformer = $numberToWords->getNumberTransformer('es'); 
+        $numberTransformer = $numberToWords->getNumberTransformer('es');
 
-        //$parteEntera = floor($valor);
-        $partes = explode('.', $valor);
+        $valor = round((float) $valor, 2);
+        $parteEntera = (int) floor($valor);
+        $parteDecimal = (int) round(($valor - $parteEntera) * 100);
 
-        $parteEntera = $partes[0];
-
-         if(count($partes) > 1){
-            $parteDecimal = $partes[1];
-        } else {
-            $parteDecimal = 0;
+        if ($parteDecimal >= 100) {
+            $parteEntera++;
+            $parteDecimal -= 100;
         }
 
-        $letras = strtoupper($numberTransformer->toWords($parteEntera)); 
-        $parteDecimal = round($parteDecimal);
-        $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT); 
+        $letras = strtoupper($numberTransformer->toWords($parteEntera));
+        $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT);
         return "{$letras} PESOS {$centavos}/100";
     }
 
