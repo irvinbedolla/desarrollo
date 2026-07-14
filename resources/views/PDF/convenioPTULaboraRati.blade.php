@@ -157,7 +157,7 @@
                     </b>
                 </p>  
 
-                <p><center><b>CONVENIO DE CONCILIACIÓN DE PAGO DE PARTICIPACIÓN DE UTILIDADES</b></center></p> <br><br>
+                <p><center><b>CONVENIO DE PAGO DE PARTICIPACIÓN DE UTILIDADES (PTU)</b></center></p> <br><br>
 
                 <p>Con fundamento en los artículos 123, apartado A, fracciones XX párrafo segundo y XXVII, inciso h) de la Constitución Política de los Estados Unidos Mexicanos;
                     33, 48 y 684-E de la Ley Federal del Trabajo, así como la fracción I del artículo 16 del Reglamento Interior del 
@@ -193,7 +193,7 @@
                         a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($ratificacion->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus servicios como <b>{{ $ratificacion->categoria }}</b>, puesto en el que actualmente se desempeña</b>.
                     </p>
                     <p class="sangria">                
-                        b) Que por el desempeño de sus labores cuenta con todas las prestaciones, incluido la <b>Participación de los Trabajadores en las Utilidades</b> de la empresa <b>PTU</b>.
+                        b) Que por el desempeño de sus labores cuenta con todas las prestaciones, incluido la <b>Participación de los Trabajadores en las Utilidades PTU</b> de la empresa.
                     </p>
                     <p class="sangria">
                         c) Que el día <b>{{ \Carbon\Carbon::parse($ratificacion->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> presentó solicitud para iniciar el procedimiento de conciliación prejudicial ante el Centro de Conciliación Laboral del 

@@ -14067,7 +14067,7 @@ class SeerController extends Controller
                 $conteoDiario = $pagosPorDiaMap[$fecha_str] ?? 0;
 
                 if($sede == 'Morelia') {
-                    $diaEstaLleno = ($conteoDiario >= 20);
+                    $diaEstaLleno = ($conteoDiario >= 90);
                 } else {
                     $diaEstaLleno = ($conteoDiario >= 10);
                 }
@@ -14079,7 +14079,7 @@ class SeerController extends Controller
                     $conteoOcupados = $ocupadosMap[$slotStart] ?? 0;
 
                     if($sede == 'Morelia'){
-                        $ocupado = ($conteoOcupados >= 4);
+                        $ocupado = ($conteoOcupados >= 6);
                     } else {
                         $ocupado = ($conteoOcupados >= 1);
                     }
