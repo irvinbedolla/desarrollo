@@ -173,23 +173,23 @@
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('turnos_publico')}}">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group mb-3">
-                                            <label for="name">Tipo de Trámite <span style="color:red;">(*)</span></label>
+                                            <label for="name">Selecciona el tipo de trámite que deseas realizar <span style="color:red;">(*)</span></label>
                                             <select name="tipo" class="form-control" onchange="blockCalendar();" required>
                                                 <option value="">Seleccione</option>
-                                                <option value="Solicitud">Solicitudes</option>
+                                                <option value="Asesoría">Asesoría</option>
                                                 <option value="Ratificación">Ratificación</option>
-                                                <option value="Asesoría">Asesorías</option>
+                                                <option value="Solicitud">Solicitud</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El tipo de solicitud es obligatoria.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group mb-3">
-                                            <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
+                                            <label for="name">Municipio donde se localiza la fuente de empleo/persona a citar <span style="color:red;">(*)</span></label>
                                             <select id="municipio_citado" class="form-control" name="municipio_citado" required>
                                                 <option value="">Seleccione</option>
                                                     @foreach($municipios as $mun)
@@ -203,9 +203,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group mb-3">
-                                            <label for="name">Delegación/Oficina <span style="color:red;">(*)</span></label>
+                                            <label for="name">Oficina del CCL a la que te corresponde acudir <span style="color:red;">(*)</span></label>
                                             <select id="delegacion" name="delegacion" class="form-control" onchange="blockCalendar();" required>
                                                 <option value="">Seleccione</option>
                                             </select>
@@ -216,7 +216,7 @@
                                     </div>
                                 </div>
                                 <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                    <h3 class="text-center" style="color:black">Datos Solicitante</h3>
+                                    <h3 class="text-center" style="color:black">Datos de Solicitante</h3>
                                 </div>   
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6">
@@ -254,7 +254,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group mb-3">
-                                            <label for="name">Email <span style="color:red;">(*)</span></label>
+                                            <label for="name">Correo electrónico <span style="color:red;">(*)</span></label>
                                             <input type="email" name="email" maxlength="50" class="form-control" required> 
                                             <div class="invalid-feedback">
                                                 El email es obligatorio.
@@ -263,7 +263,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group mb-3">
-                                            <label for="name">Teléfono <span style="color:red;">(*)</span></label>
+                                            <label for="name">Teléfono/Celular <span style="color:red;">(*)</span></label>
                                             <input type="number" name="telefono" class="form-control" maxlength="10" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required> 
                                             <div class="invalid-feedback">
                                                 El teléfono es obligatorio.
@@ -273,16 +273,16 @@
                                       
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group mb-3">
-                                            <label for="name">Grupo de atención prioritaria<span style="color:red;">(*)</span></label>
+                                            <label for="name">¿Perteneces a alguno de estos grupos de atención prioritaria?<span style="color:red;">(*)</span></label>
                                             <select name="vulnerables" class="form-control" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="Menores de edad">Menores de edad</option>
                                                 <option value="Adultos mayores">Adultos mayores</option>
                                                 <option value="Personas con discapacidad">Personas con discapacidad</option>
                                                 <option value="Población indígena">Población indígena</option>
-                                                <option value="Personas Migrantes">Personas Migrantes</option>
+                                                <option value="Personas Migrantes">Personas migrantes</option>
                                                 <option value="LGBTTTIQ">LGBTTTIQ+</option>
-                                                <option value="No aplica">No aplica</option>
+                                                <option value="No aplica">A ninguno</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -292,14 +292,14 @@
                                     
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group mb-3">
-                                            <label for="name">Requiere Asesoria/Orientación Juridica <span style="color:red;">(*)</span></label>
+                                            <label for="name">Requiere Asesoría/Orientación Jurídica <span style="color:red;">(*)</span></label>
                                             <select name="orientacion" class="form-control">
                                                 <option value="">Seleccione</option>
                                                 <option value="Si">Si</option>
                                                 <option value="No">No</option>
                                             </select>
                                             <div class="invalid-feedback">
-                                                El campo sexo es obligatorio.
+                                                El campo orientación es obligatorio.
                                             </div>
                                         </div>
                                     </div>
@@ -324,10 +324,10 @@
                                     </div>
                                     <div id="tipo_caso"  class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group mb-3">
-                                            <label for="name">Tipo de caso de excepción <span style="color:red;">(*)</span></label>
+                                            <label for="name">¿El motivo de tu solicitud se debe a alguno de los siguientes casos? <span style="color:red;">(*)</span></label>
                                             <select name="tipo_caso" class="form-control">
                                                 <option value="">Seleccione</option>
-                                                <option value="Riesgo o accidente">Accidentes de Trabajo</option>
+                                                <option value="Riesgo o accidente">Accidentede Trabajo</option>
                                                 <option value="Acoso u hostigamiento sexual">Acoso/Hostigamiento Sexual</option>
                                                 <option value="Discriminación">Disputa de titularidad de Contrato Coletivo y Contrato Ley</option>
                                                 <option value="Discriminación">Impugnación de estatutos de Sindicato y su Modificación</option>
@@ -348,7 +348,7 @@
                                     
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group mb-3">
-                                            <label for="name">Descripción de hechos</label>
+                                            <label for="name">Describe brevemente el motivo de tu solicitud (Máximo 500 caracteres): </label>
                                             <textarea name="conflicto" class="form-control" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" maxlength="200"></textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
