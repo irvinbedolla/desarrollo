@@ -76,8 +76,8 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Trabajador(a): {{ $solicitud->nombre_trabajador }}<br> 
-                    Empresa/Patrón: {{ $solicitud->empresa_representante }}<br>
+                    Solicitante(s): {{ $solicitud->nombre_trabajador }}<br> 
+                    Citados(s): {{ $solicitud->empresa_representante }}<br>
                     Fecha y hora de cumplimiento: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ \Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i') }} horas.<br> 
                     Fecha que se emite la constancia de incumplimiento: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                     Pena Convencional: Si<br>
