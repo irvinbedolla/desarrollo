@@ -115,8 +115,8 @@
                 <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
 
                 <p><b>
-                    Trabajador(a): {{ $solicitud->nombre_trabajador }} <br> 
-                    Empresa/Patrón: {{ $solicitud->empresa_representante }}<br>
+                    Solicitante(s): {{ $solicitud->nombre_trabajador }} <br> 
+                    Citados(s): {{ $solicitud->empresa_representante }}<br>
                     Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>
                     Fecha y hora de cumplimiento: {{\Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y')}} a las {{\Carbon\Carbon::parse($solicitud->update)->translatedFormat('h:i')}} horas.<br>
                     Asistencia de los interesados: Si<br>

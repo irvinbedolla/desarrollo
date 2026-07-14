@@ -67,8 +67,8 @@
             color: #ffff !important;
             /*background-color: #F0DF24 !important;
             border-color: #F0DF24 !important;*/
-            background-color: #F59727 !important;
-            border-color: #F59727 !important;
+            background-color: #8a959e !important;
+            border-color: #8a959e !important;
             cursor: not-allowed;
         }
 
@@ -220,7 +220,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Nacionalidad <span style="color:red;">(*)</span></label>
                                                         <select name="nacionalidad" class="form-control" id="nacionalidad" required>
@@ -233,10 +233,11 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div  class="col-xs-12 col-sm-12 col-md-1">
+                                                <div  class="col-xs-12 col-sm-12 col-md-2">
                                                     <div class="form-group">
                                                         <label for="name">Edad <span style="color:red;">(*)</span></label>
-                                                        <input type="number" name="trabajador_edad" class="form-control soloNumeros" required> 
+                                                        <input type="number" maxlength="3" min="0" max="150" name="trabajador_edad" class="form-control" oninput="this.value = this.value.toUpperCase(); if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required>
+
                                                         <div class="invalid-feedback">
                                                             El campo edad es obligatorio.
                                                         </div>
@@ -255,10 +256,10 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-5">
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">CURP del trabajador <span style="color:red;">(*)</span></span></label>
-                                                        <input type="text" name="trabajador_curp"  oninput="validarInput(this, 'resultado_curp_trabajador')" class="form-control" required> 
+                                                        <label for="name">CURP del trabajador</label>
+                                                        <input type="text" name="trabajador_curp"  oninput="validarInput(this, 'resultado_curp_trabajador')" class="form-control" > 
                                                         <pre id="resultado_curp_trabajador" class="resultado"></pre>
                                                         <div class="invalid-feedback">
                                                             El campo curp es obligatorio.
@@ -378,7 +379,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Días a la semana trabajados <span style="color:red;">(*)</span></label>
-                                                        <input type="number" name="dias" class="form-control soloNumeros" required> 
+                                                        <input type="number" maxlength="1" min="0" max="7" name="dias" class="form-control" oninput="this.value = this.value.toUpperCase(); if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required> 
                                                         <div class="invalid-feedback">
                                                             Este campo días a la semana trabajados es obligatorio.
                                                         </div>
@@ -467,7 +468,7 @@
                                                     </div>
                                                 </div>
                                             
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name"><br>
                                                         <center><a href="https://cclmichoacan.gob.mx/Calculadora.html" target="_blank">* Calcula el monto aproximado del convenio.</a></center>
@@ -492,12 +493,17 @@
                                                     </div>
                                                 </div>
                                              
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Sedes <span style="color:red;">(*)</span></label>
                                                         <select id="sede" name="sede" class="form-control" onchange="modalCalendar();" required>
                                                             <option value="">Seleccione la sede</option>
+                                                            <option value="Morelia">Morelia</option>
                                                             <option value="Uruapan">Uruapan</option>
+                                                            <option value="Zamora">Zamora</option>
+                                                            <option value="Zitácuaro">Zitácuaro</option>
+                                                            <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
+                                                            <option value="Sahuayo">Sahuayo</option>
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             La sede es obligatoria.

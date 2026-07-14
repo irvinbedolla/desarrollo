@@ -101,8 +101,8 @@
 
                 <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
                 <p><b>
-                    Trabajador(a): {{ $solicitanteNombre }} <br> 
-                    Empresa/Patrón: @foreach ($citados as $citado)
+                    Solicitante(s): {{ $solicitanteNombre }} <br> 
+                    Citados(s): @foreach ($citados as $citado)
                         {{ $citado->nombre }} {{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}<br>
                     @endforeach
                     Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>

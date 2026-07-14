@@ -122,8 +122,8 @@
                 </div><br><br><br>
                 <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br><br>
                 <p><b>
-                    Trabajador(a): {{ $solicitud->solicitante->nombre }} {{ $solicitud->solicitante->primero_trabajador }} {{ $solicitud->solicitante->segundo_trabajador }} <br> 
-                    Empleador(a): @foreach ($solicitud->citados as $citado)
+                    Solicitante(s): {{ $solicitud->solicitante->nombre }} {{ $solicitud->solicitante->primero_trabajador }} {{ $solicitud->solicitante->segundo_trabajador }} <br> 
+                    Citados(s): @foreach ($solicitud->citados as $citado)
                         {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}} <br>
                     @endforeach
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audienciaFecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ \Carbon\Carbon::parse($audienciaFecha)->translatedFormat('H:i') }} horas.<br> 

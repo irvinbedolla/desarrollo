@@ -22,6 +22,7 @@ use App\Models\Estados;
 use App\Models\Deducciones;
 use App\Models\DocumentosSolicitud;
 use App\Models\HistorialAbogado;
+use App\Models\Recepcion;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -696,6 +697,7 @@ class TurnosController extends Controller
                 'año'               => $año_actual,
                 'id_historial'      => $ultimoRegistro->id ?? NULL,
                 'nacionalidad'      => $data["nacionalidad"],
+                'multiple'                  => 'No'
             ); 
             $nombre = $data["trabajador"];
             
@@ -752,6 +754,7 @@ class TurnosController extends Controller
                 'estado_rat'                => $data["estado_rat"],
                 'año'                       => $año_actual,
                 'nacionalidad'              => $data["nacionalidad"],
+                'multiple'                  => 'No'
             ); 
             $nombre = $data["trabajador"];
             $email  = $data["email"];
@@ -942,28 +945,24 @@ class TurnosController extends Controller
 
     public function obtenerEventos(Request $request)
     {
-        $fecha_inicio = now()->subDays(20)->format('Y-m-d');
-        $fecha_fin = now()->addDays(20)->format('Y-m-d');
+        $fecha_inicio = now()->format('Y-m-d');
+        $fecha_fin = now()->addDays(60)->format('Y-m-d');
         $sede = $request->input('sede'); // Obtener sede de la solicitud
 
-        $inhabiles = DiasInhabiles::whereNull('user_id')
-            ->where('centro', $sede)
-            ->whereIn('descripcion', ['Inhabil', 'No inhabil'])
-            ->whereIn('tipo', ['Ratificaciones', 'Todos'])
-            ->get(); //Obtenemos días inhabiles
-
-        /* Obtener turnos ocupados filtrando por sede
-        $ocupados = Turnos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
-            ->where('delegacion', $sede) // FILTRO POR SEDE
-            ->get()
-            ->map(function ($turno) {
-                return [
-                    'title' => 'Ocupado',
-                    'start' => $turno->fecha . 'T' . $turno->hora,
-                    'color' => '#DA0909',
-                    'extendedProps' => ['estado' => 'ocupado']
-                ];
-            });*/
+        $inhabiles = DiasInhabiles::where('centro', $sede)
+            ->whereNull('user_id')
+            ->where(function ($query) use ($fecha_inicio, $fecha_fin) {
+                $query->where('fecha_inicio', '<=', $fecha_fin)
+                    ->where('fecha_final', '>=', $fecha_inicio);
+            })
+            ->get();
+        $maxEmpalme = $sede === 'Morelia' ?  2 : 1;
+        $ocupadosQuery = Recepcion::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->where('tipo', 'Ratificación')->where('delegacion', $sede)->get(['fecha', 'hora']);
+        $ocupadosCount = [];
+        foreach ($ocupadosQuery as $turno) {
+            $key = $turno->fecha->format('Y-m-d') . 'T' . $turno->hora->format('H:i');
+            $ocupadosCount[$key] = ($ocupadosCount[$key] ?? 0) + 1;
+        }
 
         $todosLosEventos = [];
         $fecha = new \DateTime($fecha_inicio);
@@ -971,8 +970,9 @@ class TurnosController extends Controller
 
         while ($fecha <= $fin) {
             if ($fecha->format('N') < 6) { 
-                $slotDt = new \DateTime($fecha->format('Y-m-d') . ' 08:30:00');
-                $slotEndDt = new \DateTime($fecha->format('Y-m-d') . ' 16:00:00');
+                $slotDt = new \DateTime($fecha->format('Y-m-d') . ' 09:00:00');
+                $slotEndDt = new \DateTime($fecha->format('Y-m-d') . ' 15:30:00');
+                $slotComida = new \DateTime($fecha->format('Y-m-d') . ' 13:00:00');
 
                 while ($slotDt <= $slotEndDt) {
                         $hora_str = $slotDt->format('H:i:s');
@@ -1001,44 +1001,53 @@ class TurnosController extends Controller
                             }
                         }
 
-                        //Comparación de fechas de días inhábiles
-
-                        /*$fechaTurno = $fecha->format('Y-m-d');
-                        $sedeTurno = $sede;
-                        $esInhabil = false;
-                        foreach ($inhabiles as $dia){
-                            if ($fechaTurno >= $dia->fecha_inicio && $fechaTurno <= $dia->fecha_final && ($dia->centro == $sedeTurno || $dia->centro == $sedeTurno) ){
-                                $esInhabil = true;
-                                break;
-                            }
-                        }*/
-
                         $disponibles = 1 - $citasExistentes;
                         $ocupado = $disponibles <= 0;
-                        
-                        if ($ocupado) {
-                            $todosLosEventos[] = [
-                                'title' => 'Ocupado',
-                                'start' => $slotStart,
-                                'color' => '#DA0909',
-                                'extendedProps' => ['estado' => 'ocupado', 'espacios_disponibles' => 0]
-                            ];
-                        } else if ($esInhabil){
-                            $todosLosEventos[] = [
-                                'title' => 'Inhábil',
-                                'start' => $slotStart,
-                                'color' => '#3B78DB',
-                                'extendedProps' => ['estado' => 'inhabil', 'espacios_disponibles' => 0]
-                            ];
-                        } else if ($esNoInhabil || $ahora > $currentCita){
-                            $titulo = $esNoInhabil ? 'No disponible' : 'Expirado';
+                        $cantidadOcupados = $ocupadosCount[$slotStart] ?? 0;
+                        if($slotDt == $slotComida ){
+                            $titulo = 'No disponible';
                             $todosLosEventos[] = [
                                 'title' => $titulo,
                                 'start' => $slotStart,
                                 'color' => '#F59727',
                                 'extendedProps' => ['estado' => 'expirado', 'espacios_disponibles' => 0]
                             ];
-                        } else {
+                        }
+                        else if ($esInhabil){
+                            $todosLosEventos[] = [
+                                'title' => 'Inhábil',
+                                'start' => $slotStart,
+                                'color' => '#3B78DB',
+                                'extendedProps' => ['estado' => 'inhabil', 'espacios_disponibles' => 0]
+                            ];
+                        }
+                        else if ($esNoInhabil || $ahora > $currentCita){
+                            $titulo = $esNoInhabil ? 'No disponible' : 'Expirado';
+                            $todosLosEventos[] = [
+                                'title' => $titulo,
+                                'start' => $slotStart,
+                                'color' => '#8a959e',
+                                'extendedProps' => ['estado' => 'expirado', 'espacios_disponibles' => 0]
+                            ];
+                        }
+                        else if ($cantidadOcupados > 0 && $cantidadOcupados < $maxEmpalme){
+                            
+                            $todosLosEventos[] = [
+                                'title' =>"Disponible",
+                                'start' => $slotStart,
+                                'color' => '#00CE1C',
+                                'extendedProps' => ['estado' => 'disponible', 'espacios_disponibles' => 0]
+                            ];
+                        }
+                        elseif ($cantidadOcupados > 0) {
+                            $todosLosEventos[] = [
+                                'title' => 'Ocupado',
+                                'start' => $slotStart,
+                                'color' => '#DA0909',
+                                'extendedProps' => ['estado' => 'ocupado', 'espacios_disponibles' => 0]
+                            ];
+                        }   
+                        else {
                             $todosLosEventos[] = [
                                 'title' => "Disponible",
                                 'start' => $slotStart,
@@ -1047,21 +1056,14 @@ class TurnosController extends Controller
                             ];
                         }
 
-                        /*foreach ($todosLosEventos as &$evento) {
-                            foreach ($inhabiles as $dia) {
-                                $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
-                                $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
-                                if ($evento['start'] >= $fechaInhabilInicio && $evento['start'] <= $fechaInhabilFinal) {
-                                    $evento['title'] = 'Inhábil';
-                                    $evento['color'] = '#970EE3';
-                                    $evento['extendedProps']['estado'] = 'inhabil';
-                                    break;
-                                }
-                            }
+                        if($slotDt->format('H:i') === '13:00' ){
+                            $slotDt->modify('+30 minutes');
                         }
-                        unset($evento);*/
-
-                        $slotDt->modify('+30 minutes');
+                        else{
+                            $slotDt->modify('+60 minutes');
+                        }
+                        
+                        
                 }
             }
             $fecha->modify('+1 day');
@@ -2857,11 +2859,6 @@ class TurnosController extends Controller
     public function guardarRatificacion(Request $request)
     {
         $data = $request->all();
-        $año_actual = date('Y');
-        $fecha_actual = date('Y-m-d');
-        $hora_actual =  date("H:i:s");
-        $user = 0;
-     
         if(isset($data["folio"])){
             request()->validate([
                 'folio'             => 'required',
@@ -2869,7 +2866,6 @@ class TurnosController extends Controller
                 'trabajador'        => 'required',
                 'trabajador_edad'   => 'required',
                 'trabajador_sexo'   => 'required',
-                'trabajador_curp'   => 'required',
                 'tipo_identificacion'=> 'required',
                 //'documentoidentificacion'=> 'required',
                 'fecha_inicio'      => 'required',
@@ -2887,21 +2883,28 @@ class TurnosController extends Controller
                 'num_identificacion'=> 'required',
             ], $data);
         }
-        
+
+        $año_actual = date('Y');
+        $fecha_actual = date('Y-m-d');
+        $hora_actual =  date("H:i:s");
+        $hora = $data["hora"];
+        $hora_fin = date("H:i:s", strtotime($hora . " +60 minutes"));
+        $user = 0;
         //Buscar la proxima fecha disponible de la sede
         $numero_consecutivo = 0;
-        $consecutivo  = Turnos::latest('consecutivo')
+
+        //---DATOS DE LA RATIFICACION (TURNOS)---
+        $consecutivo_T  = Turnos::latest('consecutivo')
         ->where('delegacion',$data["sede"])
         ->where('año',$año_actual)->
         first();
-        if(empty($consecutivo)){
-            $numero_consecutivo = 1;
+        if(empty($consecutivo_T)){
+            $numero_consecutivo_T = 1;
         }
         else{
-            $numero_consecutivo = $consecutivo["consecutivo"];
-            $numero_consecutivo++;
+            $numero_consecutivo_T = $consecutivo_T["consecutivo"];
+            $numero_consecutivo_T++;
         }
-
 
         $representante  = Poder::find($data["folio"]);
         $ultimoRegistro = HistorialAbogado::where('id_abogado', $data["folio"])->latest()->first();
@@ -2919,8 +2922,55 @@ class TurnosController extends Controller
             $telefono = $representante["numero_representante"];
             $curp   = $representante["curp_representante"];
         }
+        
+
+        //---DATOS PARA LA CITA (RECEPCION)---
+        $nombre = $data["trabajador"] . " " . $data["primero_trabajador"] . " " . $data["segundo_trabajador"];
+
+        $consecutivo_R = Recepcion::where('fecha', $data["fecha"])
+            ->where('delegacion', $data["sede"])
+            ->orderBy('consecutivo', 'desc')
+            ->first();
+
+        if (empty($consecutivo_R)) {
+            $numero_consecutivo_R = 1;
+        } else {
+            $numero_consecutivo_R = $consecutivo_R["consecutivo"] + 1;
+        }
+
+        $lista_ratificaciones = [10,6,3,32,2663,74,44,731,47,2987];
+        $listado_auxiliares = array();
+        $relacionEloquent = 'roles';
+        $usuariosauxiliares = User::whereHas($relacionEloquent, function ($query) {
+            return $query->where('name', '=', 'Auxiliar');
+        })
+        ->where('delegacion', $data["sede"])
+        ->get();
+        
+        
+        $listado_auxiliares = $usuariosauxiliares->pluck('id')->toArray();
+  
+        $auxiliares = array_intersect($listado_auxiliares,$lista_ratificaciones);
+
+        
+        //validar si hay disponibles
+        $random = array_rand($auxiliares);
+        $nombre_usuario = User::find($auxiliares[$random]);
+        
+        if($data["sede"] == 'Morelia'){
+            $auxiliaresOcupados = Recepcion::where('hora', $hora)->where('fecha', $data['fecha'])->where('delegacion', $data["sede"])->where('tipo', 'Ratificación')->pluck('auxiliar')->toArray();
+            $disponibles = array_diff($auxiliares, $auxiliaresOcupados);
+            $random = array_rand($disponibles);
+            $modulo = $this->asignarModulo($disponibles[$random]);
+            $id_aux=$disponibles[$random];
+        }
+        else{
+            $modulo = $this->asignarModulo($auxiliares[$random]);
+            $id_aux=$auxiliares[$random];
+        }
+        
         $data_insertar= array(
-            'consecutivo'       => $numero_consecutivo,    
+            'consecutivo'       => $numero_consecutivo_T,    
             'empresa'           => $representante["nombres_patronal"],
             'primero_empresa'   => $representante["primer_apellido_patronal"],
             'segundo_empresa'   => $representante["segundo_apellido_patronal"],
@@ -2930,7 +2980,7 @@ class TurnosController extends Controller
             'trabajador'        => $data["trabajador"],
             'edad'              => $data["trabajador_edad"],
             'sexo'              => $data["trabajador_sexo"],
-            'trabajador_curp'   => $data["trabajador_curp"],
+            'trabajador_curp'   => $data["trabajador_curp"] ?? null,
                 //'documentoCurp'     => $data["documentoCurp"],
             'tipo_identificacion'=> $data["tipo_identificacion"],
             'documentoidentificacion'=> "",
@@ -2941,8 +2991,8 @@ class TurnosController extends Controller
             'monto'             => $data["monto"],
             'frecuencia'        => $data["frecuencia"],
             'dias'              => $data["dias"],
-            'auxiliar'          => 0,
-            'lugar_auxiliar'    => "Recepción",
+            'auxiliar'          => $id_aux,
+            'lugar_auxiliar'    => $modulo,
             'delegacion'        => $data["sede"],
             'estatus'           => 'Confirmado',
             'exepcion'          => 'No',
@@ -2966,16 +3016,15 @@ class TurnosController extends Controller
             'idAbogado'         => $data["folio"],
             'user_id'           => $user,
             'fecha'             => $data["fecha"],
-            'hora'              => $data["hora"],
-            'hora_fin'          => $data["hora"],
+            'hora'              => $hora,
+            'hora_fin'          => $hora_fin,
             'num_identificacion'=> $data["num_identificacion"],
             'estado_rat'        => 16,
             'año'               => $año_actual,
             'id_historial'      => $ultimoRegistro->id ?? NULL,
             'nacionalidad'      => "MEXICANA",
+            'multiple'          => 'Si'
         ); 
-        $nombre = $data["trabajador"];
-    
 
         //Variables opcionales
         if(isset($data["Aguinaldo"])){
@@ -3036,9 +3085,57 @@ class TurnosController extends Controller
         if(isset($data["N_Int"])){
             $data_insert["num_int"] =  $data["N_Int"];
         }
+
+        
+
+        $data_insertar_R = array(
+            'consecutivo'     => $numero_consecutivo_R,
+            'fecha'           => $data["fecha"],
+            'hora'            => $hora,
+            'hora_fin'        => $hora_fin,
+            'auxiliar'        => $id_aux,
+            'tipo'            => 'Ratificación',
+            'lugar_auxiliar'  => $modulo,
+            'exepcion'        => 'No',
+            'edad'            => $data["trabajador_edad"],
+            'sexo'            => $data["trabajador_sexo"],
+            'tipo_caso'       =>  null,
+            'prestacionSS'    =>  null,
+            'vulnerables'     =>  null,
+            'conflicto'       =>  null,
+            'solicitante'     => $nombre,
+            'estatus'         => 'no atendido',
+            'orientacion'     => 'No',
+            'delegacion'      => $data["sede"],
+            'folio'           => null,
+            'INS'             => null,
+            'resultado'       => null,
+            'telefono'        => $telefono,
+            'correo'          => $email,
+            'municipio'       => null,
+        );
+
         //Se van insetar todos los datos
         Turnos::create($data_insertar);
+        Recepcion::create($data_insertar_R);
        
         return back()->with('success', 'Solicitud Capturada Correctamente.'  ); 
+    }
+    private function asignarModulo(int $aux){
+        switch($aux){
+                
+                case '10': return 'Modulo 4';
+                case '6': return 'Modulo 5';
+                case '3': return 'Modulo 6';
+                case '32': return 'Modulo 2';
+                case '2663': return 'Modulo 2';
+                case '74': return 'Modulo 3';
+                case '44': return  'Modulo 2';
+                case '731': return  'Modulo 2';
+                case '47': return 'Modulo 2';
+                default: break;
+
+        }
+        return 'Modulo 0';
     }
 }

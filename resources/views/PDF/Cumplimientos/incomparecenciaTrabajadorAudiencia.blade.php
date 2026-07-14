@@ -88,7 +88,7 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Solicitante: {{$solicitante->nombre}}<br> 
+                    Solicitante(s): {{$solicitante->nombre}}<br> 
                     Citado(s): 
                     @foreach ($citados as $citado)
                     {{ $citado->nombre }} {{ $citado->primer_apellido ?? '' }} {{ $citado->segundo_apellido ?? '' }}<br>

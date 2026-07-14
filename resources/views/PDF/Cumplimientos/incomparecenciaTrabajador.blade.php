@@ -88,8 +88,8 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Trabajador: {{$solicitud->trabajador}} {{$solicitud->primero_trabajador ?? ''}} {{$solicitud->segundo_trabajador ?? ''}}<br> 
-                    Empresa/Patrón: {{ $solicitud->empresa }} {{ $solicitud->primero_empresa ?? ''}} {{ $solicitud->segundo_empresa ?? ''}}<br>
+                    Solicitante(s): {{$solicitud->trabajador}} {{$solicitud->primero_trabajador ?? ''}} {{$solicitud->segundo_trabajador ?? ''}}<br> 
+                    Citados(s): {{ $solicitud->empresa }} {{ $solicitud->primero_empresa ?? ''}} {{ $solicitud->segundo_empresa ?? ''}}<br>
                 </b></p><br>  
                 <p>
                     En la Ciudad de <b>{{ $solicitud->delegacion }}</b>, Michoacán, siendo las <b>{{\Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i')}}</b> horas, del día 
