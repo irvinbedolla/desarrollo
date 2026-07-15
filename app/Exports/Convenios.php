@@ -26,6 +26,7 @@ class Convenios implements FromView
 
     public function view(): View
     {
+        \Illuminate\Support\Facades\DB::statement('SET SESSION SQL_BIG_SELECTS=1');
         $user = Auth::user();
         $sedeUsuario = $user->delegacion ?? '';
         $grupos = [

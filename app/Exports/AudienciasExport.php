@@ -21,6 +21,7 @@ class AudienciasExport implements WithMultipleSheets
 
     public function sheets(): array
     {
+        \Illuminate\Support\Facades\DB::statement('SET SESSION SQL_BIG_SELECTS=1');
         $user = Auth::user();
         $sedeUsuario = $this->sede;
 

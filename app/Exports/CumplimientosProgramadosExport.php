@@ -30,7 +30,7 @@ class CumplimientosProgramadosExport implements FromView
         $user = auth()->user();
         $sedeUsuario = $user->delegacion;
 
-
+        \Illuminate\Support\Facades\DB::statement('SET SESSION SQL_BIG_SELECTS=1');
         // 1. Subconsulta para el primer citado (evitar duplicados)
         $subqueryCitados = DB::table('seer_citados')
             ->select('id_solicitud', DB::raw('MIN(id) as first_id'))
