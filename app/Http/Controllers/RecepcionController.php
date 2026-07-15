@@ -103,7 +103,7 @@ class RecepcionController extends Controller
         $nombre_usuario = User::find($auxiliares[$random]);
         
         if($sede == 'Morelia'){
-            $auxiliaresOcupados = Recepcion::where('hora', $hora_turno)->where('fecha', $fecha_asignada_str)->where('hora', $sede)->where('tipo', $tipoTramite)->pluck('auxiliar')->toArray();;
+            $auxiliaresOcupados = Recepcion::where('hora', $hora_turno)->where('fecha', $fecha_asignada_str)->where('delegacion', $sede)->where('tipo', $tipoTramite)->pluck('auxiliar')->toArray();
             $disponibles = array_diff($auxiliares, $auxiliaresOcupados);
             $random = array_rand($disponibles);
             $modulo = $this->asignarModulo($disponibles[$random]);
@@ -939,7 +939,7 @@ class RecepcionController extends Controller
 
         $colores = [
             'ocupado' => '#DA0909', 'inhabil' => '#3B78DB',
-            'expirado' => '#F59727', 'disponible' => '#00CE1C',
+            'expirado' => '#8a959e', 'disponible' => '#00CE1C',
             'turnos' => '#00CE1C',
         ];
         $titulos = [

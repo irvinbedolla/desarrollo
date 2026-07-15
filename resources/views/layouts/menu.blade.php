@@ -161,9 +161,7 @@
             <a class="nav-link" href="{{ route('solicitudes_index') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
-            <a class="nav-link" href="{{ route('turnos') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Turnos</span>
-            </a>
+            
         @endrole
     @endauth
     @auth
