@@ -882,16 +882,25 @@ class RecepcionController extends Controller
     }
 
     // Duración del slot (minutos) y hora de cierre de jornada según el tipo de trámite y si es caso de excepción.
-    private function configuracionHorarioTurno($tipo, $excepcion){
+    private function configuracionHorarioTurno($tipo, $excepcion, $sede){
         if ($excepcion === 'Si') {
             return ['intervalo' => 75, 'fin' => ['hour' => 17, 'minute' => 00],'comida' => ['hour' => 14, 'minute' => 0]];
         }
+        if($sede == 'Morelia' || $sede == 'Zitácuaro' ){
 
+            if ($tipo === 'Ratificación') {
+                return ['intervalo' => 60, 'fin' => ['hour' => 16, 'minute' => 30],'comida' => ['hour' => 13, 'minute' => 0]];
+            }
+
+            return ['intervalo' => 40, 'fin' => ['hour' => 16, 'minute' => 20],'comida' => ['hour' => 12, 'minute' => 20]]; //cambio fin a las 16:50
+
+        }
         if ($tipo === 'Ratificación') {
-            return ['intervalo' => 60, 'fin' => ['hour' => 16, 'minute' => 30],'comida' => ['hour' => 13, 'minute' => 0]];
+            return ['intervalo' => 60, 'fin' => ['hour' => 16, 'minute' => 0],'comida' => ['hour' => 16, 'minute' => 30]];
         }
 
-        return ['intervalo' => 40, 'fin' => ['hour' => 16, 'minute' => 20],'comida' => ['hour' => 12, 'minute' => 20]]; //cambio fin a las 16:50
+        return ['intervalo' => 60, 'fin' => ['hour' => 16, 'minute' => 30],'comida' => ['hour' => 16, 'minute' => 30]]; //cambio fin a las 16:50
+        
     }
 
     public function obtenerTurnosDisponibles(Request $request){
@@ -907,7 +916,7 @@ class RecepcionController extends Controller
         $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
         $fecha_fin_str = $request->input('end', now()->addDays(60)->format('Y-m-d'));
 
-        $config = $this->configuracionHorarioTurno($tipo, $excepcion);
+        $config = $this->configuracionHorarioTurno($tipo, $excepcion, $sede);
 
         $inhabiles = DiasInhabiles::where('centro', $sede)
             ->whereNull('user_id')
@@ -957,7 +966,12 @@ class RecepcionController extends Controller
 
         while ($fecha <= $fin) {
             if ((int) $fecha->format('N') < 6) { // Saltar fines de semana
-                $slot = (clone $fecha)->setTime(9, 0, 0);
+                if(!($sede == 'Morelia' || $sede == 'Zitácuaro' ) && $tipo == 'Ratificación'){
+                    $slot = (clone $fecha)->setTime(9, 30, 0);
+                }
+                else{
+                    $slot = (clone $fecha)->setTime(9, 0, 0);
+                }
                 $finJornada = (clone $fecha)->setTime($config['fin']['hour'], $config['fin']['minute'], 0);
                 $hora_comida = (clone $fecha)->setTime($config['comida']['hour'], $config['comida']['minute'], 0);
                 while ($slot < $finJornada) {
