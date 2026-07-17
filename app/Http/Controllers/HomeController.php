@@ -240,21 +240,29 @@ class HomeController extends Controller
         //validar si hay disponibles
         $random = array_rand($auxiliares);
         $nombre_usuario = User::find($auxiliares[$random]);
-        if($sede == 'Morelia'){
-            $auxiliaresOcupados = Recepcion::where('delegacion', $sede)->where('fecha',$fecha_turno)->where('hora', $hora_turno)->where('tipo', $tipo)->pluck('auxiliar')->toArray();
+        if($data["excepcion"] == "Si"){
+            $modulo = "Caso de excepcion";
+            $id_aux = 13;
+        }
+        else{
+            if($sede == 'Morelia'){
+            $auxiliaresOcupados = Recepcion::where('hora', $hora_turno)->where('fecha', $fecha_turno)->where('delegacion', $sede)->where('tipo', $tipo)->pluck('auxiliar')->toArray();
             $disponibles = array_diff($auxiliares, $auxiliaresOcupados);
             $random = array_rand($disponibles);
             $modulo = $this->asignarModulo($disponibles[$random]);
-        }
-        else{
-            $modulo = $this->asignarModulo($auxiliares[$random]);
+            $id_aux=$disponibles[$random];
+            }
+            else{
+                $modulo = $this->asignarModulo($auxiliares[$random]);
+                $id_aux=$auxiliares[$random];
+            }
         }
         
 
         $data_insertar= array(
             'consecutivo'   => $numero_consecutivo,
             'solicitante'   => $data["nombre"],
-            'auxiliar'      => $listado_auxiliares[$random],
+            'auxiliar'      => $id_aux,
             'lugar_auxiliar'=> $modulo,
             'tipo'          => $tipo,
             'tipo_caso'     => $data["tipo_caso"],
@@ -462,7 +470,8 @@ class HomeController extends Controller
                 'JLCA'              => $data["JLCA"],
                 'motivo'            => $data["motivo"],
                 'curp_solicitante'  => $representante["curp"],
-                'salario'           => $data["salario"]
+                'salario'           => $data["salario"],
+                'multiple'                  => 'Si'
             ); 
             $nombre = $data["trabajador"];
             $email  = $representante["email"];
@@ -510,7 +519,8 @@ class HomeController extends Controller
                 'JLCA'                      => $data["JLCA"],
                 'motivo'                    => $data["motivo"],
                 'curp_solicitante'          => $data["curp"],
-                'salario'                   => $data["salario"]
+                'salario'                   => $data["salario"],
+                'multiple'                  => 'Si'
             ); 
             $nombre = $data["trabajador"];
             $email  = $data["email"];

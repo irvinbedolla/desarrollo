@@ -47,7 +47,10 @@
                                                     
                                                     <td>{{$turno->estatus}}</td>
                                                     
-                                                        <td><a class="btn btn-info" href="{{ route('cambiar',$turno->id) }}" onclick=disponibles();>Asignar</a>
+                                                    <td>  
+                                                        @if($turno->estatus === "no atendido" && $turno->exepcion === "No")
+                                                        <a class="btn btn-info" href="{{ route('cambiar',$turno->id) }}" onclick=disponibles();>Asignar</a>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach

@@ -101,17 +101,22 @@ class RecepcionController extends Controller
         //validar si hay disponibles
         $random = array_rand($auxiliares);
         $nombre_usuario = User::find($auxiliares[$random]);
-        
-        if($sede == 'Morelia'){
+        if($data["excepcion"] == "Si"){
+            $modulo = "Caso de excepcion";
+            $id_aux = 13;
+        }
+        else{
+            if($sede == 'Morelia'){
             $auxiliaresOcupados = Recepcion::where('hora', $hora_turno)->where('fecha', $fecha_asignada_str)->where('delegacion', $sede)->where('tipo', $tipoTramite)->pluck('auxiliar')->toArray();
             $disponibles = array_diff($auxiliares, $auxiliaresOcupados);
             $random = array_rand($disponibles);
             $modulo = $this->asignarModulo($disponibles[$random]);
             $id_aux=$disponibles[$random];
-        }
-        else{
-            $modulo = $this->asignarModulo($auxiliares[$random]);
-            $id_aux=$auxiliares[$random];
+            }
+            else{
+                $modulo = $this->asignarModulo($auxiliares[$random]);
+                $id_aux=$auxiliares[$random];
+            }
         }
 
         // 4. Preparar el guardado mapeado con la estructura e inputs del Blade
@@ -372,7 +377,9 @@ class RecepcionController extends Controller
         $id = auth()->user()->id;
         $user = User::find($id);
         $fecha_actual = date('Y-m-d');
-
+        if($id === 13){
+            $turnos = DB::table('recepcion')->where('auxiliar', $id)->get();
+        }
         $turnos = DB::table('recepcion')
         ->where('recepcion.fecha', $fecha_actual)
         ->where('recepcion.delegacion', $user["delegacion"])
@@ -592,6 +599,7 @@ class RecepcionController extends Controller
         //validar si hay disponibles
         $random = array_rand($auxiliares);
         $nombre_usuario = User::find($auxiliares[$random]);
+        
         if($turno->delegacion == 'Morelia'){
             $auxiliaresOcupados = Recepcion::where('delegacion',$turno->delegacion)->where('fecha', $turno->fecha)->where('hora', $turno->hora)->where('tipo', $turno->tipo)->pluck('auxiliar')->toArray();
             $disponibles = array_diff($auxiliares, $auxiliaresOcupados);
