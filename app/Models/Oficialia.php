@@ -16,4 +16,8 @@ class Oficialia extends Model
     {
         return $this->belongsTo(User::class, 'usuario_responsable', 'id');
     }
+    public function historial()
+    {
+        return $this->hasMany(Oficialia::class, 'oficio_id', 'oficio_id')->orderBy('id', 'asc'); 
+    }
 }

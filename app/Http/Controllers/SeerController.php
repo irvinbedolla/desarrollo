@@ -19859,17 +19859,19 @@ class SeerController extends Controller
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
             'Zamora'  => ['Zamora', 'Sahuayo'],
         ];
+
+        $ultimos_id = Oficialia::select(DB::raw('MAX(id) as id'))->groupBy('oficio_id');
+
         $usuariosR = User::where('delegacion', $user->delegacion)
             ->whereDoesntHave('roles', function ($query) {
                 $query->where('name', 'Solicitante');
-            })
-            ->select('users.id', 'users.name')
-            ->get();
+            })->select('users.id', 'users.name')->get();
+            
             if($userRole == 'Turnos'){
-                $oficialias = Oficialia::where('user_id', $id)->with('usuarioResponsable')->orderBy('oficio_id', 'asc')->paginate(50)->withQueryString();
+                $oficialias = Oficialia::whereIn('id', $ultimos_id)->where('user_id', $id)->with('usuarioResponsable')->orderBy('oficio_id', 'asc')->paginate(50)->withQueryString();
             }
             else{
-                $oficialias = Oficialia::where('usuario_responsable', $id)->with('usuarioResponsable')->orderBy('oficio_id', 'asc')->paginate(50)->withQueryString();
+                $oficialias = Oficialia::whereIn('id', $ultimos_id)->where('usuario_responsable', $id)->with('usuarioResponsable')->orderBy('oficio_id', 'asc')->paginate(50)->withQueryString();
             }
         
         return view('oficialia.index', compact('user','userRole', 'id','oficialias', 'usuariosR')); 
@@ -19930,30 +19932,11 @@ class SeerController extends Controller
         $fecha_actual = date('Y-m-d');
         $hora_actual = date('H:i');
         
-
         if ($oficialia) {
             $oficialia->update([
-                'estatus' => "turnado"
-            ]);
-            $oficialia_conclusion = Oficialia::create([
-                'user_id'             => $oficialia->user_id,
-                'oficio_id'           => $oficialia->oficio_id,
-                'tipo_tramite'        => $oficialia->tipo_tramite,
-                'oficio'              => $oficialia->oficio,
-                'area_turno'          => $oficialia->area_turno,
-                'precedencia'         => $oficialia->precedencia,
-                'usuario_responsable' => $oficialia->usuario_responsable,
-                'fecha'               => $fecha_actual,
-                'hora'                => $hora_actual,
-                'fecha_registro'      => $oficialia->fecha_registro,
-                'hora_registro'       => $oficialia->hora_registro,
-                'fecha_turno'         => null,
-                'hora_turno'          => null,
-                'fecha_termino'       => $oficialia->fecha_termino,
-                'hora_termino'       =>  $oficialia->hora_termino,
-                'termino'             => $oficialia->termino,
                 'estatus'             => "concluido",
-                'ruta_oficio'         => $oficialia->ruta_oficio,
+                'fecha_termino'       => $fecha_actual,
+                'hora_termino'       =>  $hora_actual,
                 'conclusion'          => $request->conclusion,
             ]);
             
@@ -19984,8 +19967,8 @@ class SeerController extends Controller
                 'hora'                => $hora_actual,
                 'fecha_registro'      => $oficialia->fecha_registro,
                 'hora_registro'       => $oficialia->hora_registro,
-                'fecha_turno'         => null,
-                'hora_turno'          => null,
+                'fecha_turno'         => $fecha_actual,
+                'hora_turno'          => $hora_actual,
                 'fecha_termino'       => $oficialia->fecha_termino,
                 'hora_termino'       =>  $oficialia->hora_termino,
                 'termino'             => $oficialia->termino,

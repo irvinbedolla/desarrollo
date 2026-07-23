@@ -33,18 +33,19 @@
                                     <table id="example" class="table table-striped mt-2" style="width:100%">
                                         <thead style="background-color: #4A001F;">
                                             <tr>
-                                                
-                                                <th style="color: #fff;">Fecha</th>
+                                                <th style="color: #fff;">Fecha de Registro</th>
                                                 <th style="color: #fff;">Núm. Oficio</th>
                                                 <th style="color: #fff;">Tipo de Tramite</th>
-                                                <th style="color: #fff;">Area de Turno</th>
+                                                <th style="color: #fff;">Área Turno</th>
                                                 <th style="color: #fff;">Usuario Responsable</th>
+                                                <th style="color: #fff;">Fecha de Turnación</th>
+                                                <th style="color: #fff;">Fecha de Termino</th>
                                                 <th style="color: #fff;">Estado</th>
+                                                <th style="color: #fff;">Conclusiones</th>
                                                 <th style="color: #fff;"></th>
                                                 <th style="color: #fff;"></th>
                                                 <th style="color: #fff;">Documento</th>
-                                                <th style="color: #fff;">Detalles</th>
-                                                <th style="color: #fff;">Conclusiones</th>
+                                                <th style="color: #fff;">Acciones</th>
 
                                             </tr>
                                         </thead>
@@ -56,8 +57,10 @@
                                                     <td>{{ $oficialia->tipo_tramite }}</td>
                                                     <td>{{ $oficialia->area_turno }}</td>
                                                     <td>{{ strtoupper($oficialia->usuarioResponsable->name )}}</td>
+                                                    <td>{{ $oficialia->fecha_turno }} {{ $oficialia->hora_turno}}</td>
+                                                    <td>{{ $oficialia->fecha_termino }} {{ $oficialia->hora_termino}}</td>
                                                     <td>@if($oficialia->estatus == 'creado')Pendiente @elseif ($oficialia->estatus == 'turnado') Turnado @else Concluido @endif</td>
-
+                                                    <td>@if($oficialia->conclusion){{ $oficialia->conclusion }} @endif</td>
                                                     <td>
                                                         @if($oficialia->estatus == 'creado' && $oficialia->usuario_responsable == $id && $userRole != 'Turnos')
                                                         <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-id="{{ $oficialia->id }}" data-bs-target="#concluirModal">Concluir</a>
@@ -79,9 +82,11 @@
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-oficialia='@json($oficialia)' data-bs-target="#detallesModal"> Detalles</a>
+                                                        <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-oficialia='@json($oficialia)' data-bs-target="#detallesModal">Detalles</a>
+                                                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-oficialia='@json($oficialia)' data-bs-target="#detallesModal">Historial</a>
+
                                                     </td>
-                                                    <td>@if($oficialia->conclusion){{ $oficialia->conclusion }} @endif</td>
+                                                    
 
                                                 </tr>
                                             @endforeach
@@ -262,27 +267,27 @@
                             
                             <tr>
                                 <td>Delegación General </td> 
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="220">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
                             </tr>
                             <tr>
                                 <td>Unidad de Asuntos Jurídicos</td>
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2925">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
                             </tr>
                             <tr>
                                 <td>Delegación Administrativa</td>
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2980">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
                             </tr>
                             <tr>
                                 <td>Delegación Morelia</td>
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="11">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
                             </tr>
                             <tr>
                                 <td>Delegación Uruapan</td>
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="33">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
                             </tr>
                             <tr>
                                 <td>Delegación Zamora</td>
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="26">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
                             </tr>
 
         
