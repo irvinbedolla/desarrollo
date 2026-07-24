@@ -19873,8 +19873,13 @@ class SeerController extends Controller
             else{
                 $oficialias = Oficialia::whereIn('id', $ultimos_id)->where('usuario_responsable', $id)->with('usuarioResponsable')->orderBy('oficio_id', 'asc')->paginate(50)->withQueryString();
             }
+        $oficiosIdsPaginados = $oficialias->pluck('oficio_id');
+
+        $historial = Oficialia::whereIn('oficio_id', $oficiosIdsPaginados)->select('oficio_id', 'fecha_turno', 'hora_turno', 'usuario_responsable')->with('usuarioResponsable:id,name')->orderBy('id', 'asc') 
+        ->get()->groupBy('oficio_id');
         
-        return view('oficialia.index', compact('user','userRole', 'id','oficialias', 'usuariosR')); 
+        
+        return view('oficialia.index', compact('user','userRole', 'id','oficialias', 'usuariosR', 'historial')); 
 
     }
     public function generar_oficialia(Request $request){

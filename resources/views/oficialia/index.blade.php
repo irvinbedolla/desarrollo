@@ -83,26 +83,86 @@
                                                     </td>
                                                     <td>
                                                         <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-oficialia='@json($oficialia)' data-bs-target="#detallesModal">Detalles</a>
-                                                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-oficialia='@json($oficialia)' data-bs-target="#detallesModal">Historial</a>
-
+                                                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalHistorial-{{ $oficialia->oficio_id }}">Historial</a>
                                                     </td>
                                                     
 
                                                 </tr>
+                                                
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    
                                 </div>
+                                
                       
                             <div class="d-flex justify-content-end mt-2">
                                 {{ $oficialias->links('pagination::bootstrap-4') }}
                             </div>
+                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    @foreach($oficialias as $oficialia)
+        <div class="modal fade" id="modalHistorial-{{ $oficialia->oficio_id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    
+                    <div class="modal-header">
+                        <h5 class="modal-title">Historial de Turnos - Oficio {{ $oficialia->oficio }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <table class="table table-striped mt-1" style="width:100%">
+                            <thead style="background-color: #4A001F;">
+                                <tr>
+                                    <th></th>
+                                    <th style="color: #fff;">Fecha y Hora Turno</th>
+                                    <th style="color: #fff;">Usuario Responsable</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if(isset($historial[$oficialia->oficio_id]))
+                                    @foreach($historial[$oficialia->oficio_id] as $index => $registro)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>
+                                                @if($registro->fecha_turno)
+                                                    {{ $registro->fecha_turno }} <br> {{ $registro->hora_turno }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($registro->usuarioResponsable)
+                                                    {{ strtoupper($registro->usuarioResponsable->name) }}
+                                                @else
+                                                    <span>Sin asignar</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="3">Sin historial</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endforeach
     <div class="modal fade" id="oficialiaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <form class='needs-validation novalidate' method='POST' action="{{ route('generar_oficialia') }}" enctype="multipart/form-data">
             @csrf
@@ -167,7 +227,7 @@
                                         <label for="name">Area de Turno <span style="color:red;">(*)</span></label>
                                         <select name="area_turno" id="area_turno" class="form-control" required>
                                             <option value="">Seleccione</option>
-                                            <option value="Dirección general">Delegación General</option>
+                                            <option value="Dirección general">Dirección General</option>
                                             <option value="Unidad Jurídica">Unidad de Asuntos Jurídicos</option>
                                             <option value="Dirección Administrativa">Delegación Administrativa</option>
                                             <option value="Delegación Morelia">Delegación Morelia</option>
@@ -266,28 +326,28 @@
                         <tbody class="contenidobusqueda">
                             
                             <tr>
-                                <td>Delegación General </td> 
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
+                                <td>Dirección General </td> 
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="220">Seleccionar</button></td>
                             </tr>
                             <tr>
                                 <td>Unidad de Asuntos Jurídicos</td>
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2925">Seleccionar</button></td>
                             </tr>
                             <tr>
                                 <td>Delegación Administrativa</td>
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2980">Seleccionar</button></td>
                             </tr>
                             <tr>
                                 <td>Delegación Morelia</td>
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="11">Seleccionar</button></td>
                             </tr>
                             <tr>
                                 <td>Delegación Uruapan</td>
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="33">Seleccionar</button></td>
                             </tr>
                             <tr>
                                 <td>Delegación Zamora</td>
-                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="2089">Seleccionar</button></td>
+                                <td><button class="btn btn-info" onclick="editar_rol()" type="submit" name="usuario_responsable" value="26">Seleccionar</button></td>
                             </tr>
 
         
