@@ -1009,7 +1009,7 @@ class TurnosController extends Controller
                             $todosLosEventos[] = [
                                 'title' => $titulo,
                                 'start' => $slotStart,
-                                'color' => '#F59727',
+                                'color' => '#8a959e',
                                 'extendedProps' => ['estado' => 'expirado', 'espacios_disponibles' => 0]
                             ];
                         }
@@ -3085,8 +3085,6 @@ class TurnosController extends Controller
         if(isset($data["N_Int"])){
             $data_insert["num_int"] =  $data["N_Int"];
         }
-
-        
 
         $data_insertar_R = array(
             'consecutivo'     => $numero_consecutivo_R,

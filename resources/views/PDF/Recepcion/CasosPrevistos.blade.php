@@ -78,6 +78,11 @@
             }
 
             .contenedor-firmas {
+                position: absolute;
+                left: 0; 
+                right: 0;
+                bottom:20%;
+                width: 100%;
                 page-break-inside: avoid; 
             }
             .titulos{
@@ -107,6 +112,9 @@
                 font-weight: bold; 
                 margin: 0; 
                 font-size: 14px;
+            }
+            .nueva-pagina {
+                page-break-before: always;
             }
             
         </style>
@@ -174,33 +182,35 @@
                     <b>Área de adscripción:</b> {{$caso->area_adscripcion}}.<br><br>
                     <b>Puesto:</b> {{$caso->puesto}}.<br><br>
                     <b>¿Cuál es el nombre del jefe inmediato?</b> {{ $caso->jefe_inmediato }}. 
-                    
-                    <br><br><br><br>
 
                 </p>
-                <p>
-                    <b>1. Tipo de situación que enfrenta:</b> 
-                    @if($caso->tipo_caso==='Discriminación') Ha sido objeto de discriminación. {{ $caso->motivos }}.
-                    @elseif ($caso->tipo_caso==='Acoso u hostigamiento sexual') Ha recibido acoso sexual por parte de un superior jerárquico o de un compañero de trabajo.
-                    @elseif ($caso->tipo_caso==='Riesgo o accidente') Ha sufrido un riesgo o accidente de trabajo.
-                    @elseif ($caso->tipo_caso==='Malos tratos o violencia') Ha sido objeto de malos tratos o violencia laboral.
-                    @else No aplica.
-                    @endif
-                    <br><br>
-                    <b>2. Frecuencia con la que han sucedido los hechos:</b> @if($caso->frecuencia === 'Continua') De manera continua, hasta la fecha atual. @else {{$caso->frecuencia}}. @endif<br><br>
-                    <b>3. Cambios que se dieron en su situación laboral después de los hechos:</b> 
-                    @if ($caso->situacion_laboral ==='Sigue igual' ) Sigue igual.
-                    @elseif ($caso->situacion_laboral ==='Tension estres incomodidad' )Tension, estrés e incomodidad en el área de trabajo.
-                    @elseif ($caso->situacion_laboral === 'Cambio area') Le cambiaron de área.
-                    @else {{ $caso->situacion_laboral }}.
+                <div class="nueva-pagina">
+                    <p>
+                        <b>1. Tipo de situación que enfrenta:</b> 
+                        @if($caso->tipo_caso==='Discriminación') Ha sido objeto de discriminación. {{ $caso->motivos }}.
+                        @elseif ($caso->tipo_caso==='Acoso u hostigamiento sexual') Ha recibido acoso sexual por parte de un superior jerárquico o de un compañero de trabajo.
+                        @elseif ($caso->tipo_caso==='Riesgo o accidente') Ha sufrido un riesgo o accidente de trabajo.
+                        @elseif ($caso->tipo_caso==='Malos tratos o violencia') Ha sido objeto de malos tratos o violencia laboral.
+                        @else No aplica.
+                        @endif
+                        <br><br>
+                        <b>2. Frecuencia con la que han sucedido los hechos:</b> @if($caso->frecuencia === 'Continua') De manera continua, hasta la fecha atual. @else {{$caso->frecuencia}}. @endif<br><br>
+                        <b>3. Cambios que se dieron en su situación laboral después de los hechos:</b> 
+                        @if ($caso->situacion_laboral ==='Sigue igual' ) Sigue igual.
+                        @elseif ($caso->situacion_laboral ==='Tension estres incomodidad' )Tension, estrés e incomodidad en el área de trabajo.
+                        @elseif ($caso->situacion_laboral === 'Cambio area') Le cambiaron de área.
+                        @else {{ $caso->situacion_laboral }}.
+                            
+                        @endif
+                        <br><br>
+                        <b>4. ¿La persona afectada comunicó los hechos a alguien de su área de trabajo? </b> @if($caso->descripcion_persona === NULL) No. @else Sí. {{$caso->descripcion_persona}} @endif<br><br>
+                        <b>5. Descripción de las conductas manifestadas:</b> {{$caso->descripcion_conductas}}<br><br>
+                        <b>6. Observaciones y comentarios:</b> {{$caso->observaciones}}<br><br>
                         
-                    @endif
-                    <br><br>
-                    <b>4. ¿La persona afectada comunicó los hechos a alguien de su ara de trabajo? </b> @if($caso->descripcion_persona === NULL) No. @else Sí. {{$caso->descripcion_persona}} @endif<br><br>
-                    <b>5. Descripción de las conductas manifestadas:</b> {{$caso->descripcion_conductas}}<br><br>
-                    <b>6. Observaciones y comentarios:</b> {{$caso->observaciones}}<br><br>
-                    
-                </p>
+                    </p>
+                </div>
+                
+                
                 </div>
                 <p>
                     <b>Nota:</b> En caso de advertirse que la persona usuaria se encuentra dentro de alguno de los supuestos de excepción establecidos en el Artículo 685 Ter de la LFT, se le informará que no se encuentra obligada a agotar la instancia conciliatoria; asimismo, se hará constar 
@@ -208,10 +218,9 @@
                     leído el Decálogo de Derechos y Obligaciones de las y los Usuarios, quedando debidamente enterada de su contenido.<br><br>
 
                     En caso de que la persona usuaria determine no continuar con el procedimiento, y una vez proporcionada la asesoría jurídica correspondiente, autoriza al Centro de Conciliación para ser canalizada ante el Departamento de la Procuraduría Local de la Defensa
-                    del Trabajo, ubicado en {{ $caso->ubicacion }}, a efecto de que le brinden la representación legal que corresponda. Asimismo, en caso de advertirse la posible comisión de un delito, se procederá a su 
+                    del Trabajo, ubicado en Av. Lázaro Cárdenas 1700, Chapultepec Sur, a efecto de que le brinden la representación legal que corresponda. Asimismo, en caso de advertirse la posible comisión de un delito, se procederá a su 
                     canalización ante las dependencias competentes, tales como la Comisión de Atención a Víctimas, la SEIMUJER y la COEPREDV con el propósito de garantizar una atención integral. 
                 </p> 
-                
                 <div class="salto-inteligente"></div>
                 <<div class="contenedor-firmas">
                     <h3 class="texto-centro texto-negrita" style="letter-spacing: 5px;">A C E P T O</h3><br><br><br><br>

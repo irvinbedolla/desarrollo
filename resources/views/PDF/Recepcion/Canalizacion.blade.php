@@ -78,6 +78,11 @@
             }
 
             .contenedor-firmas {
+                position: absolute;
+                left: 0; 
+                right: 0;
+                bottom:20%;
+                width: 100%;
                 page-break-inside: avoid; 
             }
            
