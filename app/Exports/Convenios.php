@@ -26,7 +26,6 @@ class Convenios implements FromView
 
     public function view(): View
     {
-        \Illuminate\Support\Facades\DB::statement('SET SESSION SQL_BIG_SELECTS=1');
         $user = Auth::user();
         $sedeUsuario = $user->delegacion ?? '';
         $grupos = [
@@ -78,7 +77,8 @@ class Convenios implements FromView
             )
             ->groupBy(
                 'audiencias.fecha', 
-                'audiencias.hora', 
+                'audiencias.hora',
+                'seer_general.id',
                 'seer_general.NUE', 
                 'seer_solicitante.nombre',
                 'users.name',
