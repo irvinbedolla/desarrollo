@@ -15081,12 +15081,12 @@ class SeerController extends Controller
             $query->where('id_conciliador', $user->id);
             $permisos = PermisosConciliador::where('id_conciliador', $user->id)->select('tipo')->first();
             
-            if ($permisos && $permisos->tipo === "Ambos") {
+            //if ($permisos && $permisos->tipo === "Ambos") {
                 $delegaciones = $mapaDelegaciones[$user->delegacion] ?? [$user->delegacion];
                 $query->whereIn('delegacion', $delegaciones);
-            } else {
+            /*} else {
                 $query->where('delegacion', $user->delegacion);
-            }
+            }*/
         } 
         elseif ($userRole === "Delegado") {
             $delegaciones = $mapaDelegaciones[$user->delegacion] ?? [$user->delegacion];
