@@ -125,7 +125,10 @@ use App\Http\Controllers\AsistenciaController;
     //Rutas Asitencias
         Route::get('asistencia/{id}',           [AsistenciaController::class, 'AsistenciaCrear']);
         Route::get('QRAsistencia/{id}',         [AsistenciaController::class, 'generarQrUsuario']);
-    
+        Route::get('publico',                               [HomeController::class, 'publico'])->name('publico');
+        Route::get('AgendaRatificacion',                    [TurnosController::class, 'create_ratiMultiple'])->name('create_cita-12');
+        Route::post('/citas/storeRatificacion',             [TurnosController::class, 'guardarRatificacion'])->name('guardarRatificacion');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -622,7 +625,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Búsqueda incidencias
         Route::get('/incidencias/index_search',          [IncidenciasBusquedaController::class, 'index'])->name('incidencias.busqueda.index');
         Route::post('/incidencias/marcar',               [IncidenciasBusquedaController::class, 'marcar'])->name('incidencias.busqueda.marcar');
-		Route::post('/incidencias/desmarcar',            [IncidenciasBusquedaController::class, 'desmarcar'])->name('incidencias.busqueda.desmarcar');
+        Route::post('/incidencias/desmarcar',            [IncidenciasBusquedaController::class, 'desmarcar'])->name('incidencias.busqueda.desmarcar');
     //Fin Búsqueda incidencias
 
     //Subida Masiva

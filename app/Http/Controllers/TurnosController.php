@@ -3117,8 +3117,17 @@ class TurnosController extends Controller
         Turnos::create($data_insertar);
         Recepcion::create($data_insertar_R);
        
-        return back()->with('success', 'Solicitud Capturada Correctamente.'  ); 
+        // Formatear mensaje descriptivo de confirmación
+        $mensajeConfirmacion = "¡Su cita se ha agendado exitosamente! "
+            . "Folio de Turno: #" . $numero_consecutivo_R . " | "
+            . "Trabajador: " . $nombre . " | "
+            . "Fecha: " . $data["fecha"] . " a las " . $hora . " hrs | "
+            . "Sede: " . $data["sede"] . " (" . $modulo . "). "
+            . "Favor de acudir con su documentación oficial 15 minutos antes.";
+
+        return back()->with('success', $mensajeConfirmacion);
     }
+
     private function asignarModulo(int $aux){
         switch($aux){
                 

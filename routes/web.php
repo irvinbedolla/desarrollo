@@ -92,7 +92,8 @@ Route::post('/turnos_guardar',                      [HomeController::class, 'tur
 Route::get('citas',                                 [TurnosController::class, 'create_publico'])->name('create_cita');
 Route::post('/citas/store_publico',                 [TurnosController::class, 'store_publico'])->name('turnos.publico');
 Route::get('/validar_folio_abogado/{folio}',        [TurnosController::class, 'validarFolio'])->name('validar_folio_abogado');
- Route::get('AgendaRatificacion',                   [TurnosController::class, 'create_ratiMultiple'])->name('create_cita-12');
+Route::get('AgendaRatificacion',                    [TurnosController::class, 'create_ratiMultiple'])->name('create_cita-12');
+Route::post('/citas/storeRatificacion',             [TurnosController::class, 'guardarRatificacion'])->name('guardarRatificacion');
 
 // Flujo dinámico de Solicitudes (Trabajador / Patronal)
 Route::get('Patronal/{tipo_solicitud}',             [SeerController::class, 'patron'])->name('solicitud_patron');
@@ -127,6 +128,10 @@ Route::get('constancia_individual',     [SeerController::class, 'constancia_indi
 //Rutas Asitencias
 Route::get('asistencia/{id}',           [AsistenciaController::class, 'AsistenciaCrear']);
 Route::get('QRAsistencia/{id}',         [AsistenciaController::class, 'generarQrUsuario']);
+Route::get('asistencia/{id}',           [AsistenciaController::class, 'seer.estadistica_consultar']);
+Route::get('asistencia/{id}',           [AsistenciaController::class, 'create_persona_con']);
+
+
 
 
 Route::get('/limpiar-cache', function() {
@@ -449,7 +454,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/Verpdfcasosprevistos/{id}', [RecepcionController::class, 'VerPDFCasosPrevistos'])->name('VerPDFCasosPrevistos');
         Route::get('/Verpdfcanalizacion/{id}',   [RecepcionController::class, 'VerPDFCanalizacion'])->name('VerPDFCanalizacion');
     //Poderes
-        Route::get('/poder-crear',                          [PoderController::class, 'registro'])->name('poder-crear');
+        
         Route::get('/poder-guardar',                        [PoderController::class, 'show'])->name('poder');
         Route::post('/poderes/publico',                     [PoderController::class, 'publico'])->name('poderes.publico');
         Route::get('/PDF/acuseRegistro/{idAbogado}',        [PoderController::class, 'VerPDFregistroAbogado'])->name('PDFregistroAbogado');
