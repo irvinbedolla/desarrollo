@@ -86,7 +86,7 @@
                                     <input type="hidden" name="id" value="{{ $id }}">
                                     <strong>¡Registro completo!</strong><br>
                                     <label>Tu solicitud fue capturada correctamente, tu número de folio es: "{{$id}}", Debes ingresar a la pagina:
-                                    http://siconcilio.cclmichoacan.gob.mx/login en el apartado de buzón electrónico con: "{{$mensaje}}"
+                                    http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico con: "{{$mensaje}}"
                                     <br><br>
 
                                     NOTA: En caso de detectar algún error en los datos proporcionados, el personal del centro se pondrá en contacto contigo.<br><br>
@@ -97,7 +97,6 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Terminar</a>   
                             </div>     
                         </div>
                     </div>
