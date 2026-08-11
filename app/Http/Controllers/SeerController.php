@@ -3243,11 +3243,12 @@ class SeerController extends Controller
             'tipo_generacion' => 0,
             'consecutivo'     => $numero_consecutivo,
             'año'             => $año_actual,
+            'fecha'           => date('Y-m-d'),
             'motivo_solicitud' => $data["motivo_solicitud"] ?? []
         );
        
-    session([$this->draftSessionKey('solicitud_data', $draftId) => $solicitud_data]);
-    // Nota: no limpiamos solicitante/citados globales porque rompería otras pestañas.
+        session([$this->draftSessionKey('solicitud_data', $draftId) => $solicitud_data]);
+        // Nota: no limpiamos solicitante/citados globales porque rompería otras pestañas.
 
         $id = 'session';
 
@@ -3257,7 +3258,7 @@ class SeerController extends Controller
         /*if($tipo_generacion != 0){
             return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
         }*/
-    return view('solicitudes.solicitante', compact('estados','municipios','id', 'draftId'));
+        return view('solicitudes.solicitante', compact('estados','municipios','id', 'draftId'));
         //return redirect()->route('parte2.ver', ['id' => $id]);
     }
 

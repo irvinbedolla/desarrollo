@@ -456,7 +456,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Poderes
         
         Route::get('/poder-guardar',                        [PoderController::class, 'show'])->name('poder');
-        Route::post('/poderes/publico',                     [PoderController::class, 'publico'])->name('poderes.publico');
         Route::get('/PDF/acuseRegistro/{idAbogado}',        [PoderController::class, 'VerPDFregistroAbogado'])->name('PDFregistroAbogado');
         Route::get('/poderes/index',                        [PoderController::class, 'index'])->name('poderes.index');
         Route::get('/poderes/index',                        [PoderController::class, 'index'])->name('poderes');
