@@ -14138,18 +14138,31 @@ class SeerController extends Controller
         audiencia en este sistema, sea formato viejo o el grid actual de parte3.*/
         $duracionCitaExistenteMinutos = 75;
 
-        /* Las audiencias EXISTENTES cuya hora coincide exactamente con un slot corto (11:30 o 13:45)
-        se asumen de 30 min (no 75) al calcular traslapes contra los slots largos vecinos (12:00 y 14:15),
-        para que una audiencia agendada en el slot corto no bloquee falsamente el siguiente slot largo.
-        Solo aplica al grid NUEVO: en el grid legacy el 11:30 es un slot largo normal de 75 min.*/
-        $horasSlotCorto = ['11:30:00', '13:45:00'];
+        /* Las audiencias EXISTENTES cuya hora coincide exactamente con un slot corto (del grid
+        "actual" o del "nuevo") se asumen de 30 min (no 75) al calcular traslapes contra los slots
+        largos vecinos, para que una audiencia agendada en el slot corto no bloquee falsamente el
+        siguiente slot largo. No aplica al grid legacy: ahí el 11:30 es un slot largo normal de 75 min.*/
+        $horasSlotCortoActual = ['11:30:00', '13:45:00'];
 
-        /* A partir de esta fecha rige el grid de horarios "nuevo". Antes de esta fecha se usa el
-        grid "legacy" (mismo corte que en ObtenerAudiencia). */
-        $fechaCorteHorario = '2026-08-10';
+        $horasSlotCortoNuevo = ['08:30:00', '13:15:00'];
 
-        // Grid vigente a partir de $fechaCorteHorario.
-        $horariosConfigNuevo = [
+        /* A partir de esta fecha rige el grid "actual" (el que hoy se conoce como "nuevo"). Antes de
+        esta fecha se usa el grid legacy (mismo corte que en ObtenerAudiencia). Este corte sigue siendo
+        global para todas las sedes. */
+        $fechaCorteHorarioLegacy = '2026-08-10';
+
+        // A partir de esta fecha, por sede, rige el horario "nuevo".
+        $fechaCorteHorarioNuevoPorSede = [
+            'Morelia' => '2026-08-30',
+            'Zitácuaro' => '2026-08-30',
+            'Zamora' => '2026-09-08',
+            'Sahuayo' => '2026-09-08',
+            'Uruapan' => '2026-09-15',
+            'Lázaro Cárdenas' => '2026-09-15',
+        ];
+        $fechaCorteHorarioNuevo = $fechaCorteHorarioNuevoPorSede[$sede] ?? null;
+
+        $horariosConfigActual = [
             ['hora' => [9, 0],   'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
             ['hora' => [10, 15], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
             ['hora' => [11, 30], 'duracion' => $duracionSlotMinutos, 'permite_empalme' => false],
@@ -14159,7 +14172,7 @@ class SeerController extends Controller
             ['hora' => [15, 30], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
         ];
 
-        /* Grid legacy (vigente antes de $fechaCorteHorario): 5 slots largos de 75 min, todos con
+        /* Grid legacy (vigente antes de $fechaCorteHorarioLegacy): 5 slots largos de 75 min, todos con
         empalme permitido (máximo 2 audiencias por slot), sin slots cortos. */
         $horariosConfigLegacy = [
             ['hora' => [9, 0],   'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
@@ -14167,6 +14180,19 @@ class SeerController extends Controller
             ['hora' => [11, 30], 'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
             ['hora' => [12, 45], 'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
             ['hora' => [14, 0],  'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
+        ];
+
+        /* Grid "nuevo" (vigente por sede a partir de $fechaCorteHorarioNuevo): misma forma que el
+        grid "actual" pero con los slots cortos reubicados a 8:30 y 13:15; 11:30 y 13:45 pasan a ser
+        slots largos normales de 75 min. */
+        $horariosConfigNuevo = [
+            ['hora' => [8, 30],  'duracion' => $duracionSlotMinutos, 'permite_empalme' => false],
+            ['hora' => [9, 0],   'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [10, 15], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [11, 30], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [13, 15], 'duracion' => $duracionSlotMinutos, 'permite_empalme' => false],
+            ['hora' => [13, 45], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [15, 0],  'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
         ];
 
         /* Traemos cada audiencia existente (no agrupada por coincidencia exacta) para poder
@@ -14194,8 +14220,23 @@ class SeerController extends Controller
             if ($fecha->format('N') < 6) { // Saltar fines de semana
 
                 $fechaDia = $fecha->format('Y-m-d');
-                $esDiaLegacy = $fechaDia < $fechaCorteHorario;
-                $horariosConfig = $esDiaLegacy ? $horariosConfigLegacy : $horariosConfigNuevo;
+                if ($fechaDia < $fechaCorteHorarioLegacy) {
+                    $nivelHorario = 'legacy';
+                } elseif ($fechaCorteHorarioNuevo !== null && $fechaDia >= $fechaCorteHorarioNuevo) {
+                    $nivelHorario = 'nuevo';
+                } else {
+                    $nivelHorario = 'actual';
+                }
+                $horariosConfig = match ($nivelHorario) {
+                    'legacy' => $horariosConfigLegacy,
+                    'nuevo' => $horariosConfigNuevo,
+                    default => $horariosConfigActual,
+                };
+                $horasSlotCortoVigente = match ($nivelHorario) {
+                    'legacy' => [],
+                    'nuevo' => $horasSlotCortoNuevo,
+                    default => $horasSlotCortoActual,
+                };
 
                 foreach ($horariosConfig as $config) {
                     $slot = (clone $fecha)->setTime($config['hora'][0], $config['hora'][1], 0);
@@ -14207,7 +14248,7 @@ class SeerController extends Controller
                     $audienciasEnSlot = 0;
                     foreach ($audienciasPorFecha[$fechaDia] ?? [] as $horaExistente) {
                         $existenteInicio = new \DateTime($fechaDia . ' ' . $horaExistente);
-                        $duracionExistente = (!$esDiaLegacy && in_array($horaExistente, $horasSlotCorto, true))
+                        $duracionExistente = ($nivelHorario !== 'legacy' && in_array($horaExistente, $horasSlotCortoVigente, true))
                             ? $duracionSlotMinutos
                             : $duracionCitaExistenteMinutos;
                         $existenteFin = (clone $existenteInicio)->modify("+{$duracionExistente} minutes");
@@ -14356,15 +14397,35 @@ class SeerController extends Controller
 
         $duracionSlotMinutos = 75;
 
-        /* A partir de esta fecha rige el grid de horarios "nuevo". Antes de esta fecha se usa el
-        grid "legacy" (mismo corte que en ObtenerAudiencia y en obtenerAudienciasParte2). */
-        $fechaCorteHorario = '2026-08-10';
+        /* A partir de esta fecha rige el grid "actual" (el que hoy se conoce como "nuevo"). Antes de
+        esta fecha se usa el grid legacy (mismo corte que en ObtenerAudiencia y en obtenerAudienciasParte2).
+        Este corte sigue siendo global para todas las sedes. */
+        $fechaCorteHorarioLegacy = '2026-08-10';
 
-        // Horas de inicio vigentes a partir de $fechaCorteHorario.
-        $horasNuevo = [[9, 0], [10, 15], [12, 0], [14, 15], [15, 30]];
+        /* A partir de esta fecha, por sede, rige el horario "nuevo". Mientras una sede no tenga fecha
+        aquí, se queda indefinidamente en el grid "actual". obtenerAudienciasParte3 NUNCA muestra los
+        slots cortos de 30 min (esos solo existen en obtenerAudienciasParte2); aquí lo único que puede
+        cambiar entre "actual" y "nuevo" son las horas de inicio de los slots largos. */
+        $fechaCorteHorarioNuevoPorSede = [
+            'Morelia' => '2026-08-30',
+            'Zitácuaro' => '2026-08-30',
+            'Zamora' => '2026-09-08',
+            'Sahuayo' => '2026-09-08',
+            'Uruapan' => '2026-09-15',
+            'Lázaro Cárdenas' => '2026-09-15',
+        ];
+        $fechaCorteHorarioNuevo = $fechaCorteHorarioNuevoPorSede[$sede] ?? null;
 
-        // Horas de inicio del grid legacy (vigente antes de $fechaCorteHorario).
+        // Horas de inicio del grid legacy (vigente antes de $fechaCorteHorarioLegacy).
         $horasLegacy = [[9, 0], [10, 15], [11, 30], [12, 45], [14, 0]];
+
+        // Horas de inicio del grid "actual" (vigente entre $fechaCorteHorarioLegacy y el corte por sede).
+        $horasActual = [[9, 0], [10, 15], [12, 0], [14, 15], [15, 30]];
+
+        /* Horas de inicio de los slots largos del grid "nuevo" (vigente por sede a partir de
+        $fechaCorteHorarioNuevo). Deben coincidir con los horarios largos de $horariosConfigNuevo en
+        obtenerAudienciasParte2 (los slots cortos de 8:30 y 13:15 se excluyen a propósito). */
+        $horasNuevo = [[9, 0], [10, 15], [11, 30], [13, 45], [15, 0]];
 
         /* Traemos cada audiencia existente (no agrupada por coincidencia exacta) para poder
         detectar traslapes de horario, incluyendo citas agendadas con el formato de horarios anterior
@@ -14391,8 +14452,18 @@ class SeerController extends Controller
             if ($fecha->format('N') < 6) { // Saltar fines de semana
 
                 $fechaDia = $fecha->format('Y-m-d');
-                $esDiaLegacy = $fechaDia < $fechaCorteHorario;
-                $horasBase = $esDiaLegacy ? $horasLegacy : $horasNuevo;
+                if ($fechaDia < $fechaCorteHorarioLegacy) {
+                    $nivelHorario = 'legacy';
+                } elseif ($fechaCorteHorarioNuevo !== null && $fechaDia >= $fechaCorteHorarioNuevo) {
+                    $nivelHorario = 'nuevo';
+                } else {
+                    $nivelHorario = 'actual';
+                }
+                $horasBase = match ($nivelHorario) {
+                    'legacy' => $horasLegacy,
+                    'nuevo' => $horasNuevo,
+                    default => $horasActual,
+                };
 
                 $horarios = array_map(
                     fn ($h) => (clone $fecha)->setTime($h[0], $h[1], 0),
