@@ -14153,12 +14153,12 @@ class SeerController extends Controller
 
         // A partir de esta fecha, por sede, rige el horario "nuevo".
         $fechaCorteHorarioNuevoPorSede = [
-            'Morelia' => '2026-08-30',
-            'Zitácuaro' => '2026-08-30',
-            'Zamora' => '2026-09-08',
-            'Sahuayo' => '2026-09-08',
-            'Uruapan' => '2026-09-15',
-            'Lázaro Cárdenas' => '2026-09-15',
+            'Morelia' => '2026-10-04',
+            'Zitácuaro' => '2026-10-04',
+            'Zamora' => '2026-10-04',
+            'Sahuayo' => '2026-10-04',
+            'Uruapan' => '2026-10-04',
+            'Lázaro Cárdenas' => '2026-10-04',
         ];
         $fechaCorteHorarioNuevo = $fechaCorteHorarioNuevoPorSede[$sede] ?? null;
 
@@ -14407,12 +14407,12 @@ class SeerController extends Controller
         slots cortos de 30 min (esos solo existen en obtenerAudienciasParte2); aquí lo único que puede
         cambiar entre "actual" y "nuevo" son las horas de inicio de los slots largos. */
         $fechaCorteHorarioNuevoPorSede = [
-            'Morelia' => '2026-08-30',
-            'Zitácuaro' => '2026-08-30',
-            'Zamora' => '2026-09-08',
-            'Sahuayo' => '2026-09-08',
-            'Uruapan' => '2026-09-15',
-            'Lázaro Cárdenas' => '2026-09-15',
+            'Morelia' => '2026-10-04',
+            'Zitácuaro' => '2026-10-04',
+            'Zamora' => '2026-10-04',
+            'Sahuayo' => '2026-10-04',
+            'Uruapan' => '2026-10-04',
+            'Lázaro Cárdenas' => '2026-10-04',
         ];
         $fechaCorteHorarioNuevo = $fechaCorteHorarioNuevoPorSede[$sede] ?? null;
 
