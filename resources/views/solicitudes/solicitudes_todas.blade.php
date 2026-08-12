@@ -32,6 +32,7 @@
                                         <th style="color: #fff;">Fecha Captura</th>
                                         <th style="color: #fff;">Expediente</th>
                                         <th style="color: #fff;">Solicitante</th>
+                                        <th style="color: #fff;">telefono</th>
                                         <th style="color: #fff;">Citados</th>
                                         <th style="color: #fff;">Actividad Económica</th>
                                         <th style="color: #fff;">Tipo Solicitante</th>
@@ -49,6 +50,7 @@
                                                 <td>{{$solicitud->fecha}}</td>
                                                 <td>{{$solicitud->NUE}}</td>
                                                 <td>{{$solicitud->nombre}}</td>
+                                                <td>{{ $solicitud->telefono}}</td>
                                                 <td>{{$solicitud->lista_citados}}</td>
                                                 <td>{{$solicitud->actividad}}</td>
                                                 @if($solicitud->tipo_solicitud == 1)
@@ -192,7 +194,7 @@
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_blank">Notificación al solicitante</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFacuseConfirmada', $solicitud->id) }}"  target="_blank">Acuse de solicitud confirmada</a></li>
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfo', ['tipo' => 'solicitud', 'id' => $solicitud->id]) }}"  target="_blank">Imprimir solicitud</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfo', ['tipo' => 'solicitud', 'id' => $solicitud->id]) }}"  target="_blank">Formato de Solicitud</a></li>
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
@@ -207,7 +209,7 @@
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_blank">Notificación al solicitante</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFacuseConfirmada', $solicitud->id) }}"  target="_blank">Acuse de solicitud confirmada</a></li>
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfo', ['tipo' => 'solicitud', 'id' => $solicitud->id]) }}"  target="_blank">Imprimir solicitud</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfo', ['tipo' => 'solicitud', 'id' => $solicitud->id]) }}"  target="_blank">Formato de Solicitud</a></li>
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
@@ -221,7 +223,7 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_blank">Acuse de solicitud</a></li>
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfo', ['tipo' => 'solicitud', 'id' => $solicitud->id]) }}"  target="_blank">Imprimir solicitud</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfo', ['tipo' => 'solicitud', 'id' => $solicitud->id]) }}"  target="_blank">Formato de Solicitud</a></li>
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>

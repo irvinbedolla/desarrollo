@@ -15238,7 +15238,7 @@ class SeerController extends Controller
         $isAudiencia = 'No';
 
         // 1. Iniciamos el Query base optimizado con Eager Loading selectivo
-        $query = SeerPerGeneral::with('solicitante:id,id_solicitud,nombre')
+        $query = SeerPerGeneral::with('solicitante:id,id_solicitud,nombre,telefono1')
             ->where('estatus', '!=', 'Pendiente')
             ->where(function ($q) {
                 $q->whereNull('incidencia')
@@ -15317,7 +15317,7 @@ class SeerController extends Controller
         $solicitudes->through(function ($solicitud) use ($citadosSolicitud) { 
             // Nombre del solicitante
             $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
-            
+            $solicitud->telefono = $solicitud->solicitante->telefono1 ?? 'Sin número';
             // Listado consolidado de citados
             if (isset($citadosSolicitud[$solicitud->id])) {
                 $solicitud->lista_citados = $citadosSolicitud[$solicitud->id]
@@ -15332,6 +15332,7 @@ class SeerController extends Controller
 
             return $solicitud;
         });
+        
 
         return view('solicitudes.solicitudes_todas', compact('solicitudes', 'isAudiencia', 'userRole'));
     }
