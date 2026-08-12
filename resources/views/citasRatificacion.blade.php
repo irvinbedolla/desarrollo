@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <!-- Icono y Fuentes -->
-    <link rel="icon" href="{{ asset('assets/images/ccl-r.png') }}" type="image/x-icon">
+    <link rel="icon" href="public/assets/images/ccl-r.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5.3 CSS -->
@@ -18,8 +18,8 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/locales-all.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
-    <link href="{{ asset('assets/css/iziToast.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/sweetalert.css') }}" rel="stylesheet">
+    <link href="public/assets/css/iziToast.min.css" rel="stylesheet">
+    <link href="public/assets/css/sweetalert.css" rel="stylesheet">
 
     <!-- jQuery & Select2 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

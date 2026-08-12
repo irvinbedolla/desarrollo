@@ -104,7 +104,7 @@ Route::get('/agrega_citadoP/{id}',                  [SeerController::class, 'vis
 Route::post('/agrega_citadoP',                      [SeerController::class, 'guardar_citadoPatronal'])->name('seer.citadosPatronal');
 Route::get('tipoIndustriaP/{tipo_solicitud}',       [SeerController::class, 'Industrias_p'])->name('solicitud.industria_p');
 Route::get('Trabajador/{tipo_solicitud}',           [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
-Route::post('guardar_trabajador',                   [SeerController::class, 'solicitud_parte1'])->name('parte1');
+Route::post('Agregar_solictante',                   [SeerController::class, 'solicitud_parte1'])->name('parte1');
 Route::get('solicitud_continuar',                   [SeerController::class, 'vista_parte2'])->name('parte2.ver');
 Route::post('solicitud_solicitante',                [SeerController::class, 'solicitud_parte2'])->name('parte2');
 Route::get('vista_solicitante/{id}',                [SeerController::class, 'vista_solicitante'])->name('solicitante');
@@ -115,7 +115,7 @@ Route::get('/munCitado/{id}',                       [SeerController::class, 'obt
 Route::get('/agrega_citado/{id}',                   [SeerController::class, 'vista_citado'])->name('agregar_citado');
 Route::post('/agrega_citado',                       [SeerController::class, 'guardar_citado'])->name('seer.citados');
 Route::get('/agrega_documento/{id}',                [SeerController::class, 'vista_documentos'])->name('agregar_documentos');
-
+Route::get('solicitud-completada',                  [SeerController::class, 'mostrar_aviso'])->name('solicitud.completada');
 
 //Constancias
 Route::post('GeneraConstancia',         [SeerController::class, 'genera_constancia'])->name('generaConstancia');
@@ -508,11 +508,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/plantillas/ratificaciones',                    [SeerController::class, 'plantillas_ratificaciones'])->name('plantillas_ratificaciones');
         Route::get('reporte',                                       [SeerController::class, 'reporte_diario'])->name('reporte_diario');
     //Ruta de agregar citados
-        Route::get('/agrega_citado/{id}',                           [SeerController::class, 'vista_citado'])->name('agregar_citado');
-        Route::post('/agrega_citado',                               [SeerController::class, 'guardar_citado'])->name('seer.citados');
         Route::get('/agrega_documento/{id}',                        [SeerController::class, 'vista_documentos'])->name('agregar_documentos');
         Route::post('/solicitudes/patronal/guardar-citado/{id}',    [SeerController::class, 'guardar_citado_patronal'])->name('guardar.citado.patronal');
-        Route::get('/finaliza/{id}',                                [SeerController::class, 'guardar_solicitud'])->name('seer.finaliza');
         Route::get('/cancelar_edicion',                             [SeerController::class, 'cancelar_edicion'])->name('cancelar_edicion');
     //Citados
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
