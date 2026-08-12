@@ -889,7 +889,7 @@ class RecepcionController extends Controller
         if($sede == 'Morelia' || $sede == 'Zitácuaro' ){
 
             if ($tipo === 'Ratificación') {
-                return ['intervalo' => 60, 'fin' => ['hour' => 16, 'minute' => 30],'comida' => ['hour' => 13, 'minute' => 0]];
+                return ['intervalo' => 50, 'fin' => ['hour' => 16, 'minute' => 20],'comida' => ['hour' => 12, 'minute' => 20]];
             }
 
             return ['intervalo' => 40, 'fin' => ['hour' => 16, 'minute' => 20],'comida' => ['hour' => 12, 'minute' => 20]]; //cambio fin a las 16:50
@@ -899,7 +899,7 @@ class RecepcionController extends Controller
             return ['intervalo' => 60, 'fin' => ['hour' => 16, 'minute' => 0],'comida' => ['hour' => 16, 'minute' => 30]];
         }
 
-        return ['intervalo' => 60, 'fin' => ['hour' => 16, 'minute' => 30],'comida' => ['hour' => 16, 'minute' => 30]]; //cambio fin a las 16:50
+        return ['intervalo' => 60, 'fin' => ['hour' => 15, 'minute' => 30],'comida' => ['hour' => 16, 'minute' => 30]]; //cambio fin a las 16:50
         
     }
 
@@ -1024,7 +1024,7 @@ class RecepcionController extends Controller
                         if(($tipo == 'Solicitud' || $tipo == 'Asesoría') && !$esExcepcion){
                             $slot->modify("+40 minutes");
                         } else {
-                            $slot->modify("+30 minutes");
+                            $slot->modify("+40 minutes");
                         }   
                     }
                     else{

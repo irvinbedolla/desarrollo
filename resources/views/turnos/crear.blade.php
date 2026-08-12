@@ -185,6 +185,7 @@
                                             </button>
                                             <select name="tipo_caso" class="form-control" onchange="cambiaExcepcion(this); blockCalendar();" required>
                                                 <option value="">Seleccione</option>
+                                                <option value="Ninguno" style="font-weight: bold;">No, ninguno</option>
                                                 <optgroup label="Discriminación en el empleo y ocupación por:">
                                                     <option value="Acoso u hostigamiento sexual">Acoso/Hostigamiento Sexual</option>
                                                     <option value="Discriminación">Condición social</option>

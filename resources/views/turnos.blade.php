@@ -294,6 +294,7 @@
                                             <label for="name">¿El motivo de tu solicitud se debe a alguno de los siguientes casos? <span style="color:red;">(*)</span></label>
                                             <select name="tipo_caso" class="form-control" onchange="cambiaExcepcion(this); blockCalendar();" required>
                                                 <option value="">Seleccione</option>
+                                                <option value="Ninguno" style="font-weight: bold;">No, ninguno</option>
                                                 <optgroup label="Discriminación en el empleo y ocupación por:">
                                                     <option value="Acoso u hostigamiento sexual">Acoso/Hostigamiento Sexual</option>
                                                     <option value="Discriminación">Condición social</option>
@@ -325,7 +326,7 @@
                                                     <option value="Titularidad">Contratos ley</option>
                                                 </optgroup>
                                                     <option value="Titularidad" style="font-weight: bold;">Impugnación de los estatutos de los sindicatos o su modificación</option>
-                                                    <option value="Ninguno" style="font-weight: bold;">No, ninguno</option>
+                                                    
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
