@@ -1,7 +1,7 @@
 // 1. Declaración global
 var calendarPagos, calendarAudiencias, calendarRatificaciones, calendarCitas, calendarConciliador;
 var currentCalendar = null;
-const calendarEl = document.getElementById('calendar'); // Asegúrate que este ID exista en tu HTML
+var calendarEl = document.getElementById('calendar'); // Asegúrate que este ID exista en tu HTML
 
 // Función para obtener los parámetros de filtro actuales
     function getFilterParams() {
@@ -54,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
             events: endpoint + getFilterParams(),
             //events: endpoint,
             eventClick: (info) => handleEventClick(info, tipoParaModal),
-            eventDidMount: styleEvent,
             windowResize: function(arg) {
                 let view = window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek';
                 if (this.view.type !== view) { this.changeView(view); }
@@ -78,11 +77,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Instanciamos cada calendario
-    calendarPagos = new FullCalendar.Calendar(calendarEl, crearConfiguracion('/pagos/eventos', 'pagos'));
-    calendarAudiencias = new FullCalendar.Calendar(calendarEl, crearConfiguracion('/audiencias/eventos', 'audiencias'));
-    calendarRatificaciones = new FullCalendar.Calendar(calendarEl, crearConfiguracion('/ratificaciones/eventos', 'ratificaciones'));
-    calendarCitas = new FullCalendar.Calendar(calendarEl, crearConfiguracion('/citas/eventos', 'citas'));
-    calendarConciliador = new FullCalendar.Calendar(calendarEl, crearConfiguracion('/pagos/conciliadores', 'conciliador'));
+    calendarCitas          = new FullCalendar.Calendar(calendarEl, crearConfiguracion(urlCitas, 'citas'));
+    calendarPagos          = new FullCalendar.Calendar(calendarEl, crearConfiguracion(urlPagos, 'pagos'));
+    calendarConciliador    = new FullCalendar.Calendar(calendarEl, crearConfiguracion(urlConciliadores, 'conciliador'));
+    calendarAudiencias     = new FullCalendar.Calendar(calendarEl, crearConfiguracion(urlAudiencias, 'audiencias'));
+    calendarRatificaciones = new FullCalendar.Calendar(calendarEl, crearConfiguracion(urlRatificaciones, 'ratificaciones'));
 
     // 3. LÓGICA DE LOS BOTONES (Función Maestra)
     const botones = document.querySelectorAll('.btn-calendar');

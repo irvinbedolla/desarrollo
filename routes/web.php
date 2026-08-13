@@ -33,6 +33,7 @@ use App\Models\SeerPerGeneral;
 use App\Http\Controllers\IncidenciasController;
 use App\Http\Controllers\IncidenciasBusquedaController;
 use App\Http\Controllers\AsistenciaController;
+use App\Http\Controllers\AudienciasController;
 
 
 /*
@@ -92,8 +93,8 @@ Route::post('/turnos_guardar',                      [HomeController::class, 'tur
 Route::get('citas',                                 [TurnosController::class, 'create_publico'])->name('create_cita');
 Route::post('/citas/store_publico',                 [TurnosController::class, 'store_publico'])->name('turnos.publico');
 Route::get('/validar_folio_abogado/{folio}',        [TurnosController::class, 'validarFolio'])->name('validar_folio_abogado');
-Route::get('AgendaRatificacion',                    [TurnosController::class, 'create_ratiMultiple'])->name('create_cita-12');
-Route::post('/citas/storeRatificacion',             [TurnosController::class, 'guardarRatificacion'])->name('guardarRatificacion');
+ Route::get('AgendaRatificacion',                   [TurnosController::class, 'create_ratiMultiple'])->name('create_cita-12');
+Route::post('/citas/storeRatificacion',     [TurnosController::class, 'guardarRatificacion'])->name('guardarRatificacion');
 
 // Flujo dinámico de Solicitudes (Trabajador / Patronal)
 Route::get('Patronal/{tipo_solicitud}',             [SeerController::class, 'patron'])->name('solicitud_patron');
@@ -160,11 +161,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/notificaciones/editar',               [HomeController::class, 'contraseña_update'])->name('contraseña_update'); 
 
     // Calendario Compartido
-    Route::get('/calendario',                           [CalendarController::class, 'index'])->name('calendario.index');
-    Route::get('/citas/eventos',                        [CitaController::class, 'citas'])->name('citas.eventos');
-    Route::get('/pagos/eventos',                        [CitaController::class, 'pagos'])->name('pagos.eventos');
-    Route::get('/recepcion/eventos',                    [RecepcionController::class, 'eventosRolTurnos'])->name('recepcion.eventos');
-    Route::get('/obtenerBloqueosCalendario',            [AdministracionController::class, 'obtenerBloqueosCalendario'])->name('calendario.bloqueos');
+    Route::get('/calendario',                   [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
+    Route::get('/citas/eventos',                [App\Http\Controllers\CitaController::class, 'citas'])->name('citas.eventos');
+    Route::get('/pagos/eventos',                [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
+    Route::get('/pagos/conciliadores',          [App\Http\Controllers\CitaController::class, 'conciliadores'])->name('conciliador.eventos');
+    Route::get('/audiencias/eventos',           [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.eventos');
+    Route::get('/ratificaciones/eventos',       [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
+    Route::get('citas/exportar-excel',          [CitaController::class, 'exportarExcel']);
+    Route::get('/obtenerBloqueosCalendario',    [AdministracionController::class, 'obtenerBloqueosCalendario'])->name('calendario.bloqueos');
 
     /*
      |-- SUB-GRUPO DE CONTROL DE ACCESO: SUPER USUARIO / ADMINISTRADORES
@@ -518,6 +522,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/audiencia/agregar_citado',            [SeerController::class, 'agregar_citado_audiencia_directo'])->name('agregar_citado_audiencia_directo');
         Route::delete('/borrar_citado_edicion',             [SeerController::class, 'borrar_citado_edicion'])->name('borrar_citado_edicion');
         Route::post('/historial/notificador',               [SeerController::class, 'historial_notificador'])->name('historial_notificador');
+        //Cumplimientos
+        //Ligas de busqueda
+        Route::post('/cumplimiento/busqueda',               [SeerController::class, 'cumplimientos_busqueda'])->name('cumplimientos_busqueda');
+        Route::get('/cumplimietos/actual',                  [SeerController::class, 'cumplimiento_actual'])->name('cumplimiento_actual');
+        Route::get('/cumplimiento/consulta/{id}/{tipo}',    [SeerController::class, 'consulta_cumplimiento'])->name('consulta_cumplimiento');
+        Route::get('/cumplimiento/consultar/{id}/{tipo}',   [SeerController::class, 'consulta_cumplimiento_ratificacion'])->name('consulta_cumplimiento_ratificacion');
+        Route::get('/cumplimiento/crear',                   [SeerController::class, 'crear_cumplimiento'])->name('crear_cumplimiento'); //Se crear un cumplimiento desde el menú de cumplimientos
+        //Ratificaciones diarias
+        Route::post('/cumplimiento/pagar/rati',             [SeerController::class, 'cumplimiento_pagar_rati'])->name('cumplimiento_pagar');
+        Route::get('/cumplimiento/rechazar/rati/{id}',      [SeerController::class, 'cumplimiento_rechazar_rati'])->name('cumplimiento_rechazar');
+        //Audiencias diarias
+        Route::post('/cumplimiento/pagar/audienia',         [SeerController::class, 'cumplimiento_pagar_audiencia'])->name('cumplimiento_pagar_audiencia');
+        Route::post('/cumplimiento/pagar/pena/audiencia',   [SeerController::class, 'cumplimiento_pagar_con_pena_audiencia'])->name('cumplimiento_pagar_pena_audiencia');
+        Route::get('/cumplimiento/rechazara/{id}',          [SeerController::class, 'cumplimiento_rechazar_audiencia'])->name('cumplimiento_rechazar_audiencia');
+        //Ratificaciones busqueda
+        Route::post('/cumplimientos/consulta',              [SeerController::class, 'cumplimiento_pagar_busqueda_rati'])->name('cumplimiento_pagar_busqueda');
+        Route::post('/cumplimiento/rechazar/{id}',          [SeerController::class, 'cumplimiento_rechazar_busqueda_rati'])->name('cumplimiento_rechazar_busqueda');
+        Route::get('/cumplimientos/index',                  [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
+        //Route::get('/cumplimiento/PDFpago/{id}',            [SeerController::class, 'VerPDFAudiencia'])->name('VerPDFAudiencia');
+        Route::get('/cumplimiento/PDFIncumplimiento/{id}',  [SeerController::class, 'PDFincumplimientoAudiencia'])->name('PDFincumplimientoAudiencia');
+        Route::post('/cumplimiento/guardar',                [SeerController::class, 'guardar_cumplimiento'])->name('guardar_cumplimiento');
+        Route::get('/cumplimiento/incomparecencia/{id}',    [SeerController::class, 'PDFIncomparecenciaCumplimiento'])->name('PDFIncomparecenciaCumplimiento');
+        Route::get('/cumplimiento/incomparecenciaRati/{id}', [SeerController::class, 'PDFIncomparecenciaCumplimientoRati'])->name('PDFIncomparecenciaCumplimientoRati');
+        Route::post('/cumplimiento/no_comparece/{id}',      [SeerController::class, 'cumplimiento_incomparecencia'])->name('cumplimiento_incomparecencia');
+        Route::get('/cumplimiento/generar',                 [SeerController::class, 'genera_cumplimiento'])->name('genera_cumplimiento');
+        Route::post('/cumplimiento/guardar_cumplimiento',   [SeerController::class, 'guardar_cumplimiento_cumplimientos'])->name('guardar_cumplimiento_cumplimientos');
+        Route::get('/cumplimiento/guardarC',                [SeerController::class, 'cumplimientos_conciliadores'])->name('cumplimientos_conciliadores');        
+        Route::post('/cumplimiento/guardar_CC',             [SeerController::class, 'guardar_cumplimiento_conciliadores'])->name('guardar_cumplimiento_conciliadores');
+    //Fin de cumplimientos
     //Ratificaciones
         Route::get('/ratificaciones/atender',               [TurnosController::class, 'revisar_ratificaciones_hoy'])->name('ratificacion_atender');
         Route::post('/ratificaciones/buscar',               [TurnosController::class, 'busqueda_ratificaciones'])->name('ratificacion_buscar');

@@ -94,6 +94,7 @@
                 padding: 0.4em 0.6em !important;
                 font-size: 0.85em !important;
             }
+
         }
     </style>
 
@@ -298,6 +299,19 @@
     <script src="public/assets/js/scripts.js"></script>
     <script src="public/assets/js/profile.js"></script>
     <script src="public/assets/js/custom.js"></script>
+    
+    <script>
+    
+        const urlCitas          = "{{ route('citas.eventos') }}";
+        const urlPagos          = "{{ route('pagos.eventos') }}";
+        const urlConciliadores  = "{{ route('conciliador.eventos') }}";
+        const urlAudiencias     = "{{ route('audiencias.eventos') }}";
+        const urlRatificaciones = "{{ route('ratificaciones.eventos') }}";
+        
+        // Por si también la usas dentro de tu configuración de FullCalendar:
+        const urlBloqueos       = "{{ route('calendario.bloqueos') }}"; 
+    </script>
+    <script src="public/assets/js/calendar.js"></script>
 @yield('page_js')
 @yield('scripts')
 
