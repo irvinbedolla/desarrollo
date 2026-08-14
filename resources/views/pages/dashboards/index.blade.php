@@ -94,6 +94,27 @@
                 padding: 0.4em 0.6em !important;
                 font-size: 0.85em !important;
             }
+            .fc-event {
+                background-color: transparent !important;
+                border: 1px solid transparent !important; /* Borde invisible para que no brinque */
+                box-shadow: none !important;
+                border-radius: 6px !important;
+                transition: background-color 0.2s ease, border-color 0.2s ease; /* Efecto de transición suave */
+                cursor: pointer;
+            }
+            .fc-event:hover, .fc-event:focus {
+                background-color: #f0f0f0 !important; /* Gris claro */
+                border-color: #e2e2e2 !important;     /* Borde gris para enmarcarlo */
+            }
+
+            /* Forzar que el texto no se salga del cuadro */
+            .custom-event-content .text-truncate {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: block;
+                width: 100%;
+            }
 
         }
     </style>
