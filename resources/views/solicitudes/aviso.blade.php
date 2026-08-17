@@ -177,11 +177,6 @@
                     <div class="card-body p-4 p-md-5">
                         <input type="hidden" name="id" value="{{ $id }}">
                         
-                        <!-- Folio Display -->
-                        <div class="folio-badge">
-                            Número de Folio: <span class="text-dark">{{ $id }}</span>
-                        </div>
-
                         <!-- Main Message -->
                         <div class="alert alert-success border-0 shadow-sm mb-4 p-4" style="text-align: justify; background-color: #eafaf1; color: #1e7e34;">
                             <p class="mb-3 fs-6">

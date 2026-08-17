@@ -8104,19 +8104,23 @@ class SeerController extends Controller
         return view('solicitudes.solicitudes', compact('solicitudes'));
     }
     
-    public function ObtenerAudiencia($delegacion, $notificion) {
+    public function ObtenerAudiencia($delegacion, $notificion) 
+    {
         $id = auth()->user()->id;
         $user = User::find($id);
 
         $mapa_sedes = ["Zitácuaro" => "Morelia", "Lázaro Cárdenas" => "Uruapan", "Sahuayo" => "Zamora"];
         $oficina = $mapa_sedes[$delegacion] ?? $delegacion;
 
+        // FILTRAR POR DELEGACIÓN: Buscamos la última audiencia de esa oficina/delegación específica
+        $ultima_audiencia = Audiencias::where('delegacion', $oficina)
+            ->latest()
+            ->first();
+
+        $fecha_texto = $ultima_audiencia ? date('Y-m-d', strtotime($ultima_audiencia->fecha)) : date('Y-m-d');
+
         // El punto de partida real para los 45 días siempre es HOY
         $hoy = \Carbon\Carbon::now();
-
-        $fechaCorteHorario = '2026-08-10';
-        $horariosLegacy = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
-        $horariosNuevos = ["09:00:00", "10:15:00", "12:00:00", "14:15:00", "15:30:00"];
 
         $permisos_requeridos = array_key_exists($delegacion, $mapa_sedes) ? ["Ambos", "Virtual"] : ["Ambos", "Precencial"];
 
@@ -8133,6 +8137,7 @@ class SeerController extends Controller
         $diasVacacionesSede = 0;
         $inicioVentana = $hoy->copy()->startOfDay();
         $finVentana = $fechaLimiteBase->copy()->startOfDay();
+
         foreach ($periodosVacacionalesSede as $periodo) {
             $inicio = \Carbon\Carbon::parse($periodo->fecha_inicio)->max($inicioVentana);
             $fin = \Carbon\Carbon::parse($periodo->fecha_final)->min($finVentana);
@@ -8194,9 +8199,30 @@ class SeerController extends Controller
 
         $fecha_revisar = $fecha_inicio_busqueda->copy();
 
+        // Mapeo de fechas de corte para saltar la búsqueda y evitar traslapes de agenda
+        $fechasCortePorSede = [
+            'Morelia' => ['corte' => '2026-08-07', 'inicio_nuevo' => '2026-08-10'],
+            'Uruapan' => ['corte' => '2026-08-04', 'inicio_nuevo' => '2026-08-05'],
+            'Zamora'  => ['corte' => '2026-08-31', 'inicio_nuevo' => '2026-09-01'],
+        ];
+
+        $configSede = $fechasCortePorSede[$oficina] ?? ['corte' => '2026-08-07', 'inicio_nuevo' => '2026-08-10'];
+
+        // Si la última audiencia registrada en la sede ya supera la fecha de corte del esquema viejo,
+        // forzamos el inicio de búsqueda al primer día del nuevo esquema para evitar colisiones.
+        if ($fecha_texto > $configSede['corte']) {
+            $fecha_inicio_nuevo = \Carbon\Carbon::parse($configSede['inicio_nuevo']);
+            if ($fecha_revisar->lt($fecha_inicio_nuevo)) {
+                $fecha_revisar = $fecha_inicio_nuevo->copy();
+            }
+        }
+
         // 5. Bucle principal de búsqueda de espacios vacíos
         while ($fecha_revisar->lte($fecha_limite_natural)) {
             $fecha_str = $fecha_revisar->format('Y-m-d');
+
+            // OBTENCIÓN DINÁMICA DE HORARIOS SEGÚN SEDE Y FECHA A EVALUAR
+            $horarios_disponibles = $this->obtenerHorariosPorSedeYFecha($oficina, $fecha_str);
 
             $dia_inhabil_centro = DiasInhabiles::where('centro', $oficina)
                 ->whereNull('user_id')
@@ -8210,8 +8236,6 @@ class SeerController extends Controller
                 $fecha_revisar->addDay();
                 continue;
             }
-
-            $horarios_disponibles = ($fecha_str < $fechaCorteHorario) ? $horariosLegacy : $horariosNuevos;
 
             foreach ($horarios_disponibles as $h) {
 
@@ -8232,8 +8256,9 @@ class SeerController extends Controller
 
                 $posibles_conciliadores = [];
                 $dia_campo = $dia_semana_map[$fecha_revisar->dayOfWeek] ?? null;
+
                 foreach ($conciliadores as $c) {
-                    // Validar disponibilidad del conciliador según permisos_conciliador (día y horario)
+                    // Validar disponibilidad del conciliador según permisos_conciliador
                     $permisosDelConciliador = $permisosConciliadores->get($c->id, collect());
                     $disponible = $dia_campo && $permisosDelConciliador->contains(function ($permiso) use ($dia_campo, $h) {
                         return $permiso->{$dia_campo} === 'Si'
@@ -8257,8 +8282,12 @@ class SeerController extends Controller
                         ->exists();
 
                     if (!$bloqueo_conciliador) {
-                        // Validar que el conciliador individual tampoco tenga otra audiencia asignada a esa hora
-                        $ocupado = Audiencias::where('fecha', $fecha_str)->where('hora', $h)->where('id_conciliador', $c->id)->exists();
+                        // Validar que el conciliador no tenga audiencia ocupada en ese horario
+                        $ocupado = Audiencias::where('fecha', $fecha_str)
+                            ->where('hora', $h)
+                            ->where('id_conciliador', $c->id)
+                            ->exists();
+
                         if (!$ocupado) {
                             $posibles_conciliadores[] = $c->id;
                         }
@@ -8277,6 +8306,7 @@ class SeerController extends Controller
             }
             $fecha_revisar->addDay();
         }
+
         return response()->json(['error' => "No hay disponibilidad en el rango legal extendido por días inhábiles"], 404);
     }
 

@@ -186,7 +186,7 @@
     <nav class="navbar navbar-expand-lg navbar-institutional fixed-top py-2">
         <div class="container-fluid px-4">
             <a class="navbar-brand py-0" href="#">
-                <img src="../public/assets/images/Logos 2.png" alt="Logo CCL Michoacán" height="60">
+                <img src="public/assets/images/Logos 2.png" alt="Logo CCL Michoacán" height="60">
             </a>
             <div class="ms-auto">
                 <a class="link-privacidad d-flex align-items-center gap-1" href="#" onclick="$('#modal-aviso-privacidad').modal('show'); return false;">
