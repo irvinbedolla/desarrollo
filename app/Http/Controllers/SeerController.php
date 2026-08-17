@@ -8112,13 +8112,6 @@ class SeerController extends Controller
         $mapa_sedes = ["Zitácuaro" => "Morelia", "Lázaro Cárdenas" => "Uruapan", "Sahuayo" => "Zamora"];
         $oficina = $mapa_sedes[$delegacion] ?? $delegacion;
 
-        // FILTRAR POR DELEGACIÓN: Buscamos la última audiencia de esa oficina/delegación específica
-        $ultima_audiencia = Audiencias::where('delegacion', $oficina)
-            ->latest()
-            ->first();
-
-        $fecha_texto = $ultima_audiencia ? date('Y-m-d', strtotime($ultima_audiencia->fecha)) : date('Y-m-d');
-
         // El punto de partida real para los 45 días siempre es HOY
         $hoy = \Carbon\Carbon::now();
 
@@ -8198,24 +8191,6 @@ class SeerController extends Controller
         $dia_semana_map = [1 => 'lunes', 2 => 'martes', 3 => 'miercoles', 4 => 'jueves', 5 => 'viernes'];
 
         $fecha_revisar = $fecha_inicio_busqueda->copy();
-
-        // Mapeo de fechas de corte para saltar la búsqueda y evitar traslapes de agenda
-        $fechasCortePorSede = [
-            'Morelia' => ['corte' => '2026-08-07', 'inicio_nuevo' => '2026-08-10'],
-            'Uruapan' => ['corte' => '2026-08-04', 'inicio_nuevo' => '2026-08-05'],
-            'Zamora'  => ['corte' => '2026-08-31', 'inicio_nuevo' => '2026-09-01'],
-        ];
-
-        $configSede = $fechasCortePorSede[$oficina] ?? ['corte' => '2026-08-07', 'inicio_nuevo' => '2026-08-10'];
-
-        // Si la última audiencia registrada en la sede ya supera la fecha de corte del esquema viejo,
-        // forzamos el inicio de búsqueda al primer día del nuevo esquema para evitar colisiones.
-        if ($fecha_texto > $configSede['corte']) {
-            $fecha_inicio_nuevo = \Carbon\Carbon::parse($configSede['inicio_nuevo']);
-            if ($fecha_revisar->lt($fecha_inicio_nuevo)) {
-                $fecha_revisar = $fecha_inicio_nuevo->copy();
-            }
-        }
 
         // 5. Bucle principal de búsqueda de espacios vacíos
         while ($fecha_revisar->lte($fecha_limite_natural)) {
@@ -8310,7 +8285,36 @@ class SeerController extends Controller
         return response()->json(['error' => "No hay disponibilidad en el rango legal extendido por días inhábiles"], 404);
     }
 
-    public function concluir_audiencia_conciliador(Request $request){    
+    private function obtenerHorariosPorSedeYFecha($oficina, $fechaDia)
+    {
+        $fechaCorteHorarioLegacy = '2026-08-10';
+
+        $fechaCorteHorarioNuevoPorSede = [
+            'Morelia' => '2026-10-04',
+            'Zitácuaro' => '2026-10-04',
+            'Zamora' => '2026-10-04',
+            'Sahuayo' => '2026-10-04',
+            'Uruapan' => '2026-10-04',
+            'Lázaro Cárdenas' => '2026-10-04',
+        ];
+        $fechaCorteHorarioNuevo = $fechaCorteHorarioNuevoPorSede[$oficina] ?? null;
+
+        $horasLegacy = [[9, 0], [10, 15], [11, 30], [12, 45], [14, 0]];
+        $horasActual = [[9, 0], [10, 15], [12, 0], [14, 15], [15, 30]];
+        $horasNuevo = [[9, 0], [10, 15], [11, 30], [13, 45], [15, 0]];
+
+        if ($fechaDia < $fechaCorteHorarioLegacy) {
+            $horasBase = $horasLegacy;
+        } elseif ($fechaCorteHorarioNuevo !== null && $fechaDia >= $fechaCorteHorarioNuevo) {
+            $horasBase = $horasNuevo;
+        } else {
+            $horasBase = $horasActual;
+        }
+
+        return array_map(fn ($h) => sprintf('%02d:%02d:00', $h[0], $h[1]), $horasBase);
+    }
+
+    public function concluir_audiencia_conciliador(Request $request){
         $data = $request->all();
 
         $hayCentro = false;
