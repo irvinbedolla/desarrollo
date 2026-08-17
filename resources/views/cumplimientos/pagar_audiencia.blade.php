@@ -108,6 +108,7 @@
     <form class='needs-validation novalidate'  method='POST' action="{{route('pagoA_audiencia')}}">
         @csrf
         <input type="hidden" id="modal-id" name="id" value="">
+        <input type="hidden" name="tipo" value="{{$tipo}}">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
