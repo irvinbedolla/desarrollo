@@ -100,6 +100,7 @@ class SolicitudesExport implements FromView
                 'seer_general.tipo_solicitud',
                 'seer_solicitante.nombre as solicitante_nombre',
                 'seer_solicitante.sexo',
+                'seer_solicitante.telefono1',
                 
                 'motivos_agrupados.motivos',
                 DB::raw('CONCAT_WS(" ", seer_citados.nombre, seer_citados.primer_apellido, seer_citados.segundo_apellido) as primer_citado'),
