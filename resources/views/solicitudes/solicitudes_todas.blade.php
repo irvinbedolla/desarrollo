@@ -84,6 +84,8 @@
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFfalltaInteres', $solicitud->id) }}"        target="_blank">Acta de Archivo</a></li>
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfoConcilio', ['tipo' => 'seguimiento', 'id' => $solicitud->id]) }}"  target="_blank">Caratula de Seguimiento</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfoConcilio', ['tipo' => 'caratula', 'id' => $solicitud->id]) }}"  target="_blank">Caratula de Solicitud</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -136,6 +138,8 @@
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFno_conciliacion', $solicitud->id) }}"      target="_blank">Constancia de no conciliación</a></li>
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfoConcilio', ['tipo' => 'seguimiento', 'id' => $solicitud->id]) }}"  target="_blank">Caratula de Seguimiento</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfoConcilio', ['tipo' => 'caratula', 'id' => $solicitud->id]) }}"  target="_blank">Caratula de Solicitud</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -149,6 +153,8 @@
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <!--li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFincumplimientoAudiencia', $solicitud->id) }}"      target="_blank">Constancia de Incumplimiento</a></li-->                                                                    
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfoConcilio', ['tipo' => 'seguimiento', 'id' => $solicitud->id]) }}"  target="_blank">Caratula de Seguimiento</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfoConcilio', ['tipo' => 'caratula', 'id' => $solicitud->id]) }}"  target="_blank">Caratula de Solicitud</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -181,6 +187,8 @@
                                                                            target="_blank">Constancia de cumplimiento</a>
                                                                     </li>
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfoConcilio', ['tipo' => 'seguimiento', 'id' => $solicitud->id]) }}"  target="_blank">Caratula de Seguimiento</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfoConcilio', ['tipo' => 'caratula', 'id' => $solicitud->id]) }}"  target="_blank">Caratula de Solicitud</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -195,6 +203,8 @@
                                                                     <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_blank">Notificación al solicitante</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFacuseConfirmada', $solicitud->id) }}"  target="_blank">Acuse de solicitud confirmada</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfo', ['tipo' => 'solicitud', 'id' => $solicitud->id]) }}"  target="_blank">Formato de Solicitud</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfoConcilio', ['tipo' => 'seguimiento', 'id' => $solicitud->id]) }}"  target="_blank">Caratula de Seguimiento</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFCaratulaInfoConcilio', ['tipo' => 'caratula', 'id' => $solicitud->id]) }}"  target="_blank">Caratula de Solicitud</a></li>
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
