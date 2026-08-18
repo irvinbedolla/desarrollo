@@ -623,6 +623,7 @@
                                                             <option value="CALLE">Calle</option>
                                                             <option value="CALLEJÓN">Callejón</option>
                                                             <option value="CALZADA">Calzada</option>
+                                                            <option value="CAMINO">Camino</option>
                                                             <option value="CARRETERA">Carretera</option>
                                                             <option value="CERRADA">Cerrada</option>
                                                             <option value="CIRCUITO">Circuito</option>
@@ -1063,6 +1064,7 @@
                                                             <option value="CALLE">Calle</option>
                                                             <option value="CALLEJÓN">Callejón</option>
                                                             <option value="CALZADA">Calzada</option>
+                                                            <option value="CAMINO">Camino</option>
                                                             <option value="CARRETERA">Carretera</option>
                                                             <option value="CERRADA">Cerrada</option>
                                                             <option value="CIRCUITO">Circuito</option>
@@ -2439,9 +2441,9 @@
                 $('#comp_num_identificacion').val(num);
                 
                 if(doc && doc !== '') {
-                    const basePath = "{{ url('storage/') }}";
+                    const basePath = "{{ url('public/documentosSolicitud') }}";
                     $('#comp_doc_existente_container').show();
-                    $('#comp_btn_ver_doc').attr('href', basePath + '/app/documentosSolicitud/' + solicitud + '/' + doc);
+                    $('#comp_btn_ver_doc').attr('href', basePath + '/' + solicitud + '/' + doc);
                     $('#comp_doc_input').removeAttr('required');
                 } else {
                     $('#comp_doc_existente_container').hide();

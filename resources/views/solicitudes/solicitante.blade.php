@@ -370,7 +370,7 @@
                                     <label for="vialidad" class="form-label">Tipo de Vialidad <span class="text-required">(*)</span></label>
                                     <select name="vialidad" id="vialidad" class="form-select" required>
                                         <option value="">SELECCIONE...</option>
-                                        @foreach(['AMPLIACIÓN','ANDADOR','AUTOPISTA','AVENIDA','BOULEVARD','CALLE','CALLEJÓN','CALZADA','CARRETERA','CERRADA','CIRCUITO','CIRCUNVALACIÓN','CONTINUACIÓN','CORREDOR','DIAGONAL','EJE VIAL','PERIFÉRICO','PROLONGACIÓN','PRIVADA','RETORNO','VIADUCTO','PASEO'] as $vial)
+                                        @foreach(['AMPLIACIÓN','ANDADOR','AUTOPISTA','AVENIDA','BOULEVARD','CALLE','CALLEJÓN','CALZADA','CAMINO','CARRETERA','CERRADA','CIRCUITO','CIRCUNVALACIÓN','CONTINUACIÓN','CORREDOR','DIAGONAL','EJE VIAL','PERIFÉRICO','PROLONGACIÓN','PRIVADA','RETORNO','VIADUCTO','PASEO'] as $vial)
                                             <option value="{{ $vial }}" {{ old('vialidad') == $vial ? 'selected' : '' }}>{{ $vial }}</option>
                                         @endforeach
                                     </select>

@@ -230,6 +230,7 @@
                                                     <option value="CALLE">Calle</option>
                                                     <option value="CALLEJÓN">Callejón</option>
                                                     <option value="CALZADA">Calzada</option>
+                                                    <option value="CAMINO">Camino</option>
                                                     <option value="CARRETERA">Carretera</option>
                                                     <option value="CERRADA">Cerrada</option>
                                                     <option value="CIRCUITO">Circuito</option>

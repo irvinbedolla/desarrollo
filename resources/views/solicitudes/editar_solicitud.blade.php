@@ -416,6 +416,8 @@ select[name="municipio_citado"] option {
                                                             <option value="ANDADOR"        {{ $solicitante['tipo_vialidad'] == 'ANDADOR' ? "selected" : '' }} >Andador</option>
                                                             <option value="AUTOPISTA"      {{ $solicitante['tipo_vialidad'] == 'AUTOPISTA' ? "selected" : '' }} >Autopista</option>
                                                             <option value="CALLEJÓN"       {{ $solicitante['tipo_vialidad'] == 'CALLEJÓN' ? "selected" : '' }}>Callejón</option>
+                                                            <option value="CALZADA"        {{ $solicitante['tipo_vialidad'] == 'CALZADA' ? "selected" : '' }}>Calzada</option>
+                                                            <option value="CAMINO"         {{ $solicitante['tipo_vialidad'] == 'CAMINO' ? "selected" : '' }}>Camino</option>
                                                             <option value="CARRETERA"      {{ $solicitante['tipo_vialidad'] == 'CARRETERA' ? "selected" : '' }}   >Carretera</option>
                                                             <option value="CERRADA"        {{ $solicitante['tipo_vialidad'] == 'CERRADA' ? "selected" : '' }} >Cerrada</option>
                                                             <option value="CIRCUITO"       {{ $solicitante['tipo_vialidad'] == 'CIRCUITO' ? "selected" : '' }} >Circuito</option>
@@ -1011,6 +1013,8 @@ select[name="municipio_citado"] option {
                                                             <option value="ANDADOR"        {{ $citado['tipo_vialidad'] == 'ANDADOR' ? "selected" : '' }} >Andador</option>
                                                             <option value="AUTOPISTA"      {{ $citado['tipo_vialidad'] == 'AUTOPISTA' ? "selected" : '' }} >Autopista</option>
                                                             <option value="CALLEJÓN"       {{ $citado['tipo_vialidad'] == 'CALLEJÓN' ? "selected" : '' }}>Callejón</option>
+                                                            <option value="CALZADA"        {{ $citado['tipo_vialidad'] == 'CALZADA' ? "selected" : '' }}>Calzada</option>
+                                                            <option value="CAMINO"         {{ $citado['tipo_vialidad'] == 'CAMINO' ? "selected" : '' }}>Camino</option>
                                                             <option value="CARRETERA"      {{ $citado['tipo_vialidad'] == 'CARRETERA' ? "selected" : '' }}   >Carretera</option>
                                                             <option value="CERRADA"        {{ $citado['tipo_vialidad'] == 'CERRADA' ? "selected" : '' }} >Cerrada</option>
                                                             <option value="CIRCUITO"       {{ $citado['tipo_vialidad'] == 'CIRCUITO' ? "selected" : '' }} >Circuito</option>
@@ -1655,6 +1659,7 @@ select[name="municipio_citado"] option {
                                     <option value="CALLE">Calle</option>
                                     <option value="CALLEJÓN">Callejón</option>
                                     <option value="CALZADA">Calzada</option>
+                                    <option value="CAMINO">Camino</option>
                                     <option value="CARRETERA">Carretera</option>
                                     <option value="CERRADA">Cerrada</option>
                                     <option value="CIRCUITO">Circuito</option>

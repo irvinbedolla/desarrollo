@@ -111,6 +111,7 @@
                                                             <option value="CALLE"       {{ $poder["tipo_vialidad_patronal"] == "CALLE" ? "selected" : '' }}>Calle</option>
                                                             <option value="CALLEJÓN"    {{ $poder["tipo_vialidad_patronal"] == "CALLEJÓN" ? "selected" : '' }}>Callejón</option>
                                                             <option value="CALZADA"     {{ $poder["tipo_vialidad_patronal"] == "CALZADA" ? "selected" : '' }}>Calzada</option>
+                                                            <option value="CAMINO"      {{ $poder["tipo_vialidad_patronal"] == "CAMINO" ? "selected" : '' }}>Camino</option>
                                                             <option value="CARRETERA"   {{ $poder["tipo_vialidad_patronal"] == "CARRETERA" ? "selected" : '' }}>Carretera</option>
                                                             <option value="CERRADA"     {{ $poder["tipo_vialidad_patronal"] == "CERRADA" ? "selected" : '' }}>Cerrada</option>
                                                             <option value="CIRCUITO"    {{ $poder["tipo_vialidad_patronal"] == "CIRCUITO" ? "selected" : '' }}>Circuito</option>
