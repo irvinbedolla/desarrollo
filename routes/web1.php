@@ -108,8 +108,8 @@ use App\Http\Controllers\AsistenciaController;
         Route::get('/munSolicitante/{id}',          [SeerController::class, 'obtenerMunicipio']);
         Route::get('/munCitado/{id}',               [SeerController::class, 'obtenerMunicipio']);
     //Ruta de agregar citados
-        Route::get('/agrega_citado/{id}',           [SeerController::class, 'vista_citado'])->name('agregar_citado');
-        Route::post('/agrega_citado',               [SeerController::class, 'guardar_citado'])->name('seer.citados');
+        //Route::get('/agrega_citado/{id}',           [SeerController::class, 'vista_citado'])->name('agregar_citado');
+        //Route::post('/agrega_citado',               [SeerController::class, 'guardar_citado'])->name('seer.citados');
         Route::get('/agrega_documento/{id}',        [SeerController::class, 'vista_documentos'])->name('agregar_documentos');
         Route::post('/solicitudes/patronal/guardar-citado/{id}', [SeerController::class, 'guardar_citado_patronal'])->name('guardar.citado.patronal');
         Route::get('/finaliza/{id}',                [SeerController::class, 'guardar_solicitud'])->name('seer.finaliza');
@@ -515,6 +515,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
         Route::get('/solicitud/consultarC',                 [SeerController::class, 'consultar_citados_con'])->name('consultar_citados');
         Route::post('/agregar_citado_edicion',              [SeerController::class, 'agregar_citado_edicion'])->name('agregar_citado_edicion');
+        Route::post('/audiencia/agregar_citado',            [SeerController::class, 'agregar_citado_audiencia_directo'])->name('agregar_citado_audiencia_directo');
         Route::delete('/borrar_citado_edicion',             [SeerController::class, 'borrar_citado_edicion'])->name('borrar_citado_edicion');
         Route::post('/historial/notificador',               [SeerController::class, 'historial_notificador'])->name('historial_notificador');
     //Fin de Citados
