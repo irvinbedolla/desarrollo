@@ -39,7 +39,7 @@
             display: block;
             font-weight: normal; 
             color: #333;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         
@@ -67,19 +67,19 @@
         }
         .label {
             text-transform: uppercase;
-            font-size: 13px;
-            white-space: nowrap; 
+            font-size: 15px;
+            white-space: normal;
         }
         .label-page2 {
             text-transform: uppercase;
-            font-size: 10px;
-            white-space: nowrap; 
+            font-size: 13px;
+            white-space: normal;
         }
         .nueva-pagina {
                 page-break-before: always;
                 
             }
-        .data-table-ultima { width: 100%; border-collapse: collapse; margin-bottom: 5px; font-size: 6px; }
+        .data-table-ultima { width: 100%; border-collapse: collapse; margin-bottom: 5px; font-size: 5px; }
         .data-table-ultima td { border: 1px solid #000; padding: 3px; vertical-align: top; }
     </style>
 </head>
@@ -104,8 +104,8 @@
                         </tr>
                         <tr>
                             <td>
-                                <div class="label" style="margin-bottom: 3px;">SALA:</div>
-                                <div class="pill" style="height: 20px; text-align: center;">{{$ratificacion->lugar_auxiliar}}</div>
+                                <div class="label" style="margin-bottom: 3px;">AUXILIAR:</div>
+                                <div class="pill" style="height: 20px; text-align: center;">{{$ratificacion->nombre_auxiliar}}</div>
                             </td>
                         </tr>
                         <tr>
@@ -146,9 +146,9 @@
         <table class="layout-table">
             <tr>
                 <td width="10%" class="label">INICIÓ:</td>
-                <td width="35%"><div class="pill" style="height: 20px; text-align: center;">{{$ratificacion->fecha_inicio}} </div></td>
+                <td width="35%"><div class="pill" style="height: 20px; text-align: center;">{{$ratificacion->fecha}} </div></td>
                 <td width="25%" class="label" style="text-align: right; padding-right: 10px;">FECHA DE CONCLUSIÓN:</td>
-                <td width="30%"><div class="pill" style="height: 20px; text-align: center;"> {{$ratificacion->fecha_inicio}} </div></td>
+                <td width="30%"><div class="pill" style="height: 20px; text-align: center;"> {{$ratificacion->fecha}} </div></td>
             </tr>
         </table>
 
@@ -170,10 +170,10 @@
                     <td width="50%" style="vertical-align: top;">
                         <table style="width: 100%; border-spacing: 0 8px;">
                             <tr>
-                                <td width="20%">
-                                    <div class="label-page2" style="margin-bottom: 5px; ">DÍAS PARA SU CONCLUSIÓN:</div>
+                                <td width="70%">
+                                    <div class="label-page2" style="margin-bottom: 5px; white-space: nowrap;">DÍAS PARA SU CONCLUSIÓN:</div>
                                 </td>
-                                <td width="80%">
+                                <td width="30%">
                                     <div class="pill" style="width: 80%; text-align: center; " >{{$ratificacion->dias}}</div>
                                 </td>
                             </tr>
@@ -187,7 +187,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3">
-                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 11px; text-align: center;">CONSTANCIA DE NO CONCILIACIÓN:</div>
+                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 14px; text-align: center;">CONSTANCIA DE NO CONCILIACIÓN:</div>
                                     
                                 </td>
                                 
@@ -208,7 +208,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3">
-                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 11px; text-align: center;">CONVENIO</div>
+                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 14px; text-align: center;">CONVENIO</div>
                                     
                                 </td>
                                 
@@ -235,14 +235,14 @@
                         <table style="width: 100%; border-spacing: 0 8px;">
                             <tr >
                                 <td colspan="3">
-                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 12px; text-align: center;">FECHAS DE PAGO</div>
+                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 14px; text-align: center;">FECHAS DE PAGO</div>
                                     
                                 </td>
                             </tr>
                             @foreach ($pagos as  $index => $pago)
                                 <tr>
                                     <td>
-                                        <div class="label-page2" style=" font-size: 10px; ">PAGO {{ $index + 1 }}.- {{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d / F / Y') }} A LAS {{ \Carbon\Carbon::parse($pago->hora)->translatedFormat('H:i') }} HORAS</div>
+                                        <div class="label-page2" style=" font-size: 12px; white-space: nowrap;">PAGO {{ $index + 1 }}.- {{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d / F / Y') }} A LAS {{ \Carbon\Carbon::parse($pago->hora)->translatedFormat('H:i') }} HORAS</div>
                                     </td>
                                
 

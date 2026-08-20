@@ -18274,12 +18274,12 @@ class SeerController extends Controller
             $conciliador = " ";
         }
         if($ratificacion->fecha)
-                $ratificacion->dias = 1;
+                $ratificacion->dias = intval($ratificacion->created_at->diffInDays($ratificacion->updated_at)) + 1;
             else
                 $ratificacion->dias = ' ';
         $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Ratificacion')->get();
         $monto = \DB::table('concepto_pago')->where('id_solicitud', $id)->where('tipo_pago','Ratificación')->sum('monto');
-        
+        $ratificacion->nombre_auxiliar = User::where('id', $ratificacion->user_id)->pluck('name')->first();
         $html = view('PDF/CaratulaConcilioR', compact('id','ratificacion','abogado','conciliador','pagos','monto'))->render();
         
         $pdf = \PDF::loadHTML($html)

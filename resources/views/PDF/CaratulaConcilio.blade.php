@@ -39,7 +39,7 @@
             display: block;
             font-weight: normal; 
             color: #333;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         
@@ -67,19 +67,19 @@
         }
         .label {
             text-transform: uppercase;
-            font-size: 13px;
-            white-space: nowrap; 
+            font-size: 15px;
+            white-space: normal;
         }
         .label-page2 {
             text-transform: uppercase;
-            font-size: 10px;
-            white-space: nowrap; 
+            font-size: 13px;
+            white-space: normal;
         }
         .nueva-pagina {
                 page-break-before: always;
                 
             }
-        .data-table-ultima { width: 100%; border-collapse: collapse; margin-bottom: 5px; font-size: 6px; }
+        .data-table-ultima { width: 100%; border-collapse: collapse; margin-bottom: 5px; font-size: 5px; }
         .data-table-ultima td { border: 1px solid #000; padding: 3px; vertical-align: top; }
     </style>
 </head>
@@ -131,7 +131,7 @@
             </tr>
             <tr>
                 <td class="label">CITADO (S):</td>
-                <td><div class="pill" style="min-height: 30px; padding-top: 10px; padding-bottom: 10px; font-size:10px;">
+                <td><div class="pill" style="min-height: 30px; padding-top: 10px; padding-bottom: 10px; font-size:11px;">
                     @foreach($citados as $index => $citado)
                         <strong>{{ $index + 1 }}.-</strong> {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}<br>
                     @endforeach    
@@ -158,14 +158,14 @@
 
         <table style="width: 100%; margin-top: 15px; border-collapse: separate; border-spacing: 0 12px;">
             <tr>
-                <td width="35%" class="label">ARCHIVO POR FALTA DE INTERÉS:</td>
+                <td width="35%" class="label" style="white-space: nowrap;">ARCHIVO POR FALTA DE INTERÉS:</td>
                 <td width="10%"><div class="pill-checkbox" style="font-size: 15px;" >@if($tipo == 'seguimiento'){{ $ultima_audiencia->estatus == 'Archivada' ? 'X' : '' }}@endif</div></td>
                 
                 <td width="15%" class="label" >CONVENIO:</td>
                 <td width="40%"><div class="pill-checkbox" style="font-size: 15px;" >@if($tipo == 'seguimiento'){{ $ultima_audiencia->estatus == 'Conciliacion' ? 'X' : '' }}@endif</div></td>
             </tr>
             <tr>
-                <td class="label">CONSTANCIA DE NO CONCILIACIÓN:</td>
+                <td class="label" style="white-space: nowrap;">CONSTANCIA DE NO CONCILIACIÓN:</td>
                 <td><div class="pill-checkbox" style="font-size: 15px;">@if($tipo == 'seguimiento'){{ $ultima_audiencia->estatus == 'No conciliacion' ? 'X' : '' }}@endif</div></td>
                 
                 <td class="label">MULTA:</td>
@@ -190,32 +190,32 @@
     <div class = "nueva-pagina">
         <div class="contenido-principal">
         
-            <table class="layout-table" style="margin-bottom: 20px;">
+            <table class="layout-table" style="margin-bottom: 20px; border-collapse: separate; ">
                 <tr>
                     <td width="50%" style="vertical-align: top;">
                         <table style="width: 100%; border-spacing: 0 8px;">
                             <tr>
-                                <td width="20%">
-                                    <div class="label-page2" style="margin-bottom: 5px; ">DÍAS PARA SU CONCLUSIÓN:</div>
+                                <td width="70%">
+                                    <div class="label-page2" style="margin-bottom: 5px; white-space: nowrap;">DÍAS PARA SU CONCLUSIÓN:</div>
                                 </td>
-                                <td width="80%">
-                                    <div class="pill" style="width: 80%; text-align: center; " >@if($tipo == 'seguimiento'){{$solicitud->dias}}@endif</div>
+                                <td width="30%">
+                                    <div class="pill" style="width: 80%; text-align: center;">@if($tipo == 'seguimiento'){{$solicitud->dias}}@endif</div>
                                 </td>
                             </tr>
                             <tr>
-                                <td width="20%">
-                                    <div class="label-page2" style="margin-bottom: 5px; ">NÚMERO DE AUDIENCIAS:</div>
+                                <td width="70%">
+                                    <div class="label-page2" style="margin-bottom: 5px; white-space: nowrap;">NÚMERO DE AUDIENCIAS:</div>
                                 </td>
-                                <td width="80%">
-                                    <div class="pill" style="width: 80%; text-align: center;" >@if($tipo == 'seguimiento'){{ $audiencias->count() }}@endif</div>
+                                <td width="30%">
+                                    <div class="pill" style="width: 80%; text-align: center;">@if($tipo == 'seguimiento'){{ $audiencias->count() }}@endif</div>
                                 </td>
                             </tr>
                             <tr >
                                 <td colspan="3">
-                                    <div class="label-page2" style="margin-bottom: 5px; font-size: 11px; text-align: center;">FECHA DE AUDIENCIA:</div>
+                                    <div class="label-page2" style="margin-bottom: 5px; font-size: 14px; text-align: center;">FECHA DE AUDIENCIA:</div>
                                     @if($tipo == 'seguimiento')
                                     @foreach($audiencias as $index => $audiencia)
-                                        <div class="label-page2" style=" font-size: 10px; ">{{ $index + 1 }}.- {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d / F / Y') }} A LAS {{ \Carbon\Carbon::parse($audiencia->hora)->translatedFormat('H:i') }} HORAS<br></div>
+                                        <div class="label-page2" style=" font-size: 11px; ">{{ $index + 1 }}.- {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d / F / Y') }} A LAS {{ \Carbon\Carbon::parse($audiencia->hora)->translatedFormat('H:i') }} HORAS<br></div>
                                     @endforeach   
                                     @endif
                                 </td>
@@ -229,7 +229,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3">
-                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 11px; text-align: center;">CONSTANCIA DE NO CONCILIACIÓN:</div>
+                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 12px; text-align: center;">CONSTANCIA DE NO CONCILIACIÓN:</div>
                                     
                                 </td>
                                 
@@ -250,7 +250,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3">
-                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 11px; text-align: center;">CONVENIO</div>
+                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 14px; text-align: center;">CONVENIO</div>
                                     
                                 </td>
                                 
@@ -277,7 +277,7 @@
                         <table style="width: 100%; border-spacing: 0 8px;">
                             <tr >
                                 <td colspan="3">
-                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 12px; text-align: center;">FECHAS DE PAGO</div>
+                                    <div class="label-page2" style="margin-bottom: 3px; font-size: 14px; text-align: center;">FECHAS DE PAGO</div>
                                     
                                 </td>
                             </tr>
@@ -285,7 +285,8 @@
                             @foreach ($pagos as  $index => $pago)
                                 <tr>
                                     <td>
-                                        <div class="label-page2" style=" font-size: 10px; ">PAGO {{ $index + 1 }}.- {{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d / F / Y') }} A LAS {{ \Carbon\Carbon::parse($pago->hora)->translatedFormat('H:i') }} HORAS</div>
+                                        <div class="label-page2" style=" font-size: 12px; white-space: nowrap;">PAGO {{ $index + 1 }}.- {{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d / F / Y') }} A LAS {{ \Carbon\Carbon::parse($pago->hora)->translatedFormat('H:i') }} HORAS</div>
+                                        
                                     </td>
                                
 
