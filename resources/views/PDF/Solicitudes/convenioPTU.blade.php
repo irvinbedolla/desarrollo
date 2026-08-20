@@ -15,8 +15,16 @@
                 /* dompdf solo repite el margen definido aquí en TODAS las páginas;
                    un padding/margin en body/main solo aplica una vez al inicio/fin
                    del flujo completo, por eso el texto invadía las franjas verdes
-                   del membrete en las páginas intermedias. */
-                margin: 145px 0 60px 0;
+                   del membrete en las páginas intermedias.
+                   El mismo margen superior se usa en TODAS las páginas (incluida
+                   la primera): dompdf posiciona los elementos "position: fixed"
+                   (como .fondo-membrete) relativo al área de contenido de cada
+                   página, no a la hoja física completa, así que si la primera
+                   página usara un margen distinto al resto, el membrete de fondo
+                   quedaría descuadrado entre páginas. Ver el offset negativo y el
+                   alto en .fondo-membrete más abajo, que compensan este mismo
+                   margen para que el membrete cubra la hoja completa. */
+                margin: 225px 0 60px 0;
             }
             header {
                 position: fixed;
@@ -46,11 +54,16 @@
                 line-height: 1.3;
             }
             .fondo-membrete {
+                /* dompdf posiciona "position: fixed" relativo al área de
+                   contenido de la página (dentro del margen de @page), no a la
+                   hoja física. El offset negativo y el alto extra compensan el
+                   margen (225px arriba + 60px abajo) para que la imagen cubra
+                   la hoja completa, incluida la franja del membrete. */
                 position: fixed;
-                top: 0;
+                top: -225px;
                 left: 0;
                 width: 100%;
-                height: 100%;
+                height: calc(100% + 285px);
                 z-index: -1;
             }
             .sangria {
@@ -431,14 +444,6 @@
                                             DEL ESTADO DE MICHOACÁN DE OCAMPO
                                     </b>
                                 </td>
-                                <!--
-                                <td style="width:60%; vertical-align:top; padding:0 10px;"><b>Vo. Bo.</b><br><br><br><br>
-                                    <div style="border-top: 1px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                                    <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
-                                    {{ $nombramiento_delegado }}                                 
-                                    </b>
-                                </td>
-                                -->
                             </tr>
                         </table>
                         
