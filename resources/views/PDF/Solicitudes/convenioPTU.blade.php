@@ -24,7 +24,7 @@
                    quedaría descuadrado entre páginas. Ver el offset negativo y el
                    alto en .fondo-membrete más abajo, que compensan este mismo
                    margen para que el membrete cubra la hoja completa. */
-                margin: 225px 0 30px 0;
+                margin: 225px 0 80px 0;
             }
             header {
                 position: fixed;
@@ -49,7 +49,7 @@
                 font-family: sans-serif;
                 font-size: 14px;
                 text-align: justify;
-                margin-top: 50px;
+                margin-top: -80px;
                 margin-left: 1cm;     
                 margin-right: 1cm; 
                 line-height: 1.3;
