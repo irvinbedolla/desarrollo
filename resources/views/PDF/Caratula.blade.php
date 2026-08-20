@@ -694,7 +694,7 @@
                             </div>
                                     &nbsp;&nbsp;&nbsp;
                             <div style="display: inline-block;">
-                                <p><center><b>___________________________________<br><br>@if($bandera == 'Solicitud'){{ $citado->first()->nombre }} {{ $citado->first()->primer_apellido }} {{ $citado->first()->segundo_apellido }} @else {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal ?? '' }} {{ $abogado->segundo_apellido_patronal ?? ''}} @endif<br></b></center></p>
+                                <p><center><b>___________________________________<br><br>@if($bandera == 'Solicitud'){{ $citados->first()->nombre }} {{ $citados->first()->primer_apellido }} {{ $citados->first()->segundo_apellido }} @else {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal ?? '' }} {{ $abogado->segundo_apellido_patronal ?? ''}} @endif<br></b></center></p>
                             </div>
                         </div>
                     </div>
