@@ -8302,11 +8302,16 @@ class SeerController extends Controller
         $horasLegacy = [[9, 0], [10, 15], [11, 30], [12, 45], [14, 0]];
         $horasActual = [[9, 0], [10, 15], [12, 0], [14, 15], [15, 30]];
         $horasNuevo = [[9, 0], [10, 15], [11, 30], [13, 45], [15, 0]];
+        $horasNuevoAlCuadrado = [[8, 30], [9, 45], [11, 0], [13, 0], [14, 15]];
 
         if ($fechaDia < $fechaCorteHorarioLegacy) {
             $horasBase = $horasLegacy;
         } elseif ($fechaCorteHorarioNuevo !== null && $fechaDia >= $fechaCorteHorarioNuevo) {
-            $horasBase = $horasNuevo;
+            if($oficina == 'Zamora' && $fechaDia < '2026-10-08'){
+                $horasBase = $horasNuevo;
+            } else {
+                $horasBase = $horasNuevoAlCuadrado;
+            }
         } else {
             $horasBase = $horasActual;
         }
@@ -13840,6 +13845,8 @@ class SeerController extends Controller
         // Duración de los slots cortos (11:30 y 13:45) que no permiten empalme
         $duracionSlotMinutos = 30;
 
+        $duracionSlotComodin = 45;
+
         // Duración de los slots largos que sí permiten un empalme
         $duracionSlotLargo = 75;
 
@@ -13855,6 +13862,8 @@ class SeerController extends Controller
         $horasSlotCortoActual = ['11:30:00', '13:45:00'];
 
         $horasSlotCortoNuevo = ['08:30:00', '13:15:00'];
+
+        $horasSlotCortoNuevoAlCuadrado = ['12:15:00', '15:30:00'];
 
         /* A partir de esta fecha rige el grid "actual" (el que hoy se conoce como "nuevo"). Antes de
         esta fecha se usa el grid legacy (mismo corte que en ObtenerAudiencia). Este corte sigue siendo
@@ -13905,6 +13914,16 @@ class SeerController extends Controller
             ['hora' => [15, 0],  'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
         ];
 
+        $horariosConfigNuevoAlCuadrado = [
+            ['hora' => [8, 30],  'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
+            ['hora' => [9, 45],   'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [11, 00], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [12, 15], 'duracion' => $duracionSlotComodin,   'permite_empalme' => false],
+            ['hora' => [13, 00], 'duracion' => $duracionSlotLargo, 'permite_empalme' => true],
+            ['hora' => [14, 15], 'duracion' => $duracionSlotLargo,   'permite_empalme' => true],
+            ['hora' => [15, 30],  'duracion' => $duracionSlotMinutos,   'permite_empalme' => false],
+        ];
+
         /* Traemos cada audiencia existente (no agrupada por coincidencia exacta) para poder
         detectar traslapes de horario, incluyendo citas agendadas con el formato de horarios anterior
         (p.ej. 11:30, 12:45, 14:00) que ya no coinciden con los puntos de inicio de $horarios.
@@ -13933,18 +13952,24 @@ class SeerController extends Controller
                 if ($fechaDia < $fechaCorteHorarioLegacy) {
                     $nivelHorario = 'legacy';
                 } elseif ($fechaCorteHorarioNuevo !== null && $fechaDia >= $fechaCorteHorarioNuevo) {
-                    $nivelHorario = 'nuevo';
+                    if($sede == 'Zamora' && $fechaDia < '2026-10-08'){
+                        $nivelHorario = 'nuevo';
+                    } else {
+                        $nivelHorario = 'nuevoAlCuadrado';
+                    }
                 } else {
                     $nivelHorario = 'actual';
                 }
                 $horariosConfig = match ($nivelHorario) {
                     'legacy' => $horariosConfigLegacy,
                     'nuevo' => $horariosConfigNuevo,
+                    'nuevoAlCuadrado' => $horariosConfigNuevoAlCuadrado,
                     default => $horariosConfigActual,
                 };
                 $horasSlotCortoVigente = match ($nivelHorario) {
                     'legacy' => [],
                     'nuevo' => $horasSlotCortoNuevo,
+                    'nuevoAlCuadrado' => $horasSlotCortoNuevoAlCuadrado,
                     default => $horasSlotCortoActual,
                 };
 
