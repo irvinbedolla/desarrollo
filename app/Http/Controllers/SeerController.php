@@ -8307,7 +8307,7 @@ class SeerController extends Controller
         if ($fechaDia < $fechaCorteHorarioLegacy) {
             $horasBase = $horasLegacy;
         } elseif ($fechaCorteHorarioNuevo !== null && $fechaDia >= $fechaCorteHorarioNuevo) {
-            if($oficina == 'Zamora' && $fechaDia < '2026-10-08'){
+            if(($oficina == 'Zamora' || $oficina == 'Sahuayo') && $fechaDia < '2026-10-11'){
                 $horasBase = $horasNuevo;
             } else {
                 $horasBase = $horasNuevoAlCuadrado;
@@ -14165,6 +14165,8 @@ class SeerController extends Controller
         obtenerAudienciasParte2 (los slots cortos de 8:30 y 13:15 se excluyen a propósito). */
         $horasNuevo = [[9, 0], [10, 15], [11, 30], [13, 45], [15, 0]];
 
+        $horasNuevoAlCuadrado = [[8, 30], [9, 45], [11, 00], [13, 0],[14, 15]];
+
         /* Traemos cada audiencia existente (no agrupada por coincidencia exacta) para poder
         detectar traslapes de horario, incluyendo citas agendadas con el formato de horarios anterior
         (p.ej. 11:30, 12:45, 14:00) que ya no coinciden con los puntos de inicio de $horarios.
@@ -14193,13 +14195,20 @@ class SeerController extends Controller
                 if ($fechaDia < $fechaCorteHorarioLegacy) {
                     $nivelHorario = 'legacy';
                 } elseif ($fechaCorteHorarioNuevo !== null && $fechaDia >= $fechaCorteHorarioNuevo) {
-                    $nivelHorario = 'nuevo';
+                    if($sede == 'Zamora' && $fechaDia < '2026-10-08'){
+                        $nivelHorario = 'nuevo';
+                    }
+                    else{
+                        $nivelHorario = 'nuevoAlCuadrado';
+                    }
+                    
                 } else {
                     $nivelHorario = 'actual';
                 }
                 $horasBase = match ($nivelHorario) {
                     'legacy' => $horasLegacy,
                     'nuevo' => $horasNuevo,
+                    'nuevoAlCuadrado' => $horasNuevoAlCuadrado,
                     default => $horasActual,
                 };
 
