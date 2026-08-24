@@ -9576,6 +9576,8 @@ class SeerController extends Controller
         try {
             $citado = SeerCitados::findOrFail($id);
             $solicitud = SeerPerGeneral::findOrFail($citado->id_solicitud);
+            $inicialesConcluye = $this->inicialesDeSeerGeneral($solicitud);
+            $etiquetaIniciales = $this->etiquetaDelegacionSeer($solicitud->delegacion ?? null);
             $solicitante = SeerSolicitante::where('id_solicitud', $citado->id_solicitud)->first();
             $motivoIds = SeerMotivo::where('id_solicitud', $citado->id_solicitud)->pluck('id_motivo');
             $motivos = SolicitudMotivo::whereIn('id', $motivoIds)->get();
@@ -9602,7 +9604,8 @@ class SeerController extends Controller
                 'citado',
                 'motivos',
                 'audiencia',
-                'conciliador','municipioNombre','estadoNombre','fechaEmision'
+                'conciliador','municipioNombre','estadoNombre','fechaEmision',
+                'inicialesConcluye','etiquetaIniciales'
             ))
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
