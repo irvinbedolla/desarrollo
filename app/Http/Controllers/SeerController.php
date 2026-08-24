@@ -8307,7 +8307,7 @@ class SeerController extends Controller
         if ($fechaDia < $fechaCorteHorarioLegacy) {
             $horasBase = $horasLegacy;
         } elseif ($fechaCorteHorarioNuevo !== null && $fechaDia >= $fechaCorteHorarioNuevo) {
-            if($oficina == 'Zamora' && $fechaDia < '2026-10-08'){
+            if(($oficina == 'Zamora' || $oficina == 'Sahuayo') && $fechaDia < '2026-10-11'){
                 $horasBase = $horasNuevo;
             } else {
                 $horasBase = $horasNuevoAlCuadrado;
